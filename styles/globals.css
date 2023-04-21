@@ -1,0 +1,64 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply leading-[normal] m-0;
+}
+*,
+::before,
+::after {
+  border-width: 0;
+}
+
+
+/* body {
+    background-color: #14171F;
+} */
+
+.transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+.duration-500 {
+    transition-duration: 500ms;
+}
+
+.hover\:bg-pos-100:hover {
+    background-position: 100% 100%;
+}
+
+.bg-size-200 {
+    background-size: 200% 200%;
+}
+
+.bg-pos-0 {
+    background-position: 0% 0%;
+}
+
+.p-10 {
+    padding: 2.5rem;
+}
+
+@layer components {
+    .text-gradient-p {
+        @apply bg-gradient-to-r from-[#9333EA] to-[#dcbefb] bg-clip-text text-transparent;
+    }
+
+    .text-gradient-s {
+        @apply bg-gradient-to-r from-[#ffe600] to-[#ff3c00] bg-clip-text text-transparent;
+    }
+
+    .btn-p {
+        @apply bg-gradient-to-r from-[#9333EA] via-[#C084FC] to-[#9333EA] bg-size-200 bg-pos-0 hover:bg-pos-100 px-10 py-4 font-medium rounded-full text-white active:scale-95 transition-all duration-500 disabled:cursor-not-allowed disabled:active:scale-100 disabled:bg-gradient-to-r disabled:from-gray-500 disabled:to-gray-500
+    }
+
+    .bg-p{
+        @apply bg-[#9333EA]
+    }
+}
+
