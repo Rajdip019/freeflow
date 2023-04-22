@@ -88,7 +88,7 @@ const ImageUploader = () => {
     
   return (
     <div>
-        <div className="w-96 bg-white rounded-2xl p-10 ">
+        <div className="md:w-96 mx-auto md:mx-0 bg-white rounded-2xl p-10 ">
                 <div className=" flex items-center text-center justify-center gap-3 mb-8">
                     <svg
                         fill="currentColor"

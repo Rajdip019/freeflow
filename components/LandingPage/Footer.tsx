@@ -2,9 +2,9 @@ import React from 'react'
 
 const Footer = () => {
     return (
-        <div className="self-stretch bg-[#1E293B] flex flex-col py-16 px-0 items-center justify-center text-md text-gray-300 mt-10">
-            <div className="self-stretch flex flex-row py-2.5 px-16 items-center justify-between">
-                <div className="relative leading-[21.6px]">
+        <div className="self-stretch bg-[#1E293B] flex flex-col py-16 px-0 items-center justify-center text-md text-gray-300 md:mt-10">
+            <div className="self-stretch text-center md:text-left md:flex md:flex-row py-2.5 px-16 items-center justify-between">
+                <div className="relative leading-[21.6px] mb-10 md:mb-0">
                     © 2023 Freeflow. All rights reserved.
                 </div>
                 <div className="relative text-base leading-[19px]">
