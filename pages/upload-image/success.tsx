@@ -30,7 +30,7 @@ const Success = () => {
                             position: "bottom-right",
                         })} className='btn-p py-2 w-fit'>Copy</button>
                     </CopyToClipboard>
-                    <button onClick={() =>  router.push('/upload-image')} className='btn-p py-2'>Upload another Image</button>
+                    <button onClick={() =>  router.push('/')} className='btn-p py-2'>Upload another Image</button>
                 </div>
             </div>
         </div>
