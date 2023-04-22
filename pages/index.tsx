@@ -9,7 +9,7 @@ const Home = () => {
     <div className="bg-gray-900">
       <Navbar />
       <Hero />
-      <div className=" flex justify-center py-10 px-40">
+      <div className=" flex justify-center md:py-10 py-5 px-5 md:px-40">
         <img src="/demo.png" alt="" className=" rounded-xl" />
       </div>
       <Version />
