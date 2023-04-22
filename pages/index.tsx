@@ -7,12 +7,14 @@ import React from "react";
 const Home = () => {
   return (
     <div className="bg-gray-900">
+      <div className="max-w-[1440px] mx-auto">
       <Navbar />
       <Hero />
       <div className=" flex justify-center md:py-10 py-5 px-5 md:px-40">
         <img src="/demo.png" alt="" className=" rounded-xl" />
       </div>
       <Version />
+      </div>
       <Footer />
     </div>
   );
