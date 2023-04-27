@@ -44,9 +44,13 @@ body {
     padding: 2.5rem;
 }
 
+.font-sec{
+    font-family: 'Space Grotesk', sans-serif;
+}
+
 @layer components {
     .text-gradient-p {
-        @apply bg-gradient-to-r from-[#9333EA] to-[#dcbefb] bg-clip-text text-transparent;
+        @apply bg-gradient-to-r from-[#9333EA] to-[#FF8383] bg-clip-text text-transparent;
     }
 
     .text-gradient-s {
