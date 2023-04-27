@@ -1,15 +1,5 @@
 import { IThread } from "@/interfaces/Thread";
-import { db } from "@/lib/firebaseConfig";
-import { useToast } from "@chakra-ui/react";
-import {
-  getDocs,
-  query,
-  collection,
-  orderBy,
-  addDoc,
-} from "firebase/firestore";
-import error from "next/error";
-import React, { useState } from "react";
+import React from "react";
 import Moment from "react-moment";
 
 interface Props {
@@ -26,8 +16,7 @@ const SidebarComments: React.FC<Props> = ({
 
   return (
     <div
-      className="my-1.5 bg-gray-700 flex cursor-pointer hover:bg-gray-600 transition-all"
-      onClick={() => {setHighlightedComment(thread); setIsFocusedThread(true)}}
+      className="my-1.5 bg-gray-700 flex hover:bg-gray-600 transition-all"
     >
       <div className={`w-1 bg-${thread.color}`}></div>
       <div className="p-2">
@@ -36,6 +25,7 @@ const SidebarComments: React.FC<Props> = ({
           {thread.timeStamp}
         </Moment>
         <p>{thread.initialComment}</p>
+        <button onClick={() => {setHighlightedComment(thread); setIsFocusedThread(true)}} className=" font-semibold mt-1">Reply</button>
       </div>
     </div>
   );

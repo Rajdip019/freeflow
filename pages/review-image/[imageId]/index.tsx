@@ -1,15 +1,27 @@
 import Markings from "@/components/ImageReview/Markings";
 import SidebarComments from "@/components/ImageReview/SidebarComments";
 import ThreadsExpanded from "@/components/ImageReview/ThreadsExpanded";
-import { defaultHighlightedThread, defaultNewThread } from "@/helpers/constants";
+import {
+  defaultHighlightedThread,
+  defaultNewThread,
+} from "@/helpers/constants";
 import { IImageDimension } from "@/interfaces/Image";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { IThread, INewThread } from "@/interfaces/Thread";
 import { db } from "@/lib/firebaseConfig";
 import { Spinner, Switch, Textarea, useToast } from "@chakra-ui/react";
-import { addDoc, collection, doc, getDoc, getDocs } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
+import Moment from "react-moment";
 
 const ReviewImage = () => {
   const router = useRouter();
@@ -20,7 +32,9 @@ const ReviewImage = () => {
   const [isNewThreadAddLoading, setIsNewThreadAddLoading] =
     useState<boolean>(false);
   const [isCommentsOn, setIsCommentsOn] = useState<number>(1);
-  const [highlightedComment, setHighlightedComment] = useState<IThread>(defaultHighlightedThread);
+  const [highlightedComment, setHighlightedComment] = useState<IThread>(
+    defaultHighlightedThread
+  );
   const toast = useToast();
   const imageRef = useRef<HTMLImageElement>(null);
   const commentRef = useRef<HTMLDivElement>(null);
@@ -50,7 +64,7 @@ const ReviewImage = () => {
     if (textareaRef.current) {
       textareaRef.current.focus();
     }
-  }, [textareaRef, handleClick])
+  }, [textareaRef, handleClick]);
 
   // Get the details of the image
   const getImageDetails = async () => {
@@ -67,17 +81,20 @@ const ReviewImage = () => {
 
   // Get each thread on an image
   const getThreads = async () => {
-    setIsThreadsLoading(true)
+    setIsThreadsLoading(true);
     const _comments: unknown[] = [];
     const querySnapshot = await getDocs(
-      collection(db, `reviewImages/${imageId}/threads`)
+      query(
+        collection(db, `reviewImages/${imageId}/threads`),
+        orderBy("timeStamp", "desc")
+      )
     );
     querySnapshot.forEach((doc) => {
       console.log(doc.id, " => ", doc.data());
       _comments.push({ ...doc.data(), id: doc.id });
     });
     setThreads(_comments as IThread[]);
-    setIsThreadsLoading(false)
+    setIsThreadsLoading(false);
   };
 
   // Adds a new thread
@@ -198,7 +215,11 @@ const ReviewImage = () => {
                             highlightedComment={highlightedComment as IThread}
                             thread={thread}
                             imageDimension={imageDimension as IImageDimension}
-                            setHighlightedComment={setHighlightedComment as React.Dispatch<React.SetStateAction<IThread>>}
+                            setHighlightedComment={
+                              setHighlightedComment as React.Dispatch<
+                                React.SetStateAction<IThread>
+                              >
+                            }
                           />
                         );
                       })}
@@ -210,11 +231,13 @@ const ReviewImage = () => {
                         top: newThread.pos.top,
                         left: newThread.pos.left,
                       }}
-                      className={`absolute text-gray-800 flex ${newThread.pos.top > 550 ? "items-end" : "items-start"
-                        } ${newThread.pos.left > 500
+                      className={`absolute text-gray-800 flex ${
+                        newThread.pos.top > 550 ? "items-end" : "items-start"
+                      } ${
+                        newThread.pos.left > 500
                           ? "flex-row-reverse"
                           : " flex-row"
-                        }`}
+                      }`}
                     >
                       {!isNewThreadAddLoading ? (
                         <>
@@ -225,8 +248,9 @@ const ReviewImage = () => {
                             className={`w-7 h-7 rounded-t-full rounded-r-full bg-${newThread.color} ring ring-white`}
                           ></div>
                           <div
-                            className={` text-white bg-gray-800 w-72 p-2 rounded absolute ${newThread.pos.left > 500 ? "right-10" : "left-10"
-                              }  z-50`}
+                            className={` text-white bg-gray-800 w-72 p-2 rounded absolute ${
+                              newThread.pos.left > 500 ? "right-10" : "left-10"
+                            }  z-50`}
                           >
                             <div className=" flex justify-between items-center mb-2">
                               <p className=" text-sm font-semibold">
@@ -362,52 +386,75 @@ const ReviewImage = () => {
             </div>
           </div>
           <div className=" bg-gray-800 w-3/12 h-screen">
-            <div className="h-[8vh] bg-purple-500 text-xl flex justify-center items-center font-semibold">
-              {imageData?.imageName}
-            </div>
-            {isFocusedThread ? (
-              <ThreadsExpanded setHighlightedComment={setHighlightedComment} setIsFocusedThread={setIsFocusedThread} uname={uname as string} imageId={imageId as string} highlightedComment={highlightedComment as IThread} />
-            ) : (
-              <div>
-                {isThreadsLoading ? (
-                  <div className=' flex flex-col gap-1.5 mt-2'>
-                    <div className=' rounded h-14 mx-2 animate-pulse bg-gray-700'></div>
-                    <div className=' rounded h-14 mx-2 animate-pulse bg-gray-700'></div>
-                    <div className=' rounded h-14 mx-2 animate-pulse bg-gray-700'></div>
-                    <div className=' rounded h-14 mx-2 animate-pulse bg-gray-700'></div>
-                  </div>
-                ) : (
-                  <>
-                    {threads.length > 0 ? (
-                      <>
-                        {threads.map((thread, index) => {
-                          return (
-                            <>
-                            {thread.imageDimension ? (
-                              <SidebarComments
-                                key={index}
-                                thread={thread}
-                                setHighlightedComment={setHighlightedComment as React.Dispatch<React.SetStateAction<IThread>>}
-                                setIsFocusedThread={setIsFocusedThread}
-                              />
-                            ) : (
-                              <div className=" text-center mt-5 font-semibold px-2">
-                                This version is outdated. <br />Please switch to new version by uploading the image again.
-                              </div>
-                            )}
-                            </>
-                          );
-                        })}
-                      </>) : (
-                      <div className='text-center'>
-                        <p className=' font-semibold mt-4'>No reviews on this image !</p>
-                        <p className=' mt-1'>Add first to add a review.</p>
-                      </div>
-                    )}
-                  </>
-                )}
+            <div className="h-[8vh] bg-purple-500 flex flex-col justify-center items-center">
+              <h2 className=" text-lg font-semibold">{imageData?.imageName}</h2>
+              <div className=" flex gap-2 flex-wrap">
+                <p className=" text-sm">Uploaded by {imageData?.uploadedBy}</p>
+                <Moment fromNow className="text-sm">
+                  {imageData?.timeStamp}
+                </Moment>
               </div>
-            )}
+            </div>
+            <div className=" h-[92vh] overflow-y-scroll">
+              {isFocusedThread ? (
+                <ThreadsExpanded
+                  setHighlightedComment={setHighlightedComment}
+                  setIsFocusedThread={setIsFocusedThread}
+                  uname={uname as string}
+                  imageId={imageId as string}
+                  highlightedComment={highlightedComment as IThread}
+                />
+              ) : (
+                <div>
+                  {isThreadsLoading ? (
+                    <div className=" flex flex-col gap-1.5 mt-2">
+                      <div className=" rounded h-14 mx-2 animate-pulse bg-gray-700"></div>
+                      <div className=" rounded h-14 mx-2 animate-pulse bg-gray-700"></div>
+                      <div className=" rounded h-14 mx-2 animate-pulse bg-gray-700"></div>
+                      <div className=" rounded h-14 mx-2 animate-pulse bg-gray-700"></div>
+                    </div>
+                  ) : (
+                    <>
+                      {threads.length > 0 ? (
+                        <div>
+                          {threads.map((thread, index) => {
+                            return (
+                              <>
+                                {thread.imageDimension ? (
+                                  <SidebarComments
+                                    key={index}
+                                    thread={thread}
+                                    setHighlightedComment={
+                                      setHighlightedComment as React.Dispatch<
+                                        React.SetStateAction<IThread>
+                                      >
+                                    }
+                                    setIsFocusedThread={setIsFocusedThread}
+                                  />
+                                ) : (
+                                  <div className=" text-center mt-5 font-semibold px-2">
+                                    This version is outdated. <br />
+                                    Please switch to new version by uploading
+                                    the image again.
+                                  </div>
+                                )}
+                              </>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="text-center">
+                          <p className=" font-semibold mt-4">
+                            No reviews on this image !
+                          </p>
+                          <p className=" mt-1">Add first to add a review.</p>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
