@@ -15,7 +15,7 @@ const Hero = () => {
           Upload an image and share the link to get visual feedback
         </p>
         <img
-          src="string.png"
+          src="/string.png"
           alt=""
           className=" w-10/12 mt-10 mb-10 md:mb-0 mx-auto md:mx-0 hidden md:block"
         />
