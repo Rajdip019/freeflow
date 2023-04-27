@@ -31,7 +31,7 @@ const LessEmailMoreDesign = () => {
                 </div>
             </div>
         </div>
-        <div className=' hidden md:block w-screen h-1 bg-gradient-to-r from-[#E5405E] via-[#FFE600] to-[#9333EA] mt-10'></div>
+        <div className=' absolute left-0 hidden md:block w-screen h-1 bg-gradient-to-r from-[#E5405E] via-[#FFE600] to-[#9333EA] mt-10'></div>
     </div>
   )
 }

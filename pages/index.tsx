@@ -13,7 +13,7 @@ const Home = () => {
       <Navbar />
       <Hero />
       <LessEmailMoreDesign />
-      <div className=" flex justify-center md:py-10 py-5 px-5 md:px-40 mt-10">
+      <div className=" flex justify-center md:py-10 py-5 px-5 md:px-40 mt-28">
         <img src="/demo.png" alt="" className=" rounded-xl hidden md:block" />
         <img src="/demo-m.png" alt="" className=" md:hidden" />
       </div>
