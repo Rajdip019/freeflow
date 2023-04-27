@@ -9,23 +9,23 @@ const LessEmailMoreDesign = () => {
             <div className=' md:hidden w-1 bg-gradient-to-b from-[#E5405E] via-[#FFE600] to-[#9333EA] mt-10 mr-5'></div>
                 <div className=' flex md:w-full md:justify-between mt-10 flex-col md:flex-row gap-5 md:gap-0'>
                     <div className=' flex items-center gap-2'>
-                        <img src="/icons/icon.png" alt="" className='w-6' />
+                        <img src="/icons/Icon.png" alt="" className='w-6' />
                         <p>Upload</p>
                     </div>
                     <div className=' flex items-center gap-2'>
-                        <img src="/icons/icon-1.png" alt="" className=' w-6' />
+                        <img src="/icons/Icon-1.png" alt="" className=' w-6' />
                         <p>Share</p>
                     </div>
                     <div className=' flex items-center gap-2'>
-                        <img src="/icons/icon-2.png" alt="" className=' w-6' />
+                        <img src="/icons/Icon-2.png" alt="" className=' w-6' />
                         <p>Get Feedback</p>
                     </div>
                     <div className=' flex items-center gap-2'>
-                        <img src="/icons/icon-3.png" alt="" className=' w-6' />
+                        <img src="/icons/Icon-3.png" alt="" className=' w-6' />
                         <p>Iterate</p>
                     </div>
                     <div className=' flex items-center gap-2'>
-                        <img src="/icons/icon-4.png" alt="" className=' w-6' />
+                        <img src="/icons/Icon-4.png" alt="" className=' w-6' />
                         <p>Deliver</p>
                     </div>
                 </div>
