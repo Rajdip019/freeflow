@@ -1,4 +1,4 @@
-import { Tooltip } from "@chakra-ui/react";
+import Link from "next/link";
 import React from "react";
 
 const Navbar = () => {
@@ -6,16 +6,16 @@ const Navbar = () => {
     <div className=" flex justify-center pt-5 md:justify-between md:px-40 items-center">
       <img src="/freeflow.png" alt="" className=" w-32" />
       <div className=" flex gap-5">
-        <Tooltip label="Coming Soon...">
-          <button className="font-sec btn-p hidden md:block cursor-not-allowed">
+        <Link href="/auth/signup">
+          <button className="font-sec btn-p hidden md:block">
             LogIn
           </button>
-        </Tooltip>
-        <Tooltip label="Coming Soon...">
-          <button className="font-sec btn-p hidden md:block cursor-not-allowed">
+          </Link>  
+          <Link href="/auth/signup">
+          <button className="font-sec btn-p hidden md:block">
             Join for Free
           </button>
-        </Tooltip>
+        </Link>
       </div>
     </div>
   );

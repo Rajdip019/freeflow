@@ -1,6 +1,7 @@
 import React from "react";
 import ImageUploader from "../ImageUploader";
 import { Tooltip } from "@chakra-ui/react";
+import Link from "next/link";
 
 const Hero = () => {
   return (
@@ -20,16 +21,16 @@ const Hero = () => {
           className=" w-10/12 mt-10 mb-10 md:mb-0 mx-auto md:mx-0 hidden md:block"
         />
         <div className=" flex flex-col items-center">
-          <Tooltip label="Coming Soon...">
+          <Link href="/auth/signup">
             <button className="font-sec btn-p md:hidden mb-5 text-lg cursor-not-allowed w-fit">
               Login
             </button>
-          </Tooltip>
-          <Tooltip label="Coming Soon...">
+          </Link>
+          <Link href="/auth/signup">
             <button className="font-sec btn-p md:hidden mb-10 text-lg cursor-not-allowed w-fit">
               Join for Free
             </button>
-          </Tooltip>
+          </Link>
         </div>
       </div>
       <div>

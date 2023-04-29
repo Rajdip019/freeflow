@@ -61,6 +61,10 @@ body {
         @apply bg-gradient-to-r from-[#9333EA] via-[#C084FC] to-[#9333EA] bg-size-200 bg-pos-0 hover:bg-pos-100 px-10 py-4 font-medium rounded-full text-white active:scale-95 transition-all duration-500 disabled:cursor-not-allowed disabled:active:scale-100 disabled:bg-gradient-to-r disabled:from-gray-500 disabled:to-gray-500
     }
 
+    .btn-sec{
+        @apply border-2 border-purple-500 bg-black text-white px-8 py-3 rounded-full hover:bg-gray-900 transition-all font-semibold
+    }
+
     .bg-p{
         @apply bg-[#9333EA]
     }
