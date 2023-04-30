@@ -1,7 +1,6 @@
 import { IThread } from "@/interfaces/Thread";
 import React from "react";
 import Moment from "react-moment";
-
 interface Props {
   thread: IThread;
   setHighlightedComment: React.Dispatch<React.SetStateAction<IThread>>;

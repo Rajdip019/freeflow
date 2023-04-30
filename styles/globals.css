@@ -13,11 +13,17 @@ body {
   border-width: 0;
 }
 
+@media print {
+    html,
+    body {
+       display: none;
+    }
+ }
 
-/* body {
-    background-color: #14171F;
-} */
-
+.linkify__text{
+    text-decoration: underline;
+    color: rgb(4, 165, 239);
+}
 .transition-all {
     transition-property: all;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
