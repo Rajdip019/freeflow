@@ -12,6 +12,7 @@ import {
 import error from "next/error";
 import React, { useEffect, useRef, useState } from "react";
 import Moment from "react-moment";
+import Linkify from 'react-linkify';
 
 interface Props {
     uname: string;
@@ -108,6 +109,12 @@ const ThreadsExpanded: React.FC<Props> = ({
         }
     };
 
+    const componentDecorator = (href :  string, text : string, key : any) => (
+        <a className="linkify__text" href={href} key={key} target="_blank">
+          {text}
+        </a>
+    );
+
     return (
         <div className=" flex flex-col justify-between h-[91vh]">
             <div>
@@ -169,7 +176,9 @@ const ThreadsExpanded: React.FC<Props> = ({
                                                 <Moment fromNow className="ml-2">
                                                     {comment.timeStamp}
                                                 </Moment>
-                                                <p>{comment.comment}</p>
+                                                <p>
+                                                <Linkify componentDecorator={componentDecorator}>{comment.comment}</Linkify>
+                                                </p>
                                             </div>
                                         </div>
                                     );

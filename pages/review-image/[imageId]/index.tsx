@@ -43,6 +43,7 @@ const ReviewImage = () => {
   const [newThread, setNewThread] = useState<INewThread>(defaultNewThread);
   const [imageDimension, setImageDimension] = useState<IImageDimension>();
   const [isThreadsLoading, setIsThreadsLoading] = useState<boolean>(false);
+   const [blackout, setBlackout] = useState(false);
 
   const handleClick = (event: React.MouseEvent<HTMLImageElement>) => {
     const { left, top } = commentRef.current!.getBoundingClientRect();
@@ -163,7 +164,16 @@ const ReviewImage = () => {
     handleImage();
   }, [imageData, imageRef]);
 
-  console.log(newThread.color);
+
+  useEffect(() => {
+    const handleContextmenu = (e: any) => {
+      e.preventDefault()
+    }
+    document.addEventListener('contextmenu', handleContextmenu)
+    return function cleanup() {
+      document.removeEventListener('contextmenu', handleContextmenu)
+    }
+  }, [])
 
   return (
     <div className="w-full flex flex-col h-screen bg-gray-900 text-white">
@@ -176,6 +186,24 @@ const ReviewImage = () => {
         </div>
       ) : (
         <div className=" flex w-full h-screen">
+          <div>
+            {/* Your app content */}
+            {blackout && (
+              <div
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: 'black',
+                  zIndex: 9999,
+                  width : "100vw",
+                  height : "100vh"
+                }}
+              />
+            )}
+          </div>
           <div className=" w-9/12">
             <div className=" flex items-center justify-between h-[8vh] bg-gray-800 px-5">
               <div
@@ -231,13 +259,11 @@ const ReviewImage = () => {
                         top: newThread.pos.top,
                         left: newThread.pos.left,
                       }}
-                      className={`absolute text-gray-800 flex ${
-                        newThread.pos.top > 550 ? "items-end" : "items-start"
-                      } ${
-                        newThread.pos.left > 500
+                      className={`absolute text-gray-800 flex ${newThread.pos.top > 550 ? "items-end" : "items-start"
+                        } ${newThread.pos.left > 500
                           ? "flex-row-reverse"
                           : " flex-row"
-                      }`}
+                        }`}
                     >
                       {!isNewThreadAddLoading ? (
                         <>
@@ -248,9 +274,8 @@ const ReviewImage = () => {
                             className={`w-7 h-7 rounded-t-full rounded-r-full bg-${newThread.color} ring ring-white`}
                           ></div>
                           <div
-                            className={` text-white bg-gray-800 w-72 p-2 rounded absolute ${
-                              newThread.pos.left > 500 ? "right-10" : "left-10"
-                            }  z-50`}
+                            className={` text-white bg-gray-800 w-72 p-2 rounded absolute ${newThread.pos.left > 500 ? "right-10" : "left-10"
+                              }  z-50`}
                           >
                             <div className=" flex justify-between items-center mb-2">
                               <p className=" text-sm font-semibold">
@@ -375,7 +400,7 @@ const ReviewImage = () => {
                       <img
                         src={imageData?.imageURL}
                         ref={imageRef}
-                        className=" rounded-lg"
+                        className=" rounded-lg max-h-[85vh]"
                         onClick={handleClick}
                         onLoad={handleImage}
                       />
