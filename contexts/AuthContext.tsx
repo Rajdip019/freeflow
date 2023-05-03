@@ -6,7 +6,6 @@ import FirebaseAuth, {
   signOut,
 } from '@firebase/auth';
 import React, { useContext, useEffect } from 'react';
-import { Router } from 'next/router';
 import { Spinner } from '@chakra-ui/react';
 
 export interface IAuthContext {

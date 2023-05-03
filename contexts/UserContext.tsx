@@ -60,13 +60,16 @@ export const UserContextProvider = ({ children }: Props) => {
                         name: authUser.displayName as string,
                         email: authUser.email as string,
                         imageURL: authUser.photoURL as string,
-                        createTime: Date.now()
+                        createTime: Date.now(),
+                        storage : 1024,
+
                     });
                     setUser({
                         name: authUser.displayName as string,
                         email: authUser.email as string,
                         imageURL: authUser.photoURL as string,
-                        createTime: Date.now()
+                        createTime: Date.now(),
+                        storage : 1024,
                     })
                     toast({
                         title: 'Freeflow Account created.',

@@ -26,7 +26,7 @@ const ImageUploaderDropzone: React.FC<Props> = ({ onFileUploaded, image, setImag
         <>
             <div
                 {...getRootProps()}
-                className=" border-purple-500 rounded-xl p-5 text-center border-2"
+                className=" border-purple-500 rounded-xl p-5 text-center border"
             >
                 <input {...getInputProps()} accept="image/*" />
                 {image ? (

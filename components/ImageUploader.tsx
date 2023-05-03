@@ -35,7 +35,7 @@ const ImageUploader = () => {
         try {
             const storageRef = ref(
                 storage,
-                `reviewImages/${imageName}_${Date.now()}`
+                `reviewImages/anonymous/${imageName}_${Date.now()}`
             );
 
             const uploadTask = uploadBytesResumable(storageRef, uploadedFile as File);

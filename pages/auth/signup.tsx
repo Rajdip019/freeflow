@@ -13,7 +13,7 @@ const SignUp = () => {
     const handleSignupWithGoogle = async () => {
       try {
         await signUpWithGoogle();
-        router.push('/');
+        router.push('/dashboard');
       } catch (err: any) {
         console.log(err);
       }

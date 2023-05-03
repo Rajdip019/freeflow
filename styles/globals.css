@@ -74,5 +74,11 @@ body {
     .bg-p{
         @apply bg-[#9333EA]
     }
+    .bg-sec-black{
+        @apply bg-[#20232A]
+    }
+    .text-p{
+        @apply text-[#9333EA]
+    }
 }
 
