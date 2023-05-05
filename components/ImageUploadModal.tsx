@@ -1,6 +1,6 @@
 import { IReviewImageData } from '@/interfaces/ReviewImageData';
 import { storage, db } from '@/lib/firebaseConfig';
-import { CircularProgress, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Tooltip, useDisclosure, useToast } from '@chakra-ui/react'
+import { CircularProgress, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure, useToast } from '@chakra-ui/react'
 import { addDoc, collection } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import React, { useState } from 'react'
@@ -8,6 +8,7 @@ import ImageUploaderDropzone from './ImageUploaderDropzone';
 import { useUserContext } from '@/contexts/UserContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useImageContext } from '@/contexts/ImagesContext';
+import ImageUploadSuccess from './ImageUploadSuccess';
 
 
 const ImageUploadModal = () => {
@@ -15,7 +16,9 @@ const ImageUploadModal = () => {
     const [imageName, setImageName] = useState<string>();
     const [uploadedFile, setUploadedFile] = useState<File | null>();
     const [image, setImage] = useState<string | null>(null);
-    const [isUploading, setIsUploading] = useState<boolean>(false);
+    const [uploadingState, setUploadingState] = useState<"not-started" | "uploading" | "success" | "error">('not-started');
+    const [uploadedImageId, setUploadedImageId] = useState<string>('{imageId}')
+
     const toast = useToast();
     const { user } = useUserContext();
     const { authUser } = useAuth();
@@ -39,7 +42,7 @@ const ImageUploadModal = () => {
         if (user?.storage) {
             if (storageUsed <= user.storage) {
 
-                setIsUploading(true);
+                setUploadingState("uploading");
                 try {
                     const storageRef = ref(
                         storage,
@@ -70,10 +73,12 @@ const ImageUploadModal = () => {
                                 imageName: imageName as string,
                                 size: bytes / (1024 * 1024),
                                 views: 0,
-                                threads: 0
+                                threads: 0,
+                                lastUpdated: Date.now(),
+                                newUpdate: "Uploaded"
                             }
 
-                            await addDoc(collection(db, "reviewImages"), data);
+                            const docRef = await addDoc(collection(db, "reviewImages"), data);
                             toast({
                                 title: "Image uploaded successfully",
                                 status: "success",
@@ -81,9 +86,9 @@ const ImageUploadModal = () => {
                                 isClosable: true,
                                 position: "bottom-right",
                             });
-                            setIsUploading(false);
+                            setUploadingState("success");
+                            setUploadedImageId(docRef.id)
                             getImages();
-                            onClose();
                         }
                     );
                 } catch (error) {
@@ -95,7 +100,7 @@ const ImageUploadModal = () => {
                         isClosable: true,
                         position: "bottom-right",
                     });
-                    setIsUploading(false);
+                    setUploadingState("error");
                 }
             } else {
                 toast({
@@ -110,9 +115,10 @@ const ImageUploadModal = () => {
         }
 
     };
+
     return (
         <>
-            <button onClick={() => { onOpen(); clearFile(); }} className=" font-semibold font-sec btn-p flex items-center gap-3 px-6">
+            <button onClick={() => { onOpen(); clearFile(); setUploadingState("not-started") }} className=" font-semibold font-sec btn-p rounded flex items-center gap-3 px-6 py-3">
                 <svg
                     fill="currentColor"
                     className="w-6 text-white"
@@ -136,71 +142,85 @@ const ImageUploadModal = () => {
                     <ModalCloseButton />
                     <ModalBody>
                         <div className="mx-auto md:mx-0 text-white rounded-2xl  pb-10 ">
-                            {image && (
-                                <div className=" flex justify-end">
-                                    <svg
-                                        onClick={() => {
-                                            clearFile();
-                                        }}
-                                        fill="currentColor"
-                                        className="w-6 cursor-pointer"
-                                        viewBox="0 0 24 24"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        aria-hidden="true"
-                                    >
-                                        <path
-                                            clipRule="evenodd"
-                                            fillRule="evenodd"
-                                            d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
-                                        />
-                                    </svg>
-                                </div>
-                            )}
-                            <div className=" mt-2 cursor-pointer">
-                                <ImageUploaderDropzone
-                                    onFileUploaded={handleFileUploaded}
-                                    image={image}
-                                    setImage={setImage}
-                                />
-                            </div>
-                            {image && (
+                            {(uploadingState === "not-started" || uploadingState === "uploading") && (
                                 <>
-                                    <div className="mt-5">
-                                        <p className=" text-sm text-gray-500 mb-2">Title</p>
-                                        <Input
-                                            value={imageName}
-                                            onChange={(e) => {
-                                                setImageName(e.target.value);
-                                            }}
-                                            type="text"
-                                            focusBorderColor="purple.500"
-                                            borderColor={"purple.500"}
-                                            className=" text-gray-200"
-                                            placeholder="Enter photo title"
+                                    {image && (
+                                        <div className=" flex justify-end">
+                                            <svg
+                                                onClick={() => {
+                                                    clearFile();
+                                                }}
+                                                fill="currentColor"
+                                                className="w-6 cursor-pointer"
+                                                viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                aria-hidden="true"
+                                            >
+                                                <path
+                                                    clipRule="evenodd"
+                                                    fillRule="evenodd"
+                                                    d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
+                                                />
+                                            </svg>
+                                        </div>
+                                    )}
+                                    <div className=" mt-2 cursor-pointer">
+                                        <ImageUploaderDropzone
+                                            onFileUploaded={handleFileUploaded}
+                                            image={image}
+                                            setImage={setImage}
                                         />
                                     </div>
-                                    <div className="mt-5">
-                                        <span className=" font-semibold">Image name: </span>
-                                        <span>{imageName}</span>
+                                    {image && (
+                                        <>
+                                            <div className="mt-5">
+                                                <p className=" text-sm text-gray-500 mb-2">Title</p>
+                                                <Input
+                                                    value={imageName}
+                                                    onChange={(e) => {
+                                                        setImageName(e.target.value);
+                                                    }}
+                                                    type="text"
+                                                    focusBorderColor="purple.500"
+                                                    borderColor={"purple.500"}
+                                                    className=" text-gray-200"
+                                                    placeholder="Enter photo title"
+                                                />
+                                            </div>
+                                            <div className="mt-5">
+                                                <span className=" font-semibold">Image name: </span>
+                                                <span>{imageName}</span>
+                                            </div>
+                                        </>
+                                    )}
+                                    <div>
+                                        {uploadingState === "uploading" && (
+                                            <div className="mt-5 flex w-full justify-center items-center">
+                                                <CircularProgress value={uploadPercentage} color="purple.500" />
+                                                <p className="ml-5 text-lg">Uploading file....</p>
+                                            </div>
+                                        )}
+                                        {uploadingState === "not-started" && (
+                                            <button
+                                                disabled={!!!image}
+                                                className=" btn-p py-2 w-full mt-5"
+                                                onClick={uploadFile}
+                                            >
+                                                Upload
+                                            </button>
+                                        )}
                                     </div>
                                 </>
                             )}
-                            <div>
-                                {isUploading ? (
-                                    <div className="mt-5 flex w-full justify-center items-center">
-                                        <CircularProgress value={uploadPercentage} color="purple.500" />
-                                        <p className="ml-5 text-lg">Uploading file....</p>
-                                    </div>
-                                ) : (
-                                    <button
-                                        disabled={!!!image}
-                                        className=" btn-p py-2 w-full mt-5"
-                                        onClick={uploadFile}
-                                    >
-                                        Upload
-                                    </button>
-                                )}
-                            </div>
+                            {uploadingState === "success" && (
+                                <ImageUploadSuccess imageId={uploadedImageId} setUploadingState={setUploadingState} clearFile={clearFile} mode="dark" />
+                            )}
+                            {uploadingState === 'error' && (
+                                <div className=' flex justify-center w-full flex-col items-center'>
+                                    <p className=' text-red-500 text-center font-semibold text-xl'>Some error occurred</p>
+                                    <button className=' btn-p mt-5' onClick={() => setUploadingState("not-started")}>Try again</button>
+                                </div>
+                            )}
                         </div>
                     </ModalBody>
                 </ModalContent>

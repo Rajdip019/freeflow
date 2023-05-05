@@ -8,6 +8,8 @@ import {
     collection,
     orderBy,
     addDoc,
+    updateDoc,
+    doc,
 } from "firebase/firestore";
 import error from "next/error";
 import React, { useEffect, useRef, useState } from "react";
@@ -86,6 +88,10 @@ const ThreadsExpanded: React.FC<Props> = ({
                     timeStamp: Date.now(),
                 }
             );
+            await updateDoc(doc(db, `reviewImages`, imageId as string), {
+                lastUpdated: Date.now(),
+                newUpdate: "New Comment"
+            });
             toast({
                 title: "Comment added successfully",
                 status: "success",
@@ -109,9 +115,9 @@ const ThreadsExpanded: React.FC<Props> = ({
         }
     };
 
-    const componentDecorator = (href :  string, text : string, key : any) => (
+    const componentDecorator = (href: string, text: string, key: any) => (
         <a className="linkify__text" href={href} key={key} target="_blank">
-          {text}
+            {text}
         </a>
     );
 
@@ -177,7 +183,7 @@ const ThreadsExpanded: React.FC<Props> = ({
                                                     {comment.timeStamp}
                                                 </Moment>
                                                 <p>
-                                                <Linkify componentDecorator={componentDecorator}>{comment.comment}</Linkify>
+                                                    <Linkify componentDecorator={componentDecorator}>{comment.comment}</Linkify>
                                                 </p>
                                             </div>
                                         </div>
@@ -213,15 +219,15 @@ const ThreadsExpanded: React.FC<Props> = ({
                     {isNewCommentLoading ? (
                         <Spinner size="sm" />
                     ) : (
-                    <svg
-                        className="w-5"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                        aria-hidden="true"
-                    >
-                        <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
-                    </svg>
+                        <svg
+                            className="w-5"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                        >
+                            <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+                        </svg>
                     )}
                 </button>
             </div>

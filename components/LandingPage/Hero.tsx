@@ -1,12 +1,14 @@
 import React from "react";
 import ImageUploader from "../ImageUploader";
-import { Tooltip } from "@chakra-ui/react";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Hero = () => {
+
+  const {authUser} = useAuth();
   return (
     <div className=" px-5 md:px-40 md:py-20 my-10 flex flex-col md:flex-row text-center md:text-left">
-      <div className=" mt-5 md:mt-14">
+      <div className={`mt-5`}>
         <h1 className=" text-white text-[50px] md:text-[65px] font-bold leading-[75px] mb-5 font-sec">
           The Fastest Way For{" "}
           <span className=" text-gradient-p">designers</span> To{" "}

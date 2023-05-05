@@ -33,8 +33,8 @@ const FFPage: React.FC<Props> = ({ children, isAuthRequired }) => {
     return (
         <div>
             {isLoading ? (
-                <div className=' flex justify-center items-center h-screen'>
-                    <Spinner />
+                <div className=' flex justify-center items-center h-screen bg-black'>
+                    <Spinner color='purple' size="lg" />
                 </div>
             ) : (
                 <>

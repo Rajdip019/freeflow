@@ -11,6 +11,7 @@ import { IThread, INewThread } from "@/interfaces/Thread";
 import { db } from "@/lib/firebaseConfig";
 import { Spinner, Switch, Textarea, useToast } from "@chakra-ui/react";
 import {
+  FieldValue,
   addDoc,
   collection,
   doc,
@@ -18,6 +19,7 @@ import {
   getDocs,
   orderBy,
   query,
+  updateDoc,
 } from "firebase/firestore";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
@@ -43,7 +45,7 @@ const ReviewImage = () => {
   const [newThread, setNewThread] = useState<INewThread>(defaultNewThread);
   const [imageDimension, setImageDimension] = useState<IImageDimension>();
   const [isThreadsLoading, setIsThreadsLoading] = useState<boolean>(false);
-   const [blackout, setBlackout] = useState(false);
+  const [blackout, setBlackout] = useState(false);
 
   const handleClick = (event: React.MouseEvent<HTMLImageElement>) => {
     const { left, top } = commentRef.current!.getBoundingClientRect();
@@ -111,6 +113,10 @@ const ReviewImage = () => {
         timeStamp: Date.now(),
         color: newThread.color,
       });
+      await updateDoc(doc(db, `reviewImages`, imageId as string), {
+        lastUpdated: Date.now(),
+        newUpdate: "New Thread"
+      });
       toast({
         title: "Comment added successfully",
         status: "success",
@@ -162,6 +168,15 @@ const ReviewImage = () => {
 
   useEffect(() => {
     handleImage();
+    const isVisited = localStorage.getItem('isVisited');
+    if(isVisited !== "true"){
+      if(imageData){
+        localStorage.setItem('isVisited', JSON.stringify(true));
+        updateDoc(doc(db, `reviewImages`, imageId as string), {
+          views : imageData?.views as number + 1
+        });
+      }
+    }
   }, [imageData, imageRef]);
 
 
@@ -198,8 +213,8 @@ const ReviewImage = () => {
                   bottom: 0,
                   backgroundColor: 'black',
                   zIndex: 9999,
-                  width : "100vw",
-                  height : "100vh"
+                  width: "100vw",
+                  height: "100vh"
                 }}
               />
             )}

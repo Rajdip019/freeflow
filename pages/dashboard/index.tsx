@@ -1,5 +1,7 @@
 import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import Header from "@/components/Dashboard/Header";
+import ImagesWithNoFeedback from "@/components/Dashboard/ImagesWithNoFeedback";
+import RecentUploads from "@/components/Dashboard/RecentUploads";
 import StorageStats from "@/components/Dashboard/Stats/StorageStats";
 import TotalImagesStats from "@/components/Dashboard/Stats/TotalImagesStats";
 import TotalViews from "@/components/Dashboard/Stats/TotalViews";
@@ -13,6 +15,10 @@ const Dashboard = () => {
                 <TotalImagesStats />
                 <TotalViews />
                 <StorageStats />
+            </div>
+            <div className=" mt-10 flex justify-between gap-10 items-start">
+                <RecentUploads />
+                <ImagesWithNoFeedback />
             </div>
         </DashboardLayout>
     );

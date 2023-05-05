@@ -7,5 +7,7 @@ export interface IReviewImageData {
     uploadedById? : string;
     size? : number,
     views? : number,
-    threads? : number
+    threads? : number,
+    lastUpdated: number,
+    newUpdate: "New Comment" | "New Thread" | "Uploaded"
   }
