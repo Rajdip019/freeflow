@@ -1,2 +1,2 @@
 
-export const template = "http://localhost:3000"
+export const template = "https://freeflow.to"
