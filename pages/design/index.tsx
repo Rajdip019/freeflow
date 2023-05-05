@@ -1,5 +1,6 @@
 import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import Header from "@/components/Dashboard/Header";
+import ImageUploadModal from "@/components/ImageUploadModal";
 import ImageDeleteModalConfirmation from "@/components/Modal/ImageDeleteModalConfirmation";
 import { useImageContext } from "@/contexts/ImagesContext";
 import { useUserContext } from "@/contexts/UserContext";
@@ -74,8 +75,9 @@ const Design = () => {
         </Table>
       </TableContainer>
       {images.length === 0 && (
-        <div className=" flex justify-center items-center text-white font-semibold mt-24">
-          No recent activity...✨
+        <div className=" flex justify-center flex-col gap-5 items-center text-white font-semibold mt-24">
+         <span className=" text-2xl">Upload a image to start 🚀</span>
+          <ImageUploadModal />
         </div>
       )}
     </DashboardLayout>

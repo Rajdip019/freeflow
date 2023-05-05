@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { db } from '@/lib/firebaseConfig';
-import { deleteDoc, doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import {
     createContext,
     useContext,
@@ -75,7 +75,7 @@ export const UserContextProvider = ({ children }: Props) => {
                         title: 'Freeflow Account created.',
                         description: "We've created your account for you.",
                         status: 'success',
-                        position : "top-right",
+                        position : "bottom-right",
                         duration: 5000,
                         isClosable: true,
                     })
@@ -87,7 +87,7 @@ export const UserContextProvider = ({ children }: Props) => {
                 title: 'Something went wrong.',
                 description: "Please try agin later.",
                 status: 'success',
-                position : "top-right",
+                position : "bottom-right",
                 duration: 5000,
                 isClosable: true,
             })

@@ -1,10 +1,13 @@
 import { useImageContext } from '@/contexts/ImagesContext';
 import { useUserContext } from '@/contexts/UserContext'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 const StorageStats = () => {
     const { user } = useUserContext();
     const {storage} = useImageContext();
+
+    console.log(user?.storage);
+    
 
   return (
     <div className=' bg-[#1E40AF] text-white font-sec p-4  rounded w-full '>

@@ -1,6 +1,8 @@
 import Markings from "@/components/ImageReview/Markings";
 import SidebarComments from "@/components/ImageReview/SidebarComments";
 import ThreadsExpanded from "@/components/ImageReview/ThreadsExpanded";
+import { useAuth } from "@/contexts/AuthContext";
+import { useUserContext } from "@/contexts/UserContext";
 import {
   defaultHighlightedThread,
   defaultNewThread,
@@ -9,9 +11,8 @@ import { IImageDimension } from "@/interfaces/Image";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { IThread, INewThread } from "@/interfaces/Thread";
 import { db } from "@/lib/firebaseConfig";
-import { Spinner, Switch, Textarea, useToast } from "@chakra-ui/react";
+import { Avatar, Spinner, Switch, Textarea, Tooltip, useToast } from "@chakra-ui/react";
 import {
-  FieldValue,
   addDoc,
   collection,
   doc,
@@ -45,7 +46,9 @@ const ReviewImage = () => {
   const [newThread, setNewThread] = useState<INewThread>(defaultNewThread);
   const [imageDimension, setImageDimension] = useState<IImageDimension>();
   const [isThreadsLoading, setIsThreadsLoading] = useState<boolean>(false);
-  const [blackout, setBlackout] = useState(false);
+
+  const { authUser } = useAuth();
+  const { user } = useUserContext();
 
   const handleClick = (event: React.MouseEvent<HTMLImageElement>) => {
     const { left, top } = commentRef.current!.getBoundingClientRect();
@@ -148,8 +151,13 @@ const ReviewImage = () => {
   // Handle initial Image and threads load
   useEffect(() => {
     if (router.isReady) {
-      if (!uname) {
-        router.push(`/review-image/${imageId}/name`);
+      if (!authUser) {
+        if (!uname) {
+          router.push(`/review-image/${imageId}/name`);
+        } else {
+          getImageDetails();
+          getThreads();
+        }
       } else {
         getImageDetails();
         getThreads();
@@ -167,17 +175,31 @@ const ReviewImage = () => {
   };
 
   useEffect(() => {
-    handleImage();
-    const isVisited = localStorage.getItem('isVisited');
-    if(isVisited !== "true"){
-      if(imageData){
-        localStorage.setItem('isVisited', JSON.stringify(true));
-        updateDoc(doc(db, `reviewImages`, imageId as string), {
-          views : imageData?.views as number + 1
-        });
+    if (router.isReady) {
+      handleImage();
+      let isVisited = localStorage.getItem('isVisited');
+      if (isVisited) {
+        const visited_arr = isVisited.split(",");
+        if (!visited_arr.includes(imageId as string)) {
+          if (imageData) {
+            isVisited = isVisited + "," + imageId
+            localStorage.setItem('isVisited', isVisited);
+            updateDoc(doc(db, `reviewImages`, imageId as string), {
+              views: imageData?.views as number + 1
+            });
+          }
+        }
+      } else {
+        if (imageData) {
+          isVisited = imageId as string
+          localStorage.setItem('isVisited', isVisited);
+          updateDoc(doc(db, `reviewImages`, imageId as string), {
+            views: imageData?.views as number + 1
+          });
+        }
       }
     }
-  }, [imageData, imageRef]);
+  }, [imageData, imageRef, router.isReady]);
 
 
   useEffect(() => {
@@ -202,22 +224,6 @@ const ReviewImage = () => {
       ) : (
         <div className=" flex w-full h-screen">
           <div>
-            {/* Your app content */}
-            {blackout && (
-              <div
-                style={{
-                  position: 'fixed',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: 'black',
-                  zIndex: 9999,
-                  width: "100vw",
-                  height: "100vh"
-                }}
-              />
-            )}
           </div>
           <div className=" w-9/12">
             <div className=" flex items-center justify-between h-[8vh] bg-gray-800 px-5">
@@ -244,6 +250,11 @@ const ReviewImage = () => {
                       : setIsCommentsOn(1);
                   }}
                 />
+                {authUser && (
+                  <Tooltip label={authUser.email}>
+                    <Avatar className=" ring-2 ring-purple-500 w-8 ml-5" src={authUser?.photoURL as string} name={user?.name} />
+                  </Tooltip>
+                )}
               </div>
             </div>
             <div className="h-[92vh] flex items-center px-10 justify-center ">
@@ -335,7 +346,7 @@ const ReviewImage = () => {
                                       ...prev,
                                       comment: {
                                         value: e.target.value as string,
-                                        name: uname,
+                                        name: uname ? uname : user?.name,
                                       },
                                     };
                                   });

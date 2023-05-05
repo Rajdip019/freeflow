@@ -15,6 +15,7 @@ import error from "next/error";
 import React, { useEffect, useRef, useState } from "react";
 import Moment from "react-moment";
 import Linkify from 'react-linkify';
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Props {
     uname: string;
@@ -40,6 +41,7 @@ const ThreadsExpanded: React.FC<Props> = ({
     const [isNewCommentLoading, setIsNewCommentLoading] = useState<boolean>(false)
 
     const toast = useToast();
+    const { authUser } = useAuth()
 
     const getComments = async () => {
         setIsCommentsLoading(true);
@@ -76,6 +78,7 @@ const ThreadsExpanded: React.FC<Props> = ({
     const addNewComment = async () => {
         setIsNewCommentLoading(true)
         try {
+            const name = uname ? uname : authUser?.displayName
             await addDoc(
                 collection(
                     db,
@@ -83,7 +86,7 @@ const ThreadsExpanded: React.FC<Props> = ({
                     }/comments`
                 ),
                 {
-                    name: uname,
+                    name: name,
                     comment: newComment,
                     timeStamp: Date.now(),
                 }

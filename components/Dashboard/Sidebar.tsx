@@ -3,11 +3,12 @@ import React from 'react'
 import { sidebarData } from '@/helpers/constants';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
+import { Avatar } from '@chakra-ui/react';
 
 const Sidebar = () => {
 
   const { user } = useUserContext();
-  const { logout } = useAuth()
+  const { logout , authUser} = useAuth()
   const router = useRouter()
   return (
     <div className='top-0 sticky h-screen bg-sec-black  py-4 px-4 flex justify-between flex-col'>
@@ -17,7 +18,7 @@ const Sidebar = () => {
         </div>
         <div className=' text-white  flex items-center gap-3 mt-8 text-lg'>
           <div>
-            <img className=' rounded-full ring-2 ring-purple-500 w-28' src={user?.imageURL} alt="" />
+            <Avatar className=' rounded-full ring-2 ring-purple-500 w-28' src={authUser?.photoURL as string} name={user?.name} />
           </div>
           <div>
             <h4 className=' font-semibold truncate'>{user?.name}</h4>

@@ -73,7 +73,7 @@ const RecentUploads = () => {
           );
         })}
         {latestUpdatedImages.length === 0 && (
-          <div className=" flex justify-center items-center text-white font-semibold mt-24" >No recent activity...✨</div>
+          <div className=" flex justify-center items-center text-white font-semibold mt-24" >All Images got feedback...✨</div>
         )}
       </Collapse>
       {latestUpdatedImages.length > 5 && (
