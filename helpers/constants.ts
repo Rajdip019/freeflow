@@ -23,3 +23,16 @@ export const defaultNewThread : INewThread = {
   color: "gray-900",
   isHidden: true,
 };
+
+export const sidebarData = [
+  {
+    img : "/sidebar-icons/🏠.png",
+    title : "Dashboard",
+    url : "/dashboard"
+  },
+  {
+    img : "/sidebar-icons/🎨.png",
+    title : "Design",
+    url : "/design"
+  }
+]

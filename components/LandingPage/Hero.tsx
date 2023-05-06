@@ -1,11 +1,14 @@
 import React from "react";
 import ImageUploader from "../ImageUploader";
-import { Tooltip } from "@chakra-ui/react";
+import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Hero = () => {
+
+  const {authUser} = useAuth();
   return (
     <div className=" px-5 md:px-40 md:py-20 my-10 flex flex-col md:flex-row text-center md:text-left">
-      <div className=" mt-5 md:mt-14">
+      <div className={`mt-5`}>
         <h1 className=" text-white text-[50px] md:text-[65px] font-bold leading-[75px] mb-5 font-sec">
           The Fastest Way For{" "}
           <span className=" text-gradient-p">designers</span> To{" "}
@@ -20,16 +23,16 @@ const Hero = () => {
           className=" w-10/12 mt-10 mb-10 md:mb-0 mx-auto md:mx-0 hidden md:block"
         />
         <div className=" flex flex-col items-center">
-          <Tooltip label="Coming Soon...">
+          <Link href="/auth/signup">
             <button className="font-sec btn-p md:hidden mb-5 text-lg cursor-not-allowed w-fit">
               Login
             </button>
-          </Tooltip>
-          <Tooltip label="Coming Soon...">
+          </Link>
+          <Link href="/auth/signup">
             <button className="font-sec btn-p md:hidden mb-10 text-lg cursor-not-allowed w-fit">
               Join for Free
             </button>
-          </Tooltip>
+          </Link>
         </div>
       </div>
       <div>
