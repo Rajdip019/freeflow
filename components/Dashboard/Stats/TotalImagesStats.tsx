@@ -26,7 +26,7 @@ const TotalImagesStats = () => {
     }, [images])
 
     return (
-        <div className=' bg-[#7E22CE] text-white font-sec p-4 rounded w-full'>
+        <div className=' bg-[#7E22CE] text-white font-sec p-4 rounded md:w-full min-w-max'>
             <div className=' flex mb-3 justify-between items-center'>
                 <p>Total Images</p>
                 <img src="/stats/image.png" className=' w-7' alt="" />

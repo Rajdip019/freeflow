@@ -11,7 +11,7 @@ const Sidebar = () => {
   const { logout , authUser} = useAuth()
   const router = useRouter()
   return (
-    <div className='top-0 sticky h-screen bg-sec-black  py-4 px-4 flex justify-between flex-col'>
+    <div className='top-0 sticky hidden h-screen bg-sec-black  py-4 px-4 md:flex justify-between flex-col'>
       <div>
         <div className='px-8'>
           <img src="/freeflow.png" alt="" className='w-40' />
