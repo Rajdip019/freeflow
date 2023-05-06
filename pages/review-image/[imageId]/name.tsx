@@ -9,8 +9,16 @@ const Name = () => {
     const router = useRouter();
     const { imageId } = router.query;
     const [imageData, setImageData] = useState<IReviewImageData>();
-    const [uname, setUname] = useState<string>();
+    const [email, setEmail] = useState<string>();
     const [error, setError] = useState<boolean>(false);
+    const [emailValidation, setEmailValidation] = useState<boolean>(true);
+
+    function ValidateEmail() {
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email as string)) {
+            return true;
+        }
+        return false;
+    }
 
     const getImageDetails = async () => {
         const docRef = doc(db, "reviewImages", imageId as string);
@@ -21,6 +29,16 @@ const Name = () => {
         } else {
             setError(true)
             console.log("No such document!");
+        }
+    }
+
+    const handleClick = () => {
+        const validateResult = ValidateEmail()
+        if(validateResult){
+            setEmailValidation(true)
+            router.push(`/review-image/${imageId}?uname=${email}`);
+        }else{
+            setEmailValidation(false)
         }
     }
 
@@ -44,10 +62,29 @@ const Name = () => {
                             <p className=" font-semibold text-xl">You are invited to review</p>
                             <p className=" font-semibold text-2xl">{imageData?.imageName}</p>
                         </div>
-                        <p className=' text-sm text-gray-700 mb-2'>What should we call you?</p>
-                        <Input value={uname} onChange={(e) => setUname(e.target.value)} type='text' placeholder='Enter a name' />
+                        <div className="mt-5">
+                                <div className=" flex items-center mb-2 gap-1">
+                                    <p className=" text-sm text-gray-500">Enter your email to continue</p>
+                                </div>
+                                <Input
+                                    value={email}
+                                    onChange={(e) => {
+                                        setEmail(e.target.value);
+                                    }}
+                                    type="text"
+                                    focusBorderColor={'purple.500'}
+                                    borderColor={`${emailValidation ? 'purple.500' : 'red.500'} `}
+                                    className=" text-black mb-4"
+                                    placeholder="Enter your email"
+                                />
+                                {!emailValidation ? (
+                                    <p className=" text-xs text-red-500">
+                                        Please enter a valid email.
+                                    </p>
+                                ) : null}
+                            </div>
                         <div className=' flex flex-col gap-2 items-center mt-5'>
-                            <button disabled={!!!uname} onClick={() => router.push(`/review-image/${imageId}?uname=${uname}`)} className='btn-p py-2'>Review Image</button>
+                            <button disabled={!!!email} onClick={() => handleClick()} className='btn-p py-2'>Review Image</button>
                         </div>
                     </div>
                 </div>

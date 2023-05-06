@@ -78,7 +78,7 @@ const ThreadsExpanded: React.FC<Props> = ({
     const addNewComment = async () => {
         setIsNewCommentLoading(true)
         try {
-            const name = uname ? uname : authUser?.displayName
+            const name = uname ? uname.slice(0, uname.indexOf('@')) : authUser?.email?.slice(0, authUser?.email?.indexOf('@'))
             await addDoc(
                 collection(
                     db,

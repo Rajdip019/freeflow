@@ -172,7 +172,7 @@ const ReviewImage = () => {
       width: width as number,
       height: imageRef.current?.clientHeight as number,
     });
-  };
+  };  
 
   useEffect(() => {
     if (router.isReady) {
@@ -250,9 +250,9 @@ const ReviewImage = () => {
                       : setIsCommentsOn(1);
                   }}
                 />
-                {authUser && (
-                  <Tooltip label={authUser.email}>
-                    <Avatar className=" ring-2 ring-purple-500 w-8 ml-5" src={authUser?.photoURL as string} name={user?.name} />
+                {user && (
+                  <Tooltip label={user.email}>
+                    <Avatar className=" ring-2 ring-purple-500 w-8 ml-5" src={user?.imageURL as string} name={user?.name} />
                   </Tooltip>
                 )}
               </div>
@@ -346,7 +346,7 @@ const ReviewImage = () => {
                                       ...prev,
                                       comment: {
                                         value: e.target.value as string,
-                                        name: uname ? uname : user?.name,
+                                        name: uname ? uname.slice(0, uname.indexOf('@')) : user?.email?.slice(0, user?.email?.indexOf('@')),
                                       },
                                     };
                                   });

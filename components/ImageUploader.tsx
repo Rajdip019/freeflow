@@ -1,6 +1,6 @@
 import { IReviewImageData } from '@/interfaces/ReviewImageData';
 import { storage, db } from '@/lib/firebaseConfig';
-import { useToast, Tooltip, Input, CircularProgress } from '@chakra-ui/react';
+import { useToast, Input, CircularProgress } from '@chakra-ui/react';
 import { addDoc, collection } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import React, { useState } from 'react'
@@ -14,13 +14,15 @@ const ImageUploader = () => {
     const [imageName, setImageName] = useState<string>();
     const [uploadedFile, setUploadedFile] = useState<File | null>();
     const [image, setImage] = useState<string | null>(null);
-    const [name, setName] = useState<string>();
+    const [email, setEmail] = useState<string>();
     const [uploadingState, setUploadingState] = useState<"not-started" | "uploading" | "success" | "error">('not-started');
+    const [uploadedImageId, setUploadedImageId] = useState<string>('{imageId}');
+    const [emailValidation, setEmailValidation] = useState<boolean>(true);
+    
     const toast = useToast();
     const { authUser } = useAuth();
     const { user } = useUserContext();
     const { getImages, storage: storageUsed } = useImageContext();
-    const [uploadedImageId, setUploadedImageId] = useState<string>('{imageId}')
 
     const handleFileUploaded = (file: File) => {
         setUploadedFile(file);
@@ -32,9 +34,17 @@ const ImageUploader = () => {
         setImage("");
         setUploadedFile(null);
         setImageName("");
+        setEmailValidation(true)
     };
 
     const [uploadPercentage, setUploadPercentage] = useState<number>(0);
+
+    function ValidateEmail() {
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email as string)) {
+            return true;
+        }
+        return false;
+    }
 
     const uploadFile = () => {
         if (user?.storage) {
@@ -110,62 +120,66 @@ const ImageUploader = () => {
                 });
             }
         } else {
+            const isValidEmail = ValidateEmail();
+            if (isValidEmail) {
+                setEmailValidation(true)
+                setUploadingState("uploading");
+                try {
+                    const storageRef = ref(
+                        storage,
+                        `reviewImages/anonymous/${imageName}_${Date.now()}`
+                    );
 
-            setUploadingState("uploading");
-            try {
-                const storageRef = ref(
-                    storage,
-                    `reviewImages/anonymous/${imageName}_${Date.now()}`
-                );
+                    const uploadTask = uploadBytesResumable(storageRef, uploadedFile as File);
+                    uploadTask.on(
+                        "state_changed",
+                        (snapshot: { bytesTransferred: number; totalBytes: number }) => {
+                            const progress =
+                                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            setUploadPercentage(progress);
+                        },
+                        (error) => {
+                            console.error(error);
+                        },
+                        async () => {
+                            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref)
+                            console.log("File available at", downloadURL);
 
-                const uploadTask = uploadBytesResumable(storageRef, uploadedFile as File);
-                uploadTask.on(
-                    "state_changed",
-                    (snapshot: { bytesTransferred: number; totalBytes: number }) => {
-                        const progress =
-                            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        setUploadPercentage(progress);
-                    },
-                    (error) => {
-                        console.error(error);
-                    },
-                    async () => {
-                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref)
-                        console.log("File available at", downloadURL);
+                            const data: IReviewImageData = {
+                                imageURL: downloadURL,
+                                uploadedBy: email as string,
+                                timeStamp: Date.now(),
+                                imageName: imageName as string,
+                                lastUpdated: Date.now(),
+                                newUpdate: "Uploaded"
+                            }
 
-                        const data: IReviewImageData = {
-                            imageURL: downloadURL,
-                            uploadedBy: name as string,
-                            timeStamp: Date.now(),
-                            imageName: imageName as string,
-                            lastUpdated: Date.now(),
-                            newUpdate: "Uploaded"
+                            const docRef = await addDoc(collection(db, "reviewImages"), data);
+                            toast({
+                                title: "Image uploaded successfully",
+                                status: "success",
+                                duration: 5000,
+                                isClosable: true,
+                                position: "bottom-right",
+                            });
+                            setUploadingState("success");
+                            setUploadedImageId(docRef.id);
                         }
-
-                        const docRef = await addDoc(collection(db, "reviewImages"), data);
-                        toast({
-                            title: "Image uploaded successfully",
-                            status: "success",
-                            duration: 5000,
-                            isClosable: true,
-                            position: "bottom-right",
-                        });
-                        setUploadingState("success");
-                        setUploadedImageId(docRef.id);
-                    }
-                );
-            } catch (error) {
-                toast({
-                    title: "Something went wrong",
-                    description: "Please try again",
-                    status: "error",
-                    duration: 5000,
-                    isClosable: true,
-                    position: "bottom-right",
-                });
-                setUploadingState("error");
+                    );
+                } catch (error) {
+                    toast({
+                        title: "Something went wrong",
+                        description: "Please try again",
+                        status: "error",
+                        duration: 5000,
+                        isClosable: true,
+                        position: "bottom-right",
+                    });
+                    setUploadingState("error");
+                }
+            } else {
+                setEmailValidation(false)
             }
-
         }
     };
 
@@ -180,34 +194,24 @@ const ImageUploader = () => {
                         {authUser ? (null) : (
                             <div className="mt-5">
                                 <div className=" flex items-center mb-2 gap-1">
-                                    <p className=" text-sm text-gray-500">Name </p>
-                                    <Tooltip label="💡 Tip : You can use your anonymous name.">
-                                        <svg
-                                            fill="currentColor"
-                                            viewBox="0 0 24 24"
-                                            className="w-5 text-purple-500"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            aria-hidden="true"
-                                        >
-                                            <path
-                                                clipRule="evenodd"
-                                                fillRule="evenodd"
-                                                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z"
-                                            />
-                                        </svg>
-                                    </Tooltip>
+                                    <p className=" text-sm text-gray-500">Email </p>
                                 </div>
                                 <Input
-                                    value={name}
+                                    value={email}
                                     onChange={(e) => {
-                                        setName(e.target.value);
+                                        setEmail(e.target.value);
                                     }}
                                     type="text"
-                                    focusBorderColor="purple.500"
-                                    borderColor={"purple.500"}
+                                    focusBorderColor={'purple.500'}
+                                    borderColor={`${emailValidation ? 'purple.500' : 'red.500'} `}
                                     className=" text-black mb-4"
-                                    placeholder="Enter your name"
+                                    placeholder="Enter your email"
                                 />
+                                {!emailValidation ? (
+                                    <p className=" text-xs text-red-500">
+                                        Please enter a valid email.
+                                    </p>
+                                ) : null}
                             </div>
                         )}
                         {image && (
@@ -279,7 +283,7 @@ const ImageUploader = () => {
                                     ) : (
 
                                         <button
-                                            disabled={!!!image || !!!name}
+                                            disabled={!!!image || !!!email}
                                             className=" btn-p py-2 w-full mt-5"
                                             onClick={uploadFile}
                                         >
