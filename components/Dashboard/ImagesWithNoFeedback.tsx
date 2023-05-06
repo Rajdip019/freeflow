@@ -35,14 +35,14 @@ const RecentUploads = () => {
   }, [images]);
 
   return (
-    <div className="bg-[#881337] w-full p-4 rounded">
+    <div className="bg-[#334155] w-full p-4 rounded">
       <h3 className=" font-sec text-lg text-white flex items-center">Images with NO Feedback <p className=" ml-2 text-xs bg-red-700 p-1 rounded-full w-6 flex justify-center items-center">{latestUpdatedImages.length}</p></h3>
       <Collapse startingHeight={220} in={isExpanded}>
         {latestUpdatedImages.map((image, index) => {
           return (
             <div
               key={index}
-              className=" flex items-center rounded mt-2 bg-[#BE123C] p-2 justify-between gap-2"
+              className=" flex items-center rounded mt-2 bg-gray-900 p-2 justify-between gap-2"
             >
               <p className=" text-white text-sm w-8/12 ml-1">{image.imageName}</p>
               <div className=" w-4/8 flex items-center gap-3">

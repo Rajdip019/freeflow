@@ -1,7 +1,7 @@
 import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import Header from "@/components/Dashboard/Header";
 import ImagesWithNoFeedback from "@/components/Dashboard/ImagesWithNoFeedback";
-import RecentUploads from "@/components/Dashboard/RecentUploads";
+import RecentUpdates from "@/components/Dashboard/RecentUpdates";
 import StorageStats from "@/components/Dashboard/Stats/StorageStats";
 import TotalImagesStats from "@/components/Dashboard/Stats/TotalImagesStats";
 import TotalViews from "@/components/Dashboard/Stats/TotalViews";
@@ -18,7 +18,7 @@ const Dashboard = () => {
                     <StorageStats />
                 </div>
                 <div className=" mt-10 flex flex-col md:flex-row justify-between gap-10 items-start pb-10">
-                    <RecentUploads />
+                    <RecentUpdates />
                     <ImagesWithNoFeedback />
                 </div>
             </div>

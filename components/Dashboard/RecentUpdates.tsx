@@ -6,7 +6,7 @@ import { Collapse } from "@chakra-ui/react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
-const RecentUploads = () => {
+const RecentUpdates = () => {
     const { images } = useImageContext();
     const [latestUpdatedImages, setLastUpdatedImages] = useState<
         IReviewImageData[]
@@ -105,4 +105,4 @@ const RecentUploads = () => {
     );
 };
 
-export default RecentUploads;
+export default RecentUpdates;
