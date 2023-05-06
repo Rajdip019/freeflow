@@ -437,11 +437,11 @@ const ReviewImage = () => {
             </div>
           </div>
           <div className=" bg-gray-800 w-3/12 h-screen">
-            <div className="h-[8vh] bg-purple-500 flex flex-col justify-center items-center">
+            <div className="h-[8vh] bg-purple-500 flex flex-col justify-center items-center w-full">
               <h2 className=" text-lg font-semibold">{imageData?.imageName}</h2>
-              <div className=" flex gap-2 flex-wrap">
+              <div className=" flex flex-wrap justify-center items-center flex-col">
                 <p className=" text-sm">Uploaded by {imageData?.uploadedBy}</p>
-                <Moment fromNow className="text-sm">
+                <Moment fromNow className="text-xs">
                   {imageData?.timeStamp}
                 </Moment>
               </div>

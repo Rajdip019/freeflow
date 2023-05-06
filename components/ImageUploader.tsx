@@ -147,7 +147,7 @@ const ImageUploader = () => {
 
                             const data: IReviewImageData = {
                                 imageURL: downloadURL,
-                                uploadedBy: email as string,
+                                uploadedBy: email ? email?.slice(0, email?.indexOf('@')) as string : "",
                                 timeStamp: Date.now(),
                                 imageName: imageName as string,
                                 lastUpdated: Date.now(),
