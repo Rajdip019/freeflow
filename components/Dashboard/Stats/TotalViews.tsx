@@ -17,7 +17,7 @@ const TotalViews = () => {
     }, [images])
 
     return (
-        <div className=' bg-[#047857] text-white font-sec p-4  rounded w-full'>
+        <div className=' bg-[#047857] text-white font-sec p-4  rounded md:w-full min-w-max'>
             <div className=' flex mb-3 justify-between items-center'>
                 <p>Total Views</p>
                 <Tooltip label="Total unique views on all your designs.">

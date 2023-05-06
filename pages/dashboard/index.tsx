@@ -11,14 +11,16 @@ const Dashboard = () => {
     return (
         <DashboardLayout>
             <Header title="Dashboard" />
-            <div className=" flex gap-10 mt-8">
-                <TotalImagesStats />
-                <TotalViews />
-                <StorageStats />
-            </div>
-            <div className=" mt-10 flex justify-between gap-10 items-start">
-                <RecentUploads />
-                <ImagesWithNoFeedback />
+            <div className=" px-10">
+                <div className=" flex gap-10 mt-8 overflow-x-scroll">
+                    <TotalImagesStats />
+                    <TotalViews />
+                    <StorageStats />
+                </div>
+                <div className=" mt-10 flex flex-col md:flex-row justify-between gap-10 items-start pb-10">
+                    <RecentUploads />
+                    <ImagesWithNoFeedback />
+                </div>
             </div>
         </DashboardLayout>
     );

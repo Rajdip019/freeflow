@@ -8,7 +8,7 @@ const Navbar = () => {
   const { authUser } = useAuth();
 
   return (
-    <div className=" flex justify-center pt-5 md:justify-between md:px-40 items-center">
+    <div className=" flex pt-5 justify-between px-10 md:px-40 items-center">
       <img src="/freeflow.png" alt="" className=" w-32" />
       <div className=" flex gap-5">
         {authUser ? (

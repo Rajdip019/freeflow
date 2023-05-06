@@ -7,7 +7,7 @@ const DashboardLayout = ({ children }: any) => {
         <FFPage isAuthRequired={true}>
             <div className=' flex'>
                 <Sidebar />
-                <div className=' bg-black w-full px-10'>
+                <div className=' bg-black w-full'>
                     {children}
                     {/* <div className=' absolute bottom-0 w-full h-10 bg-gradient-to-t from-[#7E3BC3] to-black '></div> */}
                 </div>

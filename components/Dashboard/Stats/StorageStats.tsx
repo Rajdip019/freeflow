@@ -10,7 +10,7 @@ const StorageStats = () => {
     
 
   return (
-    <div className=' bg-[#1E40AF] text-white font-sec p-4  rounded w-full '>
+    <div className=' bg-[#1E40AF] text-white font-sec p-4 rounded md:w-full min-w-max '>
     <div className=' flex mb-3 justify-between items-center'>
         <p>Storage</p>
         <img src="/stats/storage.png" className=' w-7' alt="" />
