@@ -31,6 +31,7 @@ import {
   query,
   updateDoc,
 } from "firebase/firestore";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import Moment from "react-moment";
@@ -229,16 +230,29 @@ const ReviewImage = () => {
   return (
     <>
       {error ? (
-        <div className=" flex h-[80vh] w-screen flex-col items-center justify-center bg-gray-900 text-4xl">
-          <p>Invalid URL</p>
-          <button onClick={() => router.push("/")} className=" btn-p mt-5 py-2">
-            Go back
-          </button>
-        </div>
+        <>
+          <Head>
+            <title>Invalid URL</title>
+          </Head>
+          <div className=" flex h-[80vh] w-screen flex-col items-center justify-center bg-gray-900 text-4xl">
+            <p>Invalid URL</p>
+            <button
+              onClick={() => router.push("/")}
+              className=" btn-p mt-5 py-2"
+            >
+              Go back
+            </button>
+          </div>
+        </>
       ) : (
         <>
           {isUnameValid ? (
             <>
+              <Head>
+                <title>
+                  {imageData?.imageName ? imageData.imageName : "Loading..."}
+                </title>
+              </Head>
               <div className=" md:hidden">
                 <ReviewImageMobile imageData={imageData as IReviewImageData} />
               </div>
