@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "pretty-quick": "pretty-quick",
+    "pretty-quick": "pretty-quick --staged --branch main",
     "prepare": "husky install"
   },
   "dependencies": {
