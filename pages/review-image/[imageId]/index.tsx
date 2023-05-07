@@ -327,15 +327,13 @@ const ReviewImage = () => {
                                 top: newThread.pos.top,
                                 left: newThread.pos.left,
                               }}
-                              className={`absolute flex text-gray-800 ${
-                                newThread.pos.top > 550
-                                  ? "items-end"
-                                  : "items-start"
-                              } ${
-                                newThread.pos.left > 500
+                              className={`absolute flex text-gray-800 ${newThread.pos.top > 550
+                                ? "items-end"
+                                : "items-start"
+                                } ${newThread.pos.left > 500
                                   ? "flex-row-reverse"
                                   : " flex-row"
-                              }`}
+                                }`}
                             >
                               {!isNewThreadAddLoading ? (
                                 <>
@@ -346,11 +344,10 @@ const ReviewImage = () => {
                                     className={`h-7 w-7 rounded-r-full rounded-t-full bg-${newThread.color} ring ring-white`}
                                   ></div>
                                   <div
-                                    className={` absolute w-72 rounded bg-gray-800 p-2 text-white ${
-                                      newThread.pos.left > 500
-                                        ? "right-10"
-                                        : "left-10"
-                                    }  z-50`}
+                                    className={` absolute w-72 rounded bg-gray-800 p-2 text-white ${newThread.pos.left > 500
+                                      ? "right-10"
+                                      : "left-10"
+                                      }  z-50`}
                                   >
                                     <div className=" mb-2 flex items-center justify-between">
                                       <p className=" text-sm font-semibold">
@@ -397,13 +394,13 @@ const ReviewImage = () => {
                                                 value: e.target.value as string,
                                                 name: uname
                                                   ? uname.slice(
-                                                      0,
-                                                      uname.indexOf("@")
-                                                    )
+                                                    0,
+                                                    uname.indexOf("@")
+                                                  )
                                                   : user?.email?.slice(
-                                                      0,
-                                                      user?.email?.indexOf("@")
-                                                    ),
+                                                    0,
+                                                    user?.email?.indexOf("@")
+                                                  ),
                                               },
                                             };
                                           });
