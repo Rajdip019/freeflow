@@ -232,7 +232,7 @@ const ReviewImage = () => {
       {error ? (
         <>
           <Head>
-            <title>Invalid URL</title>
+            <title>FreeFlow | Invalid Link</title>
           </Head>
           <div className=" flex h-[80vh] w-screen flex-col items-center justify-center bg-gray-900 text-4xl">
             <p>Invalid URL</p>
