@@ -19,6 +19,7 @@ import React, { useState } from "react";
 import Moment from "react-moment";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { template } from "@/helpers/apiTemplateString";
+import Head from "next/head";
 
 const Design = () => {
   const { images } = useImageContext();
@@ -35,6 +36,9 @@ const Design = () => {
 
   return (
     <DashboardLayout>
+      <Head>
+        <title>FreeFlow | Design</title>
+      </Head>
       <Header title="Designs" />
       <div className=" min-h-[88.1vh] px-5 md:min-h-min md:px-10">
         <TableContainer className=" mt-5">

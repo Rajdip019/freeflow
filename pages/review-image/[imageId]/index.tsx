@@ -31,6 +31,7 @@ import {
   query,
   updateDoc,
 } from "firebase/firestore";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import Moment from "react-moment";
@@ -229,16 +230,27 @@ const ReviewImage = () => {
   return (
     <>
       {error ? (
-        <div className=" flex h-[80vh] w-screen flex-col items-center justify-center bg-gray-900 text-4xl">
-          <p>Invalid URL</p>
-          <button onClick={() => router.push("/")} className=" btn-p mt-5 py-2">
-            Go back
-          </button>
-        </div>
+        <>
+          <Head>
+            <title>FreeFlow | Invalid Link</title>
+          </Head>
+          <div className=" flex h-[80vh] w-screen flex-col items-center justify-center bg-gray-900 text-4xl">
+            <p>Invalid URL</p>
+            <button
+              onClick={() => router.push("/")}
+              className=" btn-p mt-5 py-2"
+            >
+              Go back
+            </button>
+          </div>
+        </>
       ) : (
         <>
           {isUnameValid ? (
             <>
+              <Head>
+                <title>{imageData?.imageName ? imageData.imageName : "Loading..."}</title>
+              </Head>
               <div className=" md:hidden">
                 <ReviewImageMobile imageData={imageData as IReviewImageData} />
               </div>
@@ -313,15 +325,13 @@ const ReviewImage = () => {
                                 top: newThread.pos.top,
                                 left: newThread.pos.left,
                               }}
-                              className={`absolute flex text-gray-800 ${
-                                newThread.pos.top > 550
-                                  ? "items-end"
-                                  : "items-start"
-                              } ${
-                                newThread.pos.left > 500
+                              className={`absolute flex text-gray-800 ${newThread.pos.top > 550
+                                ? "items-end"
+                                : "items-start"
+                                } ${newThread.pos.left > 500
                                   ? "flex-row-reverse"
                                   : " flex-row"
-                              }`}
+                                }`}
                             >
                               {!isNewThreadAddLoading ? (
                                 <>
@@ -332,11 +342,10 @@ const ReviewImage = () => {
                                     className={`h-7 w-7 rounded-r-full rounded-t-full bg-${newThread.color} ring ring-white`}
                                   ></div>
                                   <div
-                                    className={` absolute w-72 rounded bg-gray-800 p-2 text-white ${
-                                      newThread.pos.left > 500
-                                        ? "right-10"
-                                        : "left-10"
-                                    }  z-50`}
+                                    className={` absolute w-72 rounded bg-gray-800 p-2 text-white ${newThread.pos.left > 500
+                                      ? "right-10"
+                                      : "left-10"
+                                      }  z-50`}
                                   >
                                     <div className=" mb-2 flex items-center justify-between">
                                       <p className=" text-sm font-semibold">
@@ -383,13 +392,13 @@ const ReviewImage = () => {
                                                 value: e.target.value as string,
                                                 name: uname
                                                   ? uname.slice(
-                                                      0,
-                                                      uname.indexOf("@")
-                                                    )
+                                                    0,
+                                                    uname.indexOf("@")
+                                                  )
                                                   : user?.email?.slice(
-                                                      0,
-                                                      user?.email?.indexOf("@")
-                                                    ),
+                                                    0,
+                                                    user?.email?.indexOf("@")
+                                                  ),
                                               },
                                             };
                                           });
