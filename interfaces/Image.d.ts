@@ -1,4 +1,4 @@
 export interface IImageDimension {
-    height: number;
-    width: number;
+  height: number;
+  width: number;
 }

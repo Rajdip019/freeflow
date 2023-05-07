@@ -11,7 +11,7 @@ export const defaultHighlightedThread: IThread = {
   color: "",
 };
 
-export const defaultNewThread : INewThread = {
+export const defaultNewThread: INewThread = {
   pos: {
     top: 0,
     left: 0,
@@ -26,13 +26,13 @@ export const defaultNewThread : INewThread = {
 
 export const sidebarData = [
   {
-    img : "/sidebar-icons/🏠.png",
-    title : "Dashboard",
-    url : "/dashboard"
+    img: "/sidebar-icons/🏠.png",
+    title: "Dashboard",
+    url: "/dashboard",
   },
   {
-    img : "/sidebar-icons/🎨.png",
-    title : "Design",
-    url : "/design"
-  }
-]
+    img: "/sidebar-icons/🎨.png",
+    title: "Design",
+    url: "/design",
+  },
+];

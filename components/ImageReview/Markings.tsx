@@ -7,9 +7,9 @@ interface Props {
     height: number;
     width: number;
   };
-  highlightedComment : IThread;
-  setHighlightedComment : React.Dispatch<React.SetStateAction<IThread>>;
-  setIsFocusedThread : React.Dispatch<React.SetStateAction<boolean>>
+  highlightedComment: IThread;
+  setHighlightedComment: React.Dispatch<React.SetStateAction<IThread>>;
+  setIsFocusedThread: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Markings: React.FC<Props> = ({
@@ -17,7 +17,7 @@ const Markings: React.FC<Props> = ({
   imageDimension,
   highlightedComment,
   setHighlightedComment,
-  setIsFocusedThread
+  setIsFocusedThread,
 }) => {
   return (
     <div
@@ -27,8 +27,9 @@ const Markings: React.FC<Props> = ({
         left:
           thread.left * (imageDimension.width / thread.imageDimension?.width),
       }}
-      className={`absolute flex ${thread.top > 450 ? "items-end" : "items-start"
-        } ${thread.left > 500 ? "flex-row-reverse" : " flex-row"}`}
+      className={`absolute flex ${
+        thread.top > 450 ? "items-end" : "items-start"
+      } ${thread.left > 500 ? "flex-row-reverse" : " flex-row"}`}
     >
       <div className=" hidden border-red-500"></div>
       <div className=" hidden border-green-500"></div>
@@ -39,10 +40,18 @@ const Markings: React.FC<Props> = ({
         className=""
         onClick={() => {
           setHighlightedComment(thread);
-          setIsFocusedThread(true)
+          setIsFocusedThread(true);
         }}
       >
-        <div className={`w-7 h-7 rounded-t-full rounded-r-full bg-${thread.color} ${highlightedComment.id === thread.id ? 'ring-4 ring-white scale-125 transition-all' : ''} `}></div>
+        <div
+          className={`h-7 w-7 rounded-r-full rounded-t-full bg-${
+            thread.color
+          } ${
+            highlightedComment.id === thread.id
+              ? "scale-125 ring-4 ring-white transition-all"
+              : ""
+          } `}
+        ></div>
       </button>
     </div>
   );

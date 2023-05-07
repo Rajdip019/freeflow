@@ -4,85 +4,86 @@ import React, { useState } from "react";
 import Moment from "react-moment";
 
 interface Props {
-    imageData: IReviewImageData;
+  imageData: IReviewImageData;
 }
 
 const ReviewImageMobile: React.FC<Props> = ({ imageData }) => {
-    const [onlyImage, setOnlyImage] = useState<boolean>(false);
+  const [onlyImage, setOnlyImage] = useState<boolean>(false);
 
-    return (
-        <>
-            {onlyImage ? (
-                <div className=" relative min-h-screen flex justify-center bg-gray-900">
-                    <div className=" absolute top-5 w-full flex justify-center flex-col items-center">
-                        {" "}
-                        <Link href={"/"}>
-                            <img src="/freeflow.png" alt="" className=" w-24 mb-4" />
-                        </Link>
-                        <div className="h-[8vh] text-white bg-purple-500 flex flex-col justify-center items-center w-full">
-                            <h2 className=" text-lg font-semibold">{imageData?.imageName}</h2>
-                            <div className=" flex flex-wrap justify-center items-center flex-col">
-                                <p className=" text-sm">Uploaded by {imageData?.uploadedBy}</p>
-                                <Moment fromNow className="text-xs">
-                                    {imageData?.timeStamp}
-                                </Moment>
-                            </div>
-                        </div>
-                    </div>
-                    <div className=" mt-40 px-5">
-                        <img src={imageData.imageURL} alt="" />
-                    </div>
-                    <div className=" absolute bottom-10 text-gray-300 px-10 text-center">
-                        <p className=" text-2xl">Want to leave feedback?
-                            Visit from desktop.</p>
-                    </div>
-                </div>
-            ) : (
-                <div className=" flex min-h-screen text-white bg-gradient-to-t from-[#7834bb] to-black items-center justify-center flex-col py-5 ">
-                    <div>
-                        <Link href={"/"}>
-                            <img src="/freeflow.png" alt="" className=" w-40" />
-                        </Link>
-                    </div>
-                    <div className=" px-10">
-                        <h1 className=" font-sec text-center text-2xl mt-7">
-                            Sucks that you can’t leave feedback from mobile yet.
-                        </h1>
-                        <p className=" mt-12 font-sec text-center">
-                            I don’t care just show me the image
-                        </p>
-                        <button
-                            onClick={() => setOnlyImage(true)}
-                            className="font-sec text-xl btn-p flex items-center w-full justify-center mt-5"
-                        >
-                            Continue{" "}
-                            <svg
-                                fill="none"
-                                className=" w-5 ml-2"
-                                stroke="currentColor"
-                                strokeWidth={1.5}
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
-                                />
-                            </svg>
-                        </button>
-                    </div>
-                    <div className=" absolute bottom-5">
-                        <p className=" text-xs opacity-70">
-                            {" "}
-                            © 2023 Freeflow. All rights reserved.
-                        </p>
-                    </div>
-                </div>
-            )}
-        </>
-    );
+  return (
+    <>
+      {onlyImage ? (
+        <div className=" relative flex min-h-screen justify-center bg-gray-900">
+          <div className=" absolute top-5 flex w-full flex-col items-center justify-center">
+            {" "}
+            <Link href={"/"}>
+              <img src="/freeflow.png" alt="" className=" mb-4 w-24" />
+            </Link>
+            <div className="flex h-[8vh] w-full flex-col items-center justify-center bg-purple-500 text-white">
+              <h2 className=" text-lg font-semibold">{imageData?.imageName}</h2>
+              <div className=" flex flex-col flex-wrap items-center justify-center">
+                <p className=" text-sm">Uploaded by {imageData?.uploadedBy}</p>
+                <Moment fromNow className="text-xs">
+                  {imageData?.timeStamp}
+                </Moment>
+              </div>
+            </div>
+          </div>
+          <div className=" mt-40 px-5">
+            <img src={imageData.imageURL} alt="" />
+          </div>
+          <div className=" absolute bottom-10 px-10 text-center text-gray-300">
+            <p className=" text-2xl">
+              Want to leave feedback? Visit from desktop.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className=" flex min-h-screen flex-col items-center justify-center bg-gradient-to-t from-[#7834bb] to-black py-5 text-white ">
+          <div>
+            <Link href={"/"}>
+              <img src="/freeflow.png" alt="" className=" w-40" />
+            </Link>
+          </div>
+          <div className=" px-10">
+            <h1 className=" font-sec mt-7 text-center text-2xl">
+              Sucks that you can’t leave feedback from mobile yet.
+            </h1>
+            <p className=" font-sec mt-12 text-center">
+              I don’t care just show me the image
+            </p>
+            <button
+              onClick={() => setOnlyImage(true)}
+              className="font-sec btn-p mt-5 flex w-full items-center justify-center text-xl"
+            >
+              Continue{" "}
+              <svg
+                fill="none"
+                className=" ml-2 w-5"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
+                />
+              </svg>
+            </button>
+          </div>
+          <div className=" absolute bottom-5">
+            <p className=" text-xs opacity-70">
+              {" "}
+              © 2023 Freeflow. All rights reserved.
+            </p>
+          </div>
+        </div>
+      )}
+    </>
+  );
 };
 
 export default ReviewImageMobile;

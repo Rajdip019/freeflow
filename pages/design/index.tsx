@@ -19,24 +19,28 @@ import React, { useState } from "react";
 import Moment from "react-moment";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { template } from "@/helpers/apiTemplateString";
+import Head from "next/head";
 
 const Design = () => {
   const { images } = useImageContext();
 
-  const [tooltipText, setTooltipText] = useState<string>('Copy');
+  const [tooltipText, setTooltipText] = useState<string>("Copy");
 
   const handleClick = () => {
-    setTooltipText('Copied');
+    setTooltipText("Copied");
 
     setTimeout(() => {
-      setTooltipText('Copy');
+      setTooltipText("Copy");
     }, 5000);
   };
 
   return (
     <DashboardLayout>
+      <Head>
+        <title>FreeFlow | Design</title>
+      </Head>
       <Header title="Designs" />
-      <div className=" min-h-[88.1vh] md:min-h-min px-5 md:px-10">
+      <div className=" min-h-[88.1vh] px-5 md:min-h-min md:px-10">
         <TableContainer className=" mt-5">
           <Table size="sm" colorScheme="purple">
             <Thead>
@@ -57,11 +61,11 @@ const Design = () => {
                         rel="noreferrer"
                         href={`/review-image/${image.id}`}
                       >
-                        <p className=" flex gap-2 items-center hover:underline group">
+                        <p className=" group flex items-center gap-2 hover:underline">
                           {image.imageName}{" "}
                           <svg
                             fill="none"
-                            className=" w-4 group-hover:text-white text-gray-400 cursor-pointer"
+                            className=" w-4 cursor-pointer text-gray-400 group-hover:text-white"
                             stroke="currentColor"
                             strokeWidth={1.5}
                             viewBox="0 0 24 24"
@@ -86,11 +90,13 @@ const Design = () => {
                     <Td isNumeric>
                       <div className=" flex gap-2">
                         <ImageDeleteModalConfirmation image={image} />
-                        <Tooltip label={tooltipText} >
+                        <Tooltip label={tooltipText}>
                           <div onClick={handleClick}>
-                            <CopyToClipboard text={`${template}/review-image/${image.id}`} >
+                            <CopyToClipboard
+                              text={`${template}/review-image/${image.id}`}
+                            >
                               <svg
-                                className=" w-5 hover:text-white text-gray-400 cursor-pointer"
+                                className=" w-5 cursor-pointer text-gray-400 hover:text-white"
                                 fill="currentColor"
                                 viewBox="0 0 24 24"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -114,7 +120,7 @@ const Design = () => {
           </Table>
         </TableContainer>
         {images.length === 0 && (
-          <div className=" flex justify-center flex-col gap-5 items-center text-white font-semibold mt-24">
+          <div className=" mt-24 flex flex-col items-center justify-center gap-5 font-semibold text-white">
             <span className=" text-2xl">Upload a image to start 🚀</span>
             <ImageUploadModal />
           </div>

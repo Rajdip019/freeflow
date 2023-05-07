@@ -1,2 +1,1 @@
-
-export const template = "https://freeflow.to"
+export const template = "https://freeflow.to";
