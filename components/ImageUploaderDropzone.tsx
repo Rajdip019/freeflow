@@ -13,9 +13,9 @@ const ImageUploaderDropzone: React.FC<Props> = ({
   setImage,
 }) => {
   const onDrop = (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
+    const file = acceptedFiles[0]
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
     reader.onloadend = () => {
       const dataUrl = reader.result;
       setImage(dataUrl as string);
