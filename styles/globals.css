@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 body {
-  @apply leading-[normal] m-0;
+  @apply m-0 leading-[normal];
 }
 *,
 ::before,
@@ -14,71 +14,70 @@ body {
 }
 
 @media print {
-    html,
-    body {
-       display: none;
-    }
- }
+  html,
+  body {
+    display: none;
+  }
+}
 
-.linkify__text{
-    text-decoration: underline;
-    color: rgb(4, 165, 239);
+.linkify__text {
+  text-decoration: underline;
+  color: rgb(4, 165, 239);
 }
 .transition-all {
-    transition-property: all;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
 
 .duration-500 {
-    transition-duration: 500ms;
+  transition-duration: 500ms;
 }
 
 .hover\:bg-pos-100:hover {
-    background-position: 100% 100%;
+  background-position: 100% 100%;
 }
 
 .bg-size-200 {
-    background-size: 200% 200%;
+  background-size: 200% 200%;
 }
 
 .bg-pos-0 {
-    background-position: 0% 0%;
+  background-position: 0% 0%;
 }
 
 .p-10 {
-    padding: 2.5rem;
+  padding: 2.5rem;
 }
 
-.font-sec{
-    font-family: 'Space Grotesk', sans-serif;
+.font-sec {
+  font-family: "Space Grotesk", sans-serif;
 }
 
 @layer components {
-    .text-gradient-p {
-        @apply bg-gradient-to-r from-[#9333EA] to-[#FF8383] bg-clip-text text-transparent;
-    }
+  .text-gradient-p {
+    @apply bg-gradient-to-r from-[#9333EA] to-[#FF8383] bg-clip-text text-transparent;
+  }
 
-    .text-gradient-s {
-        @apply bg-gradient-to-r from-[#ffe600] to-[#ff3c00] bg-clip-text text-transparent;
-    }
+  .text-gradient-s {
+    @apply bg-gradient-to-r from-[#ffe600] to-[#ff3c00] bg-clip-text text-transparent;
+  }
 
-    .btn-p {
-        @apply bg-gradient-to-r from-[#9333EA] via-[#C084FC] to-[#9333EA] bg-size-200 bg-pos-0 hover:bg-pos-100 px-10 py-4 font-medium rounded-full text-white active:scale-95 transition-all duration-500 disabled:cursor-not-allowed disabled:active:scale-100 disabled:bg-gradient-to-r disabled:from-gray-500 disabled:to-gray-500
-    }
+  .btn-p {
+    @apply bg-size-200 bg-pos-0 hover:bg-pos-100 rounded-full bg-gradient-to-r from-[#9333EA] via-[#C084FC] to-[#9333EA] px-10 py-4 font-medium text-white transition-all duration-500 active:scale-95 disabled:cursor-not-allowed disabled:bg-gradient-to-r disabled:from-gray-500 disabled:to-gray-500 disabled:active:scale-100;
+  }
 
-    .btn-sec{
-        @apply border-2 border-purple-500 bg-black text-white px-8 py-3 rounded-full hover:bg-gray-900 transition-all font-semibold
-    }
+  .btn-sec {
+    @apply rounded-full border-2 border-purple-500 bg-black px-8 py-3 font-semibold text-white transition-all hover:bg-gray-900;
+  }
 
-    .bg-p{
-        @apply bg-[#9333EA]
-    }
-    .bg-sec-black{
-        @apply bg-[#20232A]
-    }
-    .text-p{
-        @apply text-[#9333EA]
-    }
+  .bg-p {
+    @apply bg-[#9333EA];
+  }
+  .bg-sec-black {
+    @apply bg-[#20232A];
+  }
+  .text-p {
+    @apply text-[#9333EA];
+  }
 }
-

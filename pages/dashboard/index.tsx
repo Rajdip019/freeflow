@@ -8,22 +8,22 @@ import TotalViews from "@/components/Dashboard/Stats/TotalViews";
 import React from "react";
 
 const Dashboard = () => {
-    return (
-        <DashboardLayout>
-            <Header title="Dashboard" />
-            <div className=" px-10">
-                <div className=" flex gap-10 mt-8 overflow-x-scroll">
-                    <TotalImagesStats />
-                    <TotalViews />
-                    <StorageStats />
-                </div>
-                <div className=" mt-10 flex flex-col md:flex-row justify-between gap-10 items-start pb-10">
-                    <RecentUpdates />
-                    <ImagesWithNoFeedback />
-                </div>
-            </div>
-        </DashboardLayout>
-    );
+  return (
+    <DashboardLayout>
+      <Header title="Dashboard" />
+      <div className=" px-10">
+        <div className=" mt-8 flex gap-10 overflow-x-scroll">
+          <TotalImagesStats />
+          <TotalViews />
+          <StorageStats />
+        </div>
+        <div className=" mt-10 flex flex-col items-start justify-between gap-10 pb-10 md:flex-row">
+          <RecentUpdates />
+          <ImagesWithNoFeedback />
+        </div>
+      </div>
+    </DashboardLayout>
+  );
 };
 
 export default Dashboard;

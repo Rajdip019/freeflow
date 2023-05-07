@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { useState } from "react";
 import FirebaseAuth, {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
-} from '@firebase/auth';
-import React, { useContext, useEffect } from 'react';
-import { Spinner } from '@chakra-ui/react';
+} from "@firebase/auth";
+import React, { useContext, useEffect } from "react";
+import { Spinner } from "@chakra-ui/react";
 
 export interface IAuthContext {
   authUser: FirebaseAuth.User | null;
@@ -52,7 +52,7 @@ export function AuthContextProvider({ children }: any) {
 
   const logout = async () => {
     await signOut(auth);
-    window.location.href = '/auth/signup';
+    window.location.href = "/auth/signup";
   };
 
   useEffect(() => {
@@ -70,7 +70,13 @@ export function AuthContextProvider({ children }: any) {
 
   return (
     <AuthContext.Provider value={value}>
-      {isLoading ? (<div className=' flex justify-center items-center h-screen'><Spinner /></div>) : children}
+      {isLoading ? (
+        <div className=" flex h-screen items-center justify-center">
+          <Spinner />
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 }
