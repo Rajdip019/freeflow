@@ -13,7 +13,14 @@ import { IImageDimension } from "@/interfaces/Image";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { IThread, INewThread } from "@/interfaces/Thread";
 import { db } from "@/lib/firebaseConfig";
-import { Avatar, Spinner, Switch, Textarea, Tooltip, useToast } from "@chakra-ui/react";
+import {
+  Avatar,
+  Spinner,
+  Switch,
+  Textarea,
+  Tooltip,
+  useToast,
+} from "@chakra-ui/react";
 import {
   addDoc,
   collection,
@@ -122,7 +129,7 @@ const ReviewImage = () => {
       });
       await updateDoc(doc(db, `reviewImages`, imageId as string), {
         lastUpdated: Date.now(),
-        newUpdate: "New Thread"
+        newUpdate: "New Thread",
       });
       toast({
         title: "Comment added successfully",
@@ -154,17 +161,17 @@ const ReviewImage = () => {
 
   // Handle initial Image and threads load
   useEffect(() => {
-      if (!authUser) {
-        if (!uname) {
-          setIsUnameValid(false);
-        } else {
-          getImageDetails();
-          getThreads();
-        }
+    if (!authUser) {
+      if (!uname) {
+        setIsUnameValid(false);
       } else {
         getImageDetails();
         getThreads();
       }
+    } else {
+      getImageDetails();
+      getThreads();
+    }
   }, [isUnameValid]);
 
   // Handle image rendering with different width and height
@@ -179,43 +186,42 @@ const ReviewImage = () => {
   useEffect(() => {
     if (router.isReady) {
       handleImage();
-      let isVisited = localStorage.getItem('isVisited');
+      let isVisited = localStorage.getItem("isVisited");
       if (isVisited) {
         const visited_arr = isVisited.split(",");
         if (!visited_arr.includes(imageId as string)) {
           if (imageData) {
-            isVisited = isVisited + "," + imageId
-            localStorage.setItem('isVisited', isVisited);
+            isVisited = isVisited + "," + imageId;
+            localStorage.setItem("isVisited", isVisited);
             updateDoc(doc(db, `reviewImages`, imageId as string), {
-              views: imageData?.views as number + 1
+              views: (imageData?.views as number) + 1,
             });
           }
         }
       } else {
         if (imageData) {
-          isVisited = imageId as string
-          localStorage.setItem('isVisited', isVisited);
+          isVisited = imageId as string;
+          localStorage.setItem("isVisited", isVisited);
           updateDoc(doc(db, `reviewImages`, imageId as string), {
-            views: imageData?.views as number + 1
+            views: (imageData?.views as number) + 1,
           });
         }
       }
     }
   }, [imageData, imageRef, router.isReady]);
 
-
   useEffect(() => {
     const handleContextmenu = (e: any) => {
-      e.preventDefault()
-    }
-    document.addEventListener('contextmenu', handleContextmenu)
+      e.preventDefault();
+    };
+    document.addEventListener("contextmenu", handleContextmenu);
     return function cleanup() {
-      document.removeEventListener('contextmenu', handleContextmenu)
-    }
-  }, [])
+      document.removeEventListener("contextmenu", handleContextmenu);
+    };
+  }, []);
 
   useEffect(() => {
-    if(authUser){
+    if (authUser) {
       setIsUnameValid(true);
     }
   }, [authUser]);
@@ -223,9 +229,9 @@ const ReviewImage = () => {
   return (
     <>
       {error ? (
-        <div className=" flex justify-center flex-col items-center h-[80vh] w-screen text-4xl bg-gray-900">
+        <div className=" flex h-[80vh] w-screen flex-col items-center justify-center bg-gray-900 text-4xl">
           <p>Invalid URL</p>
-          <button onClick={() => router.push("/")} className=" btn-p py-2 mt-5">
+          <button onClick={() => router.push("/")} className=" btn-p mt-5 py-2">
             Go back
           </button>
         </div>
@@ -233,18 +239,16 @@ const ReviewImage = () => {
         <>
           {isUnameValid ? (
             <>
-
               <div className=" md:hidden">
                 <ReviewImageMobile imageData={imageData as IReviewImageData} />
               </div>
-              <div className="w-full flex-col h-screen bg-gray-900 text-white hidden md:flex">
-                <div className=" flex w-full h-screen">
-                  <div>
-                  </div>
+              <div className="hidden h-screen w-full flex-col bg-gray-900 text-white md:flex">
+                <div className=" flex h-screen w-full">
+                  <div></div>
                   <div className=" w-9/12">
-                    <div className=" flex items-center justify-between h-[8vh] bg-gray-800 px-5">
+                    <div className=" flex h-[8vh] items-center justify-between bg-gray-800 px-5">
                       <div
-                        className=" flex gap-2 cursor-pointer"
+                        className=" flex cursor-pointer gap-2"
                         onClick={() => router.push("/")}
                       >
                         <img src="/logo.png" alt="" className=" w-10" />
@@ -268,12 +272,16 @@ const ReviewImage = () => {
                         />
                         {user && (
                           <Tooltip label={user.email}>
-                            <Avatar className=" ring-2 ring-purple-500 w-8 ml-5" src={user?.imageURL as string} name={user?.name} />
+                            <Avatar
+                              className=" ml-5 w-8 ring-2 ring-purple-500"
+                              src={user?.imageURL as string}
+                              name={user?.name}
+                            />
                           </Tooltip>
                         )}
                       </div>
                     </div>
-                    <div className="h-[92vh] flex items-center px-10 justify-center ">
+                    <div className="flex h-[92vh] items-center justify-center px-10 ">
                       <>
                         <div className=" relative">
                           {isCommentsOn === 1 && (
@@ -282,9 +290,13 @@ const ReviewImage = () => {
                                 return (
                                   <Markings
                                     setIsFocusedThread={setIsFocusedThread}
-                                    highlightedComment={highlightedComment as IThread}
+                                    highlightedComment={
+                                      highlightedComment as IThread
+                                    }
                                     thread={thread}
-                                    imageDimension={imageDimension as IImageDimension}
+                                    imageDimension={
+                                      imageDimension as IImageDimension
+                                    }
                                     setHighlightedComment={
                                       setHighlightedComment as React.Dispatch<
                                         React.SetStateAction<IThread>
@@ -301,11 +313,15 @@ const ReviewImage = () => {
                                 top: newThread.pos.top,
                                 left: newThread.pos.left,
                               }}
-                              className={`absolute text-gray-800 flex ${newThread.pos.top > 550 ? "items-end" : "items-start"
-                                } ${newThread.pos.left > 500
+                              className={`absolute flex text-gray-800 ${
+                                newThread.pos.top > 550
+                                  ? "items-end"
+                                  : "items-start"
+                              } ${
+                                newThread.pos.left > 500
                                   ? "flex-row-reverse"
                                   : " flex-row"
-                                }`}
+                              }`}
                             >
                               {!isNewThreadAddLoading ? (
                                 <>
@@ -313,13 +329,16 @@ const ReviewImage = () => {
                                   <div className=" hidden text-green-500"></div>
                                   <div className=" hidden text-blue-500"></div>
                                   <div
-                                    className={`w-7 h-7 rounded-t-full rounded-r-full bg-${newThread.color} ring ring-white`}
+                                    className={`h-7 w-7 rounded-r-full rounded-t-full bg-${newThread.color} ring ring-white`}
                                   ></div>
                                   <div
-                                    className={` text-white bg-gray-800 w-72 p-2 rounded absolute ${newThread.pos.left > 500 ? "right-10" : "left-10"
-                                      }  z-50`}
+                                    className={` absolute w-72 rounded bg-gray-800 p-2 text-white ${
+                                      newThread.pos.left > 500
+                                        ? "right-10"
+                                        : "left-10"
+                                    }  z-50`}
                                   >
-                                    <div className=" flex justify-between items-center mb-2">
+                                    <div className=" mb-2 flex items-center justify-between">
                                       <p className=" text-sm font-semibold">
                                         Add your comment
                                       </p>
@@ -362,7 +381,15 @@ const ReviewImage = () => {
                                               ...prev,
                                               comment: {
                                                 value: e.target.value as string,
-                                                name: uname ? uname.slice(0, uname.indexOf('@')) : user?.email?.slice(0, user?.email?.indexOf('@')),
+                                                name: uname
+                                                  ? uname.slice(
+                                                      0,
+                                                      uname.indexOf("@")
+                                                    )
+                                                  : user?.email?.slice(
+                                                      0,
+                                                      user?.email?.indexOf("@")
+                                                    ),
                                               },
                                             };
                                           });
@@ -372,46 +399,61 @@ const ReviewImage = () => {
                                         <div
                                           onClick={() => {
                                             setNewThread((prev) => {
-                                              return { ...prev, color: "gray-900" };
+                                              return {
+                                                ...prev,
+                                                color: "gray-900",
+                                              };
                                             });
                                           }}
-                                          className="rounded-full ring-2 w-5 h-5 bg-gray-900 cursor-pointer active:ring-4"
+                                          className="h-5 w-5 cursor-pointer rounded-full bg-gray-900 ring-2 active:ring-4"
                                         ></div>
                                         <div
                                           onClick={() => {
                                             setNewThread((prev) => {
-                                              return { ...prev, color: "white" };
+                                              return {
+                                                ...prev,
+                                                color: "white",
+                                              };
                                             });
                                           }}
-                                          className="rounded-full ring-2 w-5 h-5 bg-white cursor-pointer active:ring-4"
+                                          className="h-5 w-5 cursor-pointer rounded-full bg-white ring-2 active:ring-4"
                                         ></div>
                                         <div
                                           onClick={() => {
                                             setNewThread((prev) => {
-                                              return { ...prev, color: "green-500" };
+                                              return {
+                                                ...prev,
+                                                color: "green-500",
+                                              };
                                             });
                                           }}
-                                          className="rounded-full ring-2 w-5 h-5 bg-green-500 cursor-pointer active:ring-4"
+                                          className="h-5 w-5 cursor-pointer rounded-full bg-green-500 ring-2 active:ring-4"
                                         ></div>
                                         <div
                                           onClick={() => {
                                             setNewThread((prev) => {
-                                              return { ...prev, color: "blue-500" };
+                                              return {
+                                                ...prev,
+                                                color: "blue-500",
+                                              };
                                             });
                                           }}
-                                          className="rounded-full ring-2 w-5 h-5 bg-blue-500 cursor-pointer active:ring-4"
+                                          className="h-5 w-5 cursor-pointer rounded-full bg-blue-500 ring-2 active:ring-4"
                                         ></div>
                                         <div
                                           onClick={() => {
                                             setNewThread((prev) => {
-                                              return { ...prev, color: "red-500" };
+                                              return {
+                                                ...prev,
+                                                color: "red-500",
+                                              };
                                             });
                                           }}
-                                          className="rounded-full ring-2 w-5 h-5 bg-red-500 cursor-pointer active:ring-4"
+                                          className="h-5 w-5 cursor-pointer rounded-full bg-red-500 ring-2 active:ring-4"
                                         ></div>
                                         <button
                                           disabled={!!!newThread.comment.value}
-                                          className="bg-purple-500 hover:bg-purple-600 disabled:cursor-not-allowed disabled:bg-gray-400  ml-2 p-1 rounded px-2 transition-all"
+                                          className="ml-2 rounded bg-purple-500 p-1  px-2 transition-all hover:bg-purple-600 disabled:cursor-not-allowed disabled:bg-gray-400"
                                           onClick={addNewThread}
                                         >
                                           <svg
@@ -436,13 +478,16 @@ const ReviewImage = () => {
                           <div
                             // style={{ width: imageDimension.width, height: imageDimension.height }}
                             ref={commentRef}
-                            className="flex justify-center items-center"
+                            className="flex items-center justify-center"
                           >
-                            <div onClick={handleClick} className="cursor-crosshair">
+                            <div
+                              onClick={handleClick}
+                              className="cursor-crosshair"
+                            >
                               <img
                                 src={imageData?.imageURL}
                                 ref={imageRef}
-                                className=" rounded-lg max-h-[85vh]"
+                                className=" max-h-[85vh] rounded-lg"
                                 onClick={handleClick}
                                 onLoad={handleImage}
                               />
@@ -452,11 +497,15 @@ const ReviewImage = () => {
                       </>
                     </div>
                   </div>
-                  <div className=" bg-gray-800 w-3/12 h-screen">
-                    <div className="h-[8vh] bg-purple-500 flex flex-col justify-center items-center w-full">
-                      <h2 className=" text-lg font-semibold">{imageData?.imageName}</h2>
-                      <div className=" flex flex-wrap justify-center items-center flex-col">
-                        <p className=" text-sm">Uploaded by {imageData?.uploadedBy}</p>
+                  <div className=" h-screen w-3/12 bg-gray-800">
+                    <div className="flex h-[8vh] w-full flex-col items-center justify-center bg-purple-500">
+                      <h2 className=" text-lg font-semibold">
+                        {imageData?.imageName}
+                      </h2>
+                      <div className=" flex flex-col flex-wrap items-center justify-center">
+                        <p className=" text-sm">
+                          Uploaded by {imageData?.uploadedBy}
+                        </p>
                         <Moment fromNow className="text-xs">
                           {imageData?.timeStamp}
                         </Moment>
@@ -474,11 +523,11 @@ const ReviewImage = () => {
                       ) : (
                         <div>
                           {isThreadsLoading ? (
-                            <div className=" flex flex-col gap-1.5 mt-2">
-                              <div className=" rounded h-14 mx-2 animate-pulse bg-gray-700"></div>
-                              <div className=" rounded h-14 mx-2 animate-pulse bg-gray-700"></div>
-                              <div className=" rounded h-14 mx-2 animate-pulse bg-gray-700"></div>
-                              <div className=" rounded h-14 mx-2 animate-pulse bg-gray-700"></div>
+                            <div className=" mt-2 flex flex-col gap-1.5">
+                              <div className=" mx-2 h-14 animate-pulse rounded bg-gray-700"></div>
+                              <div className=" mx-2 h-14 animate-pulse rounded bg-gray-700"></div>
+                              <div className=" mx-2 h-14 animate-pulse rounded bg-gray-700"></div>
+                              <div className=" mx-2 h-14 animate-pulse rounded bg-gray-700"></div>
                             </div>
                           ) : (
                             <>
@@ -496,13 +545,15 @@ const ReviewImage = () => {
                                                 React.SetStateAction<IThread>
                                               >
                                             }
-                                            setIsFocusedThread={setIsFocusedThread}
+                                            setIsFocusedThread={
+                                              setIsFocusedThread
+                                            }
                                           />
                                         ) : (
-                                          <div className=" text-center mt-5 font-semibold px-2">
+                                          <div className=" mt-5 px-2 text-center font-semibold">
                                             This version is outdated. <br />
-                                            Please switch to new version by uploading
-                                            the image again.
+                                            Please switch to new version by
+                                            uploading the image again.
                                           </div>
                                         )}
                                       </>
@@ -511,10 +562,12 @@ const ReviewImage = () => {
                                 </div>
                               ) : (
                                 <div className="text-center">
-                                  <p className=" font-semibold mt-4">
+                                  <p className=" mt-4 font-semibold">
                                     No reviews on this image !
                                   </p>
-                                  <p className=" mt-1">Add first to add a review.</p>
+                                  <p className=" mt-1">
+                                    Add first to add a review.
+                                  </p>
                                 </div>
                               )}
                             </>
@@ -525,10 +578,16 @@ const ReviewImage = () => {
                   </div>
                 </div>
               </div>
-            </>) : (
+            </>
+          ) : (
             <>
-              <AddEmailState setIsUnameValid={setIsUnameValid} uname={uname as string} setUname={setUname} />
-            </>)}
+              <AddEmailState
+                setIsUnameValid={setIsUnameValid}
+                uname={uname as string}
+                setUname={setUname}
+              />
+            </>
+          )}
         </>
       )}
     </>

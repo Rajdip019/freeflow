@@ -1,0 +1,2 @@
+echo "Running Husky pre-commit hooks"
+npm run pretty-quick

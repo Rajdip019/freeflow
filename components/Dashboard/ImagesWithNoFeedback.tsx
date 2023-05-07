@@ -12,7 +12,7 @@ const RecentUploads = () => {
     IReviewImageData[]
   >([]);
   const { user } = useUserContext();
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     const _latestUpdatedImages = images.sort((a, b) => {
@@ -20,13 +20,13 @@ const RecentUploads = () => {
     });
     const result = _latestUpdatedImages.map((image) => {
       if (image.newUpdate === "Uploaded") {
-        return image
+        return image;
       } else {
-        return null
+        return null;
       }
-    })
-    const finalArray: IReviewImageData[] = []
-    result.forEach(elements => {
+    });
+    const finalArray: IReviewImageData[] = [];
+    result.forEach((elements) => {
       if (elements != null && elements !== undefined) {
         finalArray.push(elements);
       }
@@ -35,16 +35,23 @@ const RecentUploads = () => {
   }, [images]);
 
   return (
-    <div className="bg-[#334155] w-full p-4 rounded">
-      <h3 className=" font-sec text-lg text-white flex items-center">Images with NO Feedback <p className=" ml-2 text-xs bg-red-700 p-1 rounded-full w-6 flex justify-center items-center">{latestUpdatedImages.length}</p></h3>
+    <div className="w-full rounded bg-[#334155] p-4">
+      <h3 className=" font-sec flex items-center text-lg text-white">
+        Images with NO Feedback{" "}
+        <p className=" ml-2 flex w-6 items-center justify-center rounded-full bg-red-700 p-1 text-xs">
+          {latestUpdatedImages.length}
+        </p>
+      </h3>
       <Collapse startingHeight={220} in={isExpanded}>
         {latestUpdatedImages.map((image, index) => {
           return (
             <div
               key={index}
-              className=" flex items-center rounded mt-2 bg-gray-900 p-2 justify-between gap-2"
+              className=" mt-2 flex items-center justify-between gap-2 rounded bg-gray-900 p-2"
             >
-              <p className=" text-white text-sm w-8/12 ml-1">{image.imageName}</p>
+              <p className=" ml-1 w-8/12 text-sm text-white">
+                {image.imageName}
+              </p>
               <div className=" w-4/8 flex items-center gap-3">
                 <Link
                   href={`${template}/review-image/${image.id}?uname=${user?.name}`}
@@ -73,15 +80,22 @@ const RecentUploads = () => {
           );
         })}
         {latestUpdatedImages.length === 0 && (
-          <div className=" flex justify-center items-center text-white font-semibold mt-24" >All Images got feedback...✨</div>
+          <div className=" mt-24 flex items-center justify-center font-semibold text-white">
+            All Images got feedback...✨
+          </div>
         )}
       </Collapse>
       {latestUpdatedImages.length > 5 && (
-        <button onClick={() => setIsExpanded(!isExpanded)} className={` text-white p-2 flex items-center justify-between w-full border rounded mt-2 text-sm`}>
-          {isExpanded ? 'Show Less' : 'View all Images'}
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className={` mt-2 flex w-full items-center justify-between rounded border p-2 text-sm text-white`}
+        >
+          {isExpanded ? "Show Less" : "View all Images"}
           <svg
             fill="none"
-            className={`w-4 mr-1 ${isExpanded ? '' : 'rotate-90'} transition-all  text-white`}
+            className={`mr-1 w-4 ${
+              isExpanded ? "" : "rotate-90"
+            } text-white  transition-all`}
             stroke="currentColor"
             strokeWidth={1.5}
             viewBox="0 0 24 24"
