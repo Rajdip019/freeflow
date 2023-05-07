@@ -249,7 +249,9 @@ const ReviewImage = () => {
           {isUnameValid ? (
             <>
               <Head>
-                <title>{imageData?.imageName ? imageData.imageName : "Loading..."}</title>
+                <title>
+                  {imageData?.imageName ? imageData.imageName : "Loading..."}
+                </title>
               </Head>
               <div className=" md:hidden">
                 <ReviewImageMobile imageData={imageData as IReviewImageData} />

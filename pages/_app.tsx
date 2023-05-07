@@ -22,7 +22,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       
       gtag('config', '${process.env.NEXT_PUBLIC_FIREBASE_MEASURMENT_ID}');
       `}
-      
       </Script>
       <ChakraProvider>
         <AuthContextProvider>

@@ -21,9 +21,9 @@ const SignUp = () => {
 
   return (
     <>
-    <Head>
-      <title>FreeFlow | Signup</title>
-    </Head>
+      <Head>
+        <title>FreeFlow | Signup</title>
+      </Head>
       <div className=" flex h-screen items-center bg-gradient-to-t from-[#7834bb] to-black text-white ">
         <div className=" absolute left-5 top-5">
           <Link href={"/"}>
