@@ -10,11 +10,11 @@ const Footer = () => {
           </div>
           <div className="relative text-base leading-[19px] flex flex-col items-center">
             <p className="mb-2 font-bold">Contact</p>
-            <a className="m-0 mb-1 flex gap-2" href="https://twitter.com/RajdeepS019" target="_blank" rel="noreferrer">
+            <a className="m-0 mb-1 flex gap-2" href="https://twitter.com/ReallyMad0" target="_blank" rel="noreferrer">
               <img src="/twitter.png" className=" w-5" alt="" />
               Ahmed Geaissa
             </a>
-            <a className="m-0 flex gap-2" href="https://twitter.com/ReallyMad0" target="_blank" rel="noreferrer">
+            <a className="m-0 flex gap-2" href="https://twitter.com/RajdeepS019" target="_blank" rel="noreferrer">
               <img src="/twitter.png" className=" w-5" alt=""  />
               Rajdeep Sengupta
             </a>
