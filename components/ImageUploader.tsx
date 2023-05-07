@@ -18,7 +18,8 @@ const ImageUploader = () => {
     const [uploadingState, setUploadingState] = useState<"not-started" | "uploading" | "success" | "error">('not-started');
     const [uploadedImageId, setUploadedImageId] = useState<string>('{imageId}');
     const [emailValidation, setEmailValidation] = useState<boolean>(true);
-    
+    const [fileSize, setFileSize] = useState<number>(0);
+
     const toast = useToast();
     const { authUser } = useAuth();
     const { user } = useUserContext();
@@ -26,6 +27,7 @@ const ImageUploader = () => {
 
     const handleFileUploaded = (file: File) => {
         setUploadedFile(file);
+        setFileSize(Math.round(file.size / (1024 * 1024)));
         setImageName(file.name);
         console.log("File uploaded:", file);
     };
@@ -47,139 +49,150 @@ const ImageUploader = () => {
     }
 
     const uploadFile = () => {
-        if (user?.storage) {
-            if (storageUsed <= user.storage) {
-                setUploadingState("uploading");
-                try {
-                    const storageRef = ref(
-                        storage,
-                        `reviewImages/${authUser?.uid}/public/${imageName}_${Date.now()}`
-                    );
-                    let bytes: number = 0
-                    const uploadTask = uploadBytesResumable(storageRef, uploadedFile as File);
-                    uploadTask.on(
-                        "state_changed",
-                        (snapshot: { bytesTransferred: number; totalBytes: number }) => {
-                            bytes = snapshot.totalBytes;
-                            const progress =
-                                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            setUploadPercentage(progress);
-                        },
-                        (error) => {
-                            console.error(error);
-                        },
-                        async () => {
-                            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref)
-                            console.log("File available at", downloadURL);
+        if (fileSize < 75) {
+            if (user?.storage) {
+                if (storageUsed <= user.storage) {
+                    setUploadingState("uploading");
+                    try {
+                        const storageRef = ref(
+                            storage,
+                            `reviewImages/${authUser?.uid}/public/${imageName}_${Date.now()}`
+                        );
+                        let bytes: number = 0
+                        const uploadTask = uploadBytesResumable(storageRef, uploadedFile as File);
+                        uploadTask.on(
+                            "state_changed",
+                            (snapshot: { bytesTransferred: number; totalBytes: number }) => {
+                                bytes = snapshot.totalBytes;
+                                const progress =
+                                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                setUploadPercentage(progress);
+                            },
+                            (error) => {
+                                console.error(error);
+                            },
+                            async () => {
+                                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref)
+                                console.log("File available at", downloadURL);
 
-                            const data: IReviewImageData = {
-                                imageURL: downloadURL,
-                                uploadedBy: user?.name as string,
-                                uploadedById: authUser?.uid,
-                                timeStamp: Date.now(),
-                                imageName: imageName as string,
-                                size: bytes / (1024 * 1024),
-                                views: 0,
-                                threads: 0,
-                                lastUpdated: Date.now(),
-                                newUpdate: "Uploaded"
+                                const data: IReviewImageData = {
+                                    imageURL: downloadURL,
+                                    uploadedBy: user?.name as string,
+                                    uploadedById: authUser?.uid,
+                                    timeStamp: Date.now(),
+                                    imageName: imageName as string,
+                                    size: bytes / (1024 * 1024),
+                                    views: 0,
+                                    threads: 0,
+                                    lastUpdated: Date.now(),
+                                    newUpdate: "Uploaded"
+                                }
+
+                                const docRef = await addDoc(collection(db, "reviewImages"), data);
+                                toast({
+                                    title: "Image uploaded successfully",
+                                    status: "success",
+                                    duration: 5000,
+                                    isClosable: true,
+                                    position: "bottom-right",
+                                });
+                                setUploadingState("success");
+                                setUploadedImageId(docRef.id);
+                                getImages();
                             }
-
-                            const docRef = await addDoc(collection(db, "reviewImages"), data);
-                            toast({
-                                title: "Image uploaded successfully",
-                                status: "success",
-                                duration: 5000,
-                                isClosable: true,
-                                position: "bottom-right",
-                            });
-                            setUploadingState("success");
-                            setUploadedImageId(docRef.id);
-                            getImages();
-                        }
-                    );
-                } catch (error) {
+                        );
+                    } catch (error) {
+                        toast({
+                            title: "Something went wrong",
+                            description: "Please try again",
+                            status: "error",
+                            duration: 5000,
+                            isClosable: true,
+                            position: "bottom-right",
+                        });
+                        setUploadingState("error");
+                    }
+                } else {
                     toast({
-                        title: "Something went wrong",
-                        description: "Please try again",
+                        title: "Your storage is full.",
+                        description: "Delete some images and try uploading.",
                         status: "error",
                         duration: 5000,
                         isClosable: true,
                         position: "bottom-right",
                     });
-                    setUploadingState("error");
                 }
             } else {
-                toast({
-                    title: "Your storage is full.",
-                    description: "Delete some images and try uploading.",
-                    status: "error",
-                    duration: 5000,
-                    isClosable: true,
-                    position: "bottom-right",
-                });
+                const isValidEmail = ValidateEmail();
+                if (isValidEmail) {
+                    setEmailValidation(true)
+                    setUploadingState("uploading");
+                    try {
+                        const storageRef = ref(
+                            storage,
+                            `reviewImages/anonymous/${imageName}_${Date.now()}`
+                        );
+
+                        const uploadTask = uploadBytesResumable(storageRef, uploadedFile as File);
+                        uploadTask.on(
+                            "state_changed",
+                            (snapshot: { bytesTransferred: number; totalBytes: number }) => {
+                                const progress =
+                                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                setUploadPercentage(progress);
+                            },
+                            (error) => {
+                                console.error(error);
+                            },
+                            async () => {
+                                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref)
+                                console.log("File available at", downloadURL);
+
+                                const data: IReviewImageData = {
+                                    imageURL: downloadURL,
+                                    uploadedBy: email ? email?.slice(0, email?.indexOf('@')) as string : "",
+                                    timeStamp: Date.now(),
+                                    imageName: imageName as string,
+                                    lastUpdated: Date.now(),
+                                    newUpdate: "Uploaded"
+                                }
+
+                                const docRef = await addDoc(collection(db, "reviewImages"), data);
+                                toast({
+                                    title: "Image uploaded successfully",
+                                    status: "success",
+                                    duration: 5000,
+                                    isClosable: true,
+                                    position: "bottom-right",
+                                });
+                                setUploadingState("success");
+                                setUploadedImageId(docRef.id);
+                            }
+                        );
+                    } catch (error) {
+                        toast({
+                            title: "Something went wrong",
+                            description: "Please try again",
+                            status: "error",
+                            duration: 5000,
+                            isClosable: true,
+                            position: "bottom-right",
+                        });
+                        setUploadingState("error");
+                    }
+                } else {
+                    setEmailValidation(false)
+                }
             }
         } else {
-            const isValidEmail = ValidateEmail();
-            if (isValidEmail) {
-                setEmailValidation(true)
-                setUploadingState("uploading");
-                try {
-                    const storageRef = ref(
-                        storage,
-                        `reviewImages/anonymous/${imageName}_${Date.now()}`
-                    );
-
-                    const uploadTask = uploadBytesResumable(storageRef, uploadedFile as File);
-                    uploadTask.on(
-                        "state_changed",
-                        (snapshot: { bytesTransferred: number; totalBytes: number }) => {
-                            const progress =
-                                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            setUploadPercentage(progress);
-                        },
-                        (error) => {
-                            console.error(error);
-                        },
-                        async () => {
-                            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref)
-                            console.log("File available at", downloadURL);
-
-                            const data: IReviewImageData = {
-                                imageURL: downloadURL,
-                                uploadedBy: email ? email?.slice(0, email?.indexOf('@')) as string : "",
-                                timeStamp: Date.now(),
-                                imageName: imageName as string,
-                                lastUpdated: Date.now(),
-                                newUpdate: "Uploaded"
-                            }
-
-                            const docRef = await addDoc(collection(db, "reviewImages"), data);
-                            toast({
-                                title: "Image uploaded successfully",
-                                status: "success",
-                                duration: 5000,
-                                isClosable: true,
-                                position: "bottom-right",
-                            });
-                            setUploadingState("success");
-                            setUploadedImageId(docRef.id);
-                        }
-                    );
-                } catch (error) {
-                    toast({
-                        title: "Something went wrong",
-                        description: "Please try again",
-                        status: "error",
-                        duration: 5000,
-                        isClosable: true,
-                        position: "bottom-right",
-                    });
-                    setUploadingState("error");
-                }
-            } else {
-                setEmailValidation(false)
-            }
+            toast({
+                title: "File size is too large",
+                description: "Please upload a file less than 75MB",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom-right",
+            });
         }
     };
 
