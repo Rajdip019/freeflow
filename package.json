@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prettier": "prettier --write ."
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.18",
@@ -35,9 +36,15 @@
     "@types/react-copy-to-clipboard": "^5.0.4",
     "@types/react-linkify": "^1.0.1",
     "autoprefixer": "^10.4.14",
+    "husky": "^8.0.3",
     "postcss": "^8.4.23",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.2.8",
     "tailwindcss": "^3.3.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run prettier"
+    }
   }
 }
