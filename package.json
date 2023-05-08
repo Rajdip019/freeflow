@@ -9,8 +9,8 @@
     "lint": "next lint",
     "pretty-quick": "pretty-quick --staged --branch main",
     "prepare": "husky install",
-    "deploy:prod": "./scripts/deploy_prod.sh",
-    "deploy:stage": "./scripts/deploy_stage.sh"
+    "deploy:prod": "git checkout main && git pull origin main && ./scripts/deploy_prod.sh",
+    "deploy:stage": "git checkout stage && git pull origin stage && ./scripts/deploy_stage.sh"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.18",
