@@ -28,6 +28,15 @@ const Footer = () => {
               <img src="/twitter.png" className=" w-5" alt="" />
               Rajdeep Sengupta
             </a>
+            <a
+              className="m-0 flex gap-2"
+              href="https://twitter.com/imMichaelYoung"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <img src="/twitter.png" className=" w-5" alt="" />
+              Michael Young
+            </a>
           </div>
         </div>
       </div>
