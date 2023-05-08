@@ -46,9 +46,7 @@ const Design = () => {
             <Thead>
               <Tr>
                 <Th w={"full"}>Name</Th>
-                <Th textAlign="right" isNumeric>
-                  Password
-                </Th>
+                <Th textAlign="right">Password</Th>
                 <Th isNumeric>Views</Th>
                 <Th isNumeric>Created at</Th>
                 <Th isNumeric>Actions</Th>
@@ -84,14 +82,12 @@ const Design = () => {
                         </p>
                       </Link>
                     </Td>
-                    <Td isNumeric>
-                      {image.private?.password ? (
+                    <Td>
+                      {image.private?.password && (
                         <PasswordCopy
                           align="right"
                           value={image.private.password}
                         />
-                      ) : (
-                        <p className=" text-gray-400">Public</p>
                       )}
                     </Td>
                     <Td isNumeric>{image.views}</Td>
