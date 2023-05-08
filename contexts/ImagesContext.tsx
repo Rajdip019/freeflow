@@ -59,13 +59,34 @@ export const ImageContextProvider = ({ children }: Props) => {
 
   const getImages = async () => {
     if (authUser) {
-      const _images: IReviewImageData[] = [];
       const imagesRef = collection(db, "reviewImages");
       const q = query(imagesRef, where("uploadedById", "==", authUser?.uid));
       const querySnapShot = await getDocs(q);
-      querySnapShot.forEach((doc) => {
-        _images.push({ id: doc.id, ...(doc.data() as IReviewImageData) });
+      const promises = querySnapShot.docs.map(async (docSnap) => {
+        const data = docSnap.data() as IReviewImageData;
+        let imagePassword;
+        if (data.isPrivate) {
+          const passDocRef = doc(
+            db,
+            "reviewImages",
+            data.id,
+            "private",
+            "password"
+          );
+          const passDocSnap = await getDoc(passDocRef);
+          if (passDocSnap.exists()) {
+            imagePassword = passDocSnap.data().password;
+          }
+        }
+        return {
+          // @ts-expect-error
+          id: doc.id,
+          ...(imagePassword && { private: { password: imagePassword } }),
+          ...data,
+        } as IReviewImageData;
       });
+      const _images: IReviewImageData[] = await Promise.all(promises);
+
       setImages(_images);
       if (_images.length !== 0) {
         const sum = _images.reduce((accumulator, object: any) => {
@@ -95,7 +116,7 @@ export const ImageContextProvider = ({ children }: Props) => {
     getImages();
   }, [authUser]);
 
-  console.log(images);
+  console.log("🚀 > images:", images);
 
   const value = {
     images,

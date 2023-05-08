@@ -20,6 +20,8 @@ const ImageUploadSuccess: React.FC<Props> = ({
 }) => {
   const toast = useToast();
 
+  const urlToCopy = `${template}/review-image/${imageId}`;
+
   return (
     <div className=" space-y-6">
       <div
@@ -36,10 +38,10 @@ const ImageUploadSuccess: React.FC<Props> = ({
             : "border-black text-gray-800"
         } b clear-left rounded p-2 `}
       >
-        {template}/review-image/{imageId}/name
+        {urlToCopy}
       </div>
       <div className=" mt-5 flex flex-col items-center">
-        <CopyToClipboard text={`${template}/review-image/${imageId}/name`}>
+        <CopyToClipboard text={urlToCopy}>
           <button
             onClick={() =>
               toast({
