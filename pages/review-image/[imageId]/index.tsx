@@ -223,9 +223,11 @@ const ReviewImage = () => {
 
   useEffect(() => {
     if (authUser) {
-      setIsUnameValid(true);
+      if (authUser.uid === imageData?.uploadedById) {
+        setIsUnameValid(true);
+      }
     }
-  }, [authUser]);
+  }, [authUser, imageData?.uploadedById]);
 
   return (
     <>
