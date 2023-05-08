@@ -30,10 +30,8 @@ const ImageUploadSuccess: React.FC<Props> = ({
 }) => {
   const toast = useToast();
 
-
-  const { onCopy, hasCopied } = useClipboard(urlToCopy);
   const urlToCopy = `${APP_URL}/review-image/${imageId}`;
-
+  const { onCopy, hasCopied } = useClipboard(urlToCopy);
 
   return (
     <div className=" space-y-2">
