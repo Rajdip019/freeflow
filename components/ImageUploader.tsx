@@ -9,12 +9,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useUserContext } from "@/contexts/UserContext";
 import { useImageContext } from "@/contexts/ImagesContext";
 import ImageUploadSuccess from "./ImageUploadSuccess";
+import { validateEmail } from "@/helpers/validators";
 
 const ImageUploader = () => {
   const [imageName, setImageName] = useState<string>();
   const [uploadedFile, setUploadedFile] = useState<File | null>();
   const [image, setImage] = useState<string | null>(null);
-  const [email, setEmail] = useState<string>();
+  const [email, setEmail] = useState<string>("");
   const [uploadingState, setUploadingState] = useState<
     "not-started" | "uploading" | "success" | "error"
   >("not-started");
@@ -42,13 +43,6 @@ const ImageUploader = () => {
   };
 
   const [uploadPercentage, setUploadPercentage] = useState<number>(0);
-
-  function ValidateEmail() {
-    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email as string)) {
-      return true;
-    }
-    return false;
-  }
 
   const uploadFile = () => {
     if (fileSize < 75) {
@@ -135,7 +129,7 @@ const ImageUploader = () => {
           });
         }
       } else {
-        const isValidEmail = ValidateEmail();
+        const isValidEmail = validateEmail(email);
         if (isValidEmail) {
           setEmailValidation(true);
           setUploadingState("uploading");
