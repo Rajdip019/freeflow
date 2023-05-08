@@ -1,5 +1,5 @@
 export interface IReviewImageData {
-  id?: string;
+  id: string;
   imageName: string;
   imageURL: string;
   timeStamp: number;
@@ -10,4 +10,9 @@ export interface IReviewImageData {
   threads?: number;
   lastUpdated: number;
   newUpdate: "New Comment" | "New Thread" | "Uploaded";
+  isPrivate: boolean;
+  // Nested Firestore documents in /reviewImages/{id}/private
+  private?: {
+    password?: string;
+  };
 }
