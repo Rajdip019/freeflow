@@ -1,4 +1,4 @@
-import { appUrl } from "@/helpers/app-url";
+import { APP_URL } from "@/helpers/constants";
 import React from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import {
@@ -30,8 +30,10 @@ const ImageUploadSuccess: React.FC<Props> = ({
 }) => {
   const toast = useToast();
 
-  const urlToCopy = `${appUrl()}/review-image/${imageId}`;
+
   const { onCopy, hasCopied } = useClipboard(urlToCopy);
+  const urlToCopy = `${APP_URL}/review-image/${imageId}`;
+
 
   return (
     <div className=" space-y-2">

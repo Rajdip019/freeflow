@@ -1,6 +1,6 @@
 import { useImageContext } from "@/contexts/ImagesContext";
 import { useUserContext } from "@/contexts/UserContext";
-import { appUrl } from "@/helpers/app-url";
+import { APP_URL } from "@/helpers/constants";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { Collapse } from "@chakra-ui/react";
 import Link from "next/link";
@@ -59,9 +59,7 @@ const RecentUpdates = () => {
                   {image.newUpdate}
                 </div>
                 <Link
-                  href={`${appUrl()}/review-image/${image.id}?uname=${
-                    user?.name
-                  }`}
+                  href={`${APP_URL}/review-image/${image.id}?uname=${user?.name}`}
                   className=" mr-1"
                   target="_blank"
                   rel="noreferrer"
