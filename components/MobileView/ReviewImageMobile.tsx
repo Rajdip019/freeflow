@@ -19,7 +19,7 @@ const ReviewImageMobile: React.FC<Props> = ({ imageData }) => {
             <Link href={"/"}>
               <img src="/freeflow.png" alt="" className=" mb-4 w-24" />
             </Link>
-            <div className="flex h-[8vh] w-full flex-col items-center justify-center bg-purple-500 text-white">
+            <div className="flex h-[10vh] w-full flex-col items-center justify-center bg-purple-500 text-white">
               <h2 className=" text-lg font-semibold">{imageData?.imageName}</h2>
               <div className=" flex flex-col flex-wrap items-center justify-center">
                 <p className=" text-sm">Uploaded by {imageData?.uploadedBy}</p>
