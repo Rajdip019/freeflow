@@ -1,7 +1,7 @@
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { storage, db } from "@/lib/firebaseConfig";
 import { useToast, Input, CircularProgress } from "@chakra-ui/react";
-import { addDoc, collection } from "firebase/firestore";
+import { collection, doc, setDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import React, { useState } from "react";
 import ImageUploaderDropzone from "./ImageUploaderDropzone";
@@ -82,7 +82,10 @@ const ImageUploader = () => {
                 );
                 console.log("File available at", downloadURL);
 
+                const docRef = doc(collection(db, "reviewImages"));
+
                 const data: IReviewImageData = {
+                  id: docRef.id,
                   imageURL: downloadURL,
                   uploadedBy: user?.name as string,
                   uploadedById: authUser?.uid,
@@ -93,12 +96,11 @@ const ImageUploader = () => {
                   threads: 0,
                   lastUpdated: Date.now(),
                   newUpdate: "Uploaded",
+                  isPrivate: false,
                 };
 
-                const docRef = await addDoc(
-                  collection(db, "reviewImages"),
-                  data
-                );
+                await setDoc(docRef, data);
+
                 toast({
                   title: "Image uploaded successfully",
                   status: "success",
@@ -163,7 +165,10 @@ const ImageUploader = () => {
                 );
                 console.log("File available at", downloadURL);
 
+                const docRef = doc(collection(db, "reviewImages"));
+
                 const data: IReviewImageData = {
+                  id: docRef.id,
                   imageURL: downloadURL,
                   uploadedBy: email
                     ? (email?.slice(0, email?.indexOf("@")) as string)
@@ -172,12 +177,11 @@ const ImageUploader = () => {
                   imageName: imageName as string,
                   lastUpdated: Date.now(),
                   newUpdate: "Uploaded",
+                  isPrivate: false,
                 };
 
-                const docRef = await addDoc(
-                  collection(db, "reviewImages"),
-                  data
-                );
+                await setDoc(docRef, data);
+
                 toast({
                   title: "Image uploaded successfully",
                   status: "success",

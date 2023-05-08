@@ -20,6 +20,7 @@ import Moment from "react-moment";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { template } from "@/helpers/apiTemplateString";
 import Head from "next/head";
+import PasswordCopy from "@/components/PasswordCopy";
 
 const Design = () => {
   const { images } = useImageContext();
@@ -46,6 +47,7 @@ const Design = () => {
             <Thead>
               <Tr>
                 <Th w={"full"}>Name</Th>
+                <Th textAlign="right">Password</Th>
                 <Th isNumeric>Views</Th>
                 <Th isNumeric>Created at</Th>
                 <Th isNumeric>Actions</Th>
@@ -80,6 +82,14 @@ const Design = () => {
                           </svg>
                         </p>
                       </Link>
+                    </Td>
+                    <Td>
+                      {image.private?.password && (
+                        <PasswordCopy
+                          align="right"
+                          value={image.private.password}
+                        />
+                      )}
                     </Td>
                     <Td isNumeric>{image.views}</Td>
                     <Td isNumeric>

@@ -13,7 +13,7 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { addDoc, collection } from "firebase/firestore";
+import { collection, doc, setDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import React, { useState } from "react";
 import ImageUploaderDropzone from "./ImageUploaderDropzone";
@@ -25,6 +25,7 @@ import ImageUploadSuccess from "./ImageUploadSuccess";
 const ImageUploadModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [imageName, setImageName] = useState<string>();
+  const [password, setPassword] = useState<string>("");
   const [uploadedFile, setUploadedFile] = useState<File | null>();
   const [image, setImage] = useState<string | null>(null);
   const [uploadingState, setUploadingState] = useState<
@@ -49,6 +50,7 @@ const ImageUploadModal = () => {
     setImage("");
     setUploadedFile(null);
     setImageName("");
+    setPassword("");
   };
 
   const [uploadPercentage, setUploadPercentage] = useState<number>(0);
@@ -85,7 +87,10 @@ const ImageUploadModal = () => {
                 );
                 console.log("File available at", downloadURL);
 
+                const docRef = doc(collection(db, "reviewImages"));
+
                 const data: IReviewImageData = {
+                  id: docRef.id,
                   imageURL: downloadURL,
                   uploadedBy: user?.name as string,
                   uploadedById: authUser?.uid,
@@ -96,12 +101,17 @@ const ImageUploadModal = () => {
                   threads: 0,
                   lastUpdated: Date.now(),
                   newUpdate: "Uploaded",
+                  isPrivate: Boolean(password),
                 };
 
-                const docRef = await addDoc(
-                  collection(db, "reviewImages"),
-                  data
+                await setDoc(docRef, data);
+                await setDoc(
+                  doc(db, "reviewImages", docRef.id, "private/password"),
+                  {
+                    password,
+                  }
                 );
+
                 toast({
                   title: "Image uploaded successfully",
                   status: "success",
@@ -109,6 +119,7 @@ const ImageUploadModal = () => {
                   isClosable: true,
                   position: "bottom-right",
                 });
+
                 setUploadingState("success");
                 setUploadedImageId(docRef.id);
                 getImages();
@@ -230,6 +241,22 @@ const ImageUploadModal = () => {
                       <div className="mt-5">
                         <span className=" font-semibold">Image name: </span>
                         <span>{imageName}</span>
+                      </div>
+                      <div className="mt-5">
+                        <p className="mb-2 text-sm text-gray-500">
+                          Password (optional)
+                        </p>
+                        <Input
+                          value={password}
+                          onChange={(e) => {
+                            setPassword(e.target.value);
+                          }}
+                          type="text"
+                          focusBorderColor="purple.500"
+                          borderColor={"purple.500"}
+                          className=" text-gray-200"
+                          placeholder="Enter a password for image review"
+                        />
                       </div>
                     </>
                   )}
