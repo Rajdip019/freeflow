@@ -267,8 +267,7 @@ const ReviewImage = () => {
                         className=" flex cursor-pointer gap-2"
                         onClick={() => router.push("/")}
                       >
-                        <img src="/logo.png" alt="" className=" w-10" />
-                        <p className=" text-lg font-semibold">FreeFlow</p>
+                        <img src="/freeflow.png" alt="" className=" w-32" />
                       </div>
                       <p className=" font-semibold">
                         Click on the image anywhere to start commenting
