@@ -1,4 +1,4 @@
-import { template } from "@/helpers/apiTemplateString";
+import { appUrl } from "@/helpers/app-url";
 import React from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useToast } from "@chakra-ui/react";
@@ -20,7 +20,7 @@ const ImageUploadSuccess: React.FC<Props> = ({
 }) => {
   const toast = useToast();
 
-  const urlToCopy = `${template}/review-image/${imageId}`;
+  const urlToCopy = `${appUrl()}/review-image/${imageId}`;
 
   return (
     <div className=" space-y-6">
