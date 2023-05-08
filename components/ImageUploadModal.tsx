@@ -311,6 +311,7 @@ const ImageUploadModal = () => {
                   imageId={uploadedImageId}
                   setUploadingState={setUploadingState}
                   clearFile={clearFile}
+                  password={password}
                   mode="dark"
                 />
               )}
