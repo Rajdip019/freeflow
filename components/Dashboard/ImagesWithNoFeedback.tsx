@@ -1,6 +1,6 @@
 import { useImageContext } from "@/contexts/ImagesContext";
 import { useUserContext } from "@/contexts/UserContext";
-import { template } from "@/helpers/apiTemplateString";
+import { appUrl } from "@/helpers/app-url";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { Collapse } from "@chakra-ui/react";
 import Link from "next/link";
@@ -54,7 +54,7 @@ const RecentUploads = () => {
               </p>
               <div className=" w-4/8 flex items-center gap-3">
                 <Link
-                  href={`${template}/review-image/${image.id}?uname=${user?.name}`}
+                  href={`${appUrl}/review-image/${image.id}?uname=${user?.name}`}
                   className=" mr-1"
                   target="_blank"
                   rel="noreferrer"
