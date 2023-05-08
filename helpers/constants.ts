@@ -1,5 +1,12 @@
 import { INewThread, IThread } from "@/interfaces/Thread";
 
+export const APP_URL =
+  process.env.NEXT_PUBLIC_ENV === "prod"
+    ? "https://freeflow.to"
+    : process.env.NEXT_PUBLIC_ENV === "stage"
+    ? "https://freeflow-stage.vercel.app"
+    : "http://localhost:3000";
+
 export const defaultHighlightedThread: IThread = {
   id: "",
   imageDimension: { height: 0, width: 0 },
