@@ -17,7 +17,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import Moment from "react-moment";
 import CopyToClipboard from "react-copy-to-clipboard";
-import { appUrl } from "@/helpers/app-url";
+import { APP_URL } from "@/helpers/constants";
 import Head from "next/head";
 import PasswordCopy from "@/components/PasswordCopy";
 
@@ -106,7 +106,7 @@ const Design = () => {
                         <Tooltip label={tooltipText}>
                           <div onClick={handleClick}>
                             <CopyToClipboard
-                              text={`${appUrl()}/review-image/${image.id}`}
+                              text={`${APP_URL}/review-image/${image.id}`}
                             >
                               <svg
                                 className=" w-5 cursor-pointer text-gray-400 hover:text-white"
