@@ -8,7 +8,7 @@ const Footer = () => {
           <div className="relative mb-10 leading-[21.6px] md:mb-0">
             © 2023 Freeflow. All rights reserved.
           </div>
-          <div className="relative flex flex-col items-center text-base leading-[19px]">
+          <div className="relative flex flex-col items-center text-base leading-[19px] md:items-start">
             <p className="mb-2 font-bold">Contact</p>
             <a
               className="m-0 mb-1 flex gap-2"
