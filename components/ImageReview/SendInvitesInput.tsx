@@ -10,6 +10,7 @@ import SendIcon from "@/components/Icons/SendIcon";
 import { useState } from "react";
 import { validateCommaSeparatedEmails } from "@/helpers/validators";
 import { formatCommaSeparatedStringToArray } from "@/helpers/formatters";
+import { postJson } from "@/lib/fetch";
 
 interface Props {
   imageId: string;
@@ -34,14 +35,8 @@ const SendInvitesInput = ({
   const handleSendInvites = async () => {
     setInvitesSendStatus("loading");
     try {
-      await fetch(`/api/review-image/${imageId}/send-invites`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          emails: formatCommaSeparatedStringToArray(invitesInputText),
-        }),
+      await postJson(`/api/review-image/${imageId}/send-invites`, {
+        emails: formatCommaSeparatedStringToArray(invitesInputText),
       });
       setInvitesSendStatus("done");
       setTimeout(() => {
