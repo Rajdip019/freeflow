@@ -45,7 +45,10 @@ const RecentUploads = () => {
       <Collapse startingHeight={220} in={isExpanded}>
         {latestUpdatedImages.map((image, index) => {
           return (
-            <div
+            <Link
+              href={`${APP_URL}/review-image/${image.id}?uname=${user?.name}`}
+              target="_blank"
+              rel="noreferrer"
               key={index}
               className=" mt-2 flex items-center justify-between gap-2 rounded bg-gray-900 p-2"
             >
@@ -53,30 +56,23 @@ const RecentUploads = () => {
                 {image.imageName}
               </p>
               <div className=" w-4/8 flex items-center gap-3">
-                <Link
-                  href={`${APP_URL}/review-image/${image.id}?uname=${user?.name}`}
-                  className=" mr-1"
-                  target="_blank"
-                  rel="noreferrer"
+                <svg
+                  fill="none"
+                  className=" w-4 text-white"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
                 >
-                  <svg
-                    fill="none"
-                    className=" w-4 text-white"
-                    stroke="currentColor"
-                    strokeWidth={1.5}
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
-                    />
-                  </svg>
-                </Link>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
+                  />
+                </svg>
               </div>
-            </div>
+            </Link>
           );
         })}
         {latestUpdatedImages.length === 0 && (
