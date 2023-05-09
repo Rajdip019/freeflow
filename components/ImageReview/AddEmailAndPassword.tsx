@@ -1,3 +1,4 @@
+import { validateEmail } from "@/helpers/validators";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { Button, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 import React, { useState } from "react";
@@ -20,17 +21,8 @@ const AddEmailAndPassword: React.FC<Props> = ({
   const [emailInput, setEmailInput] = useState<string>("");
   const [showPassword, setShowPassword] = React.useState(false);
 
-  function validateEmail() {
-    if (
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(emailInput as string)
-    ) {
-      return true;
-    }
-    return false;
-  }
-
   const handleClick = async () => {
-    let isInputValid = validateEmail();
+    let isInputValid = validateEmail(emailInput);
     if (!isInputValid) {
       setErrorMessage("Please enter a valid email.");
       return;

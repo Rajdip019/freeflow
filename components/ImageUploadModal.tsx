@@ -20,6 +20,7 @@ import { useUserContext } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useImageContext } from "@/contexts/ImagesContext";
 import ImageUploadSuccess from "./ImageUploadSuccess";
+import { newReviewImageEvent } from "@/lib/events";
 
 const ImageUploadModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -92,6 +93,7 @@ const ImageUploadModal = () => {
                   id: docRef.id,
                   imageURL: downloadURL,
                   uploadedBy: user?.name as string,
+                  uploadedByEmail: authUser?.email ?? "",
                   uploadedById: authUser?.uid,
                   timeStamp: Date.now(),
                   imageName: imageName as string,
@@ -118,7 +120,7 @@ const ImageUploadModal = () => {
                   isClosable: true,
                   position: "bottom-right",
                 });
-
+                newReviewImageEvent(data);
                 setUploadingState("success");
                 setUploadedImageId(docRef.id);
                 getImages();

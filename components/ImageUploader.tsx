@@ -9,12 +9,14 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useUserContext } from "@/contexts/UserContext";
 import { useImageContext } from "@/contexts/ImagesContext";
 import ImageUploadSuccess from "./ImageUploadSuccess";
+import { validateEmail } from "@/helpers/validators";
+import { newReviewImageEvent } from "@/lib/events";
 
 const ImageUploader = () => {
   const [imageName, setImageName] = useState<string>();
   const [uploadedFile, setUploadedFile] = useState<File | null>();
   const [image, setImage] = useState<string | null>(null);
-  const [email, setEmail] = useState<string>();
+  const [email, setEmail] = useState<string>("");
   const [uploadingState, setUploadingState] = useState<
     "not-started" | "uploading" | "success" | "error"
   >("not-started");
@@ -42,13 +44,6 @@ const ImageUploader = () => {
   };
 
   const [uploadPercentage, setUploadPercentage] = useState<number>(0);
-
-  function ValidateEmail() {
-    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email as string)) {
-      return true;
-    }
-    return false;
-  }
 
   const uploadFile = () => {
     if (fileSize < 75) {
@@ -88,6 +83,7 @@ const ImageUploader = () => {
                   id: docRef.id,
                   imageURL: downloadURL,
                   uploadedBy: user?.name as string,
+                  uploadedByEmail: email,
                   uploadedById: authUser?.uid,
                   timeStamp: Date.now(),
                   imageName: imageName as string,
@@ -108,6 +104,7 @@ const ImageUploader = () => {
                   isClosable: true,
                   position: "bottom-right",
                 });
+                newReviewImageEvent(data);
                 setUploadingState("success");
                 setUploadedImageId(docRef.id);
                 getImages();
@@ -135,7 +132,7 @@ const ImageUploader = () => {
           });
         }
       } else {
-        const isValidEmail = ValidateEmail();
+        const isValidEmail = validateEmail(email);
         if (isValidEmail) {
           setEmailValidation(true);
           setUploadingState("uploading");
@@ -173,6 +170,7 @@ const ImageUploader = () => {
                   uploadedBy: email
                     ? (email?.slice(0, email?.indexOf("@")) as string)
                     : "",
+                  uploadedByEmail: email,
                   timeStamp: Date.now(),
                   imageName: imageName as string,
                   lastUpdated: Date.now(),
@@ -189,6 +187,7 @@ const ImageUploader = () => {
                   isClosable: true,
                   position: "bottom-right",
                 });
+                newReviewImageEvent(data);
                 setUploadingState("success");
                 setUploadedImageId(docRef.id);
               }

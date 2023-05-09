@@ -20,6 +20,8 @@ import CopyToClipboard from "react-copy-to-clipboard";
 import { APP_URL } from "@/helpers/constants";
 import Head from "next/head";
 import PasswordCopy from "@/components/PasswordCopy";
+import SendInvitesIconModal from "@/components/ImageReview/SendInvitesIconModal";
+import { orderBy } from "lodash-es";
 
 const Design = () => {
   const { images } = useImageContext();
@@ -40,8 +42,8 @@ const Design = () => {
         <title>FreeFlow | Design</title>
       </Head>
       <Header title="Designs" />
-      <div className=" min-h-[88.1vh] px-5 md:min-h-min md:px-10">
-        <TableContainer className=" mt-5">
+      <div className="min-h-[88.1vh] px-5 md:min-h-min md:px-10">
+        <TableContainer className="mt-5">
           <Table size="sm" colorScheme="purple">
             <Thead>
               <Tr>
@@ -55,20 +57,20 @@ const Design = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {images.map((image) => {
+              {orderBy(images, ["timeStamp"], ["desc"]).map((image) => {
                 return (
-                  <Tr className=" text-white" key={image.id}>
+                  <Tr className="hover:bg-sec-black text-white" key={image.id}>
                     <Td>
                       <Link
                         target="_blank"
                         rel="noreferrer"
                         href={`/review-image/${image.id}`}
                       >
-                        <p className=" group flex items-center gap-2 hover:underline">
+                        <p className="group flex items-center gap-2 hover:underline">
                           {image.imageName}{" "}
                           <svg
                             fill="none"
-                            className=" w-4 cursor-pointer text-gray-400 group-hover:text-white"
+                            className="w-4 cursor-pointer text-gray-400 group-hover:text-white"
                             stroke="currentColor"
                             strokeWidth={1.5}
                             viewBox="0 0 24 24"
@@ -91,17 +93,17 @@ const Design = () => {
                           value={image.private.password}
                         />
                       ) : (
-                        <p className=" text-gray-400">Public</p>
+                        <p className="text-gray-400">Public</p>
                       )}
                     </Td>
                     <Td isNumeric>{image.views}</Td>
                     <Td isNumeric>
-                      <Moment className=" text-gray-400" format="MMM Do YYYY">
+                      <Moment className="text-gray-400" format="MMM Do YYYY">
                         {image.timeStamp}
                       </Moment>
                     </Td>
                     <Td isNumeric>
-                      <div className=" flex gap-2">
+                      <div className="flex gap-2">
                         <ImageDeleteModalConfirmation image={image} />
                         <Tooltip label={tooltipText}>
                           <div onClick={handleClick}>
@@ -109,7 +111,7 @@ const Design = () => {
                               text={`${APP_URL}/review-image/${image.id}`}
                             >
                               <svg
-                                className=" w-5 cursor-pointer text-gray-400 hover:text-white"
+                                className="w-5 cursor-pointer text-gray-400 hover:text-white"
                                 fill="currentColor"
                                 viewBox="0 0 24 24"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -124,6 +126,7 @@ const Design = () => {
                             </CopyToClipboard>
                           </div>
                         </Tooltip>
+                        <SendInvitesIconModal image={image} />
                       </div>
                     </Td>
                   </Tr>
@@ -133,8 +136,8 @@ const Design = () => {
           </Table>
         </TableContainer>
         {images.length === 0 && (
-          <div className=" mt-24 flex flex-col items-center justify-center gap-5 font-semibold text-white">
-            <span className=" text-2xl">Upload a image to start 🚀</span>
+          <div className="mt-24 flex flex-col items-center justify-center gap-5 font-semibold text-white">
+            <span className="text-2xl">Upload a image to start 🚀</span>
             <ImageUploadModal />
           </div>
         )}

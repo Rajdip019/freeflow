@@ -1,15 +1,15 @@
 import { APP_URL } from "@/helpers/constants";
 import React from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
 import {
-  Button,
   Input,
   InputGroup,
   InputRightElement,
-  Textarea,
   useClipboard,
-  useToast,
 } from "@chakra-ui/react";
+import ClipboardCopiedIcon from "@/components/Icons/ClipboardCopiedIcon";
+import ClipboardIcon from "@/components/Icons/ClipboardIcon";
+import classNames from "classnames";
+import SendInvitesInput from "./ImageReview/SendInvitesInput";
 
 interface Props {
   imageId: string;
@@ -26,139 +26,90 @@ const ImageUploadSuccess: React.FC<Props> = ({
   setUploadingState,
   clearFile,
   mode,
-  password,
+  password = "",
 }) => {
-  const toast = useToast();
-
-  const urlToCopy = `${APP_URL}/review-image/${imageId}`;
-  const { onCopy, hasCopied } = useClipboard(urlToCopy);
+  const reviewImageUrl = `${APP_URL}/review-image/${imageId}`;
+  const { onCopy: onCopyImageUrl, hasCopied: hasCopiedImageUrl } =
+    useClipboard(reviewImageUrl);
+  const { onCopy: onCopyPassword, hasCopied: hasCopiedPassword } =
+    useClipboard(password);
 
   return (
-    <div className=" space-y-2">
+    <div>
       <div
         className={`mb-6 flex items-center justify-center gap-3 text-center ${
           mode === "dark" ? "text-white" : "text-black"
         } `}
       >
-        <p className=" text-2xl font-semibold">Done! Ready to get feedback?</p>
+        <p className="text-2xl font-semibold">Done! Ready to get feedback?</p>
       </div>
-      <div className="">
-        <p className=" mb-4 text-center text-xl">Share the link</p>
+
+      <SendInvitesInput
+        imageId={imageId}
+        inputClassName={classNames({
+          "text-white": mode === "dark",
+          "text-black": mode === "light",
+        })}
+        wrapperClassName="mb-4"
+      />
+
+      <div className="my-4 flex flex-col gap-2">
+        <p
+          className={classNames("text-center text-2xl", {
+            "text-gray-400": mode === "dark",
+            "text-gray-500": mode === "light",
+          })}
+        >
+          OR
+        </p>
+      </div>
+      <div className="mb-4 flex flex-col gap-2">
+        <p>Share the link:</p>
         <InputGroup size="md">
           <Input
-            value={urlToCopy}
+            value={reviewImageUrl}
             disabled
             name="url"
             focusBorderColor={"purple.500"}
             borderColor={"purple.500"}
-            color={"white"}
-            className="mb-4 text-white"
+            className={classNames("mb-4 pr-4", {
+              "text-white": mode === "dark",
+              "text-black": mode === "light",
+            })}
           />
-          <InputRightElement width="3.5rem">
-            <button className=" bg-purple-500 p-1" onClick={() => onCopy()}>
-              {hasCopied ? (
-                <svg
-                  fill="currentColor"
-                  className="w-5 text-white"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <path
-                    clipRule="evenodd"
-                    fillRule="evenodd"
-                    d="M7.502 6h7.128A3.375 3.375 0 0118 9.375v9.375a3 3 0 003-3V6.108c0-1.505-1.125-2.811-2.664-2.94a48.972 48.972 0 00-.673-.05A3 3 0 0015 1.5h-1.5a3 3 0 00-2.663 1.618c-.225.015-.45.032-.673.05C8.662 3.295 7.554 4.542 7.502 6zM13.5 3A1.5 1.5 0 0012 4.5h4.5A1.5 1.5 0 0015 3h-1.5z"
-                  />
-                  <path
-                    clipRule="evenodd"
-                    fillRule="evenodd"
-                    d="M3 9.375C3 8.339 3.84 7.5 4.875 7.5h9.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 013 20.625V9.375zm9.586 4.594a.75.75 0 00-1.172-.938l-2.476 3.096-.908-.907a.75.75 0 00-1.06 1.06l1.5 1.5a.75.75 0 001.116-.062l3-3.75z"
-                  />
-                </svg>
+          <InputRightElement>
+            <button onClick={() => onCopyImageUrl()}>
+              {hasCopiedImageUrl ? (
+                <ClipboardCopiedIcon className="h-5 w-5 text-gray-500" />
               ) : (
-                <svg
-                  fill="currentColor"
-                  className=" w-5 cursor-pointer text-white"
-                  onClick={() => {
-                    onCopy();
-                  }}
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <path
-                    clipRule="evenodd"
-                    fillRule="evenodd"
-                    d="M7.502 6h7.128A3.375 3.375 0 0118 9.375v9.375a3 3 0 003-3V6.108c0-1.505-1.125-2.811-2.664-2.94a48.972 48.972 0 00-.673-.05A3 3 0 0015 1.5h-1.5a3 3 0 00-2.663 1.618c-.225.015-.45.032-.673.05C8.662 3.295 7.554 4.542 7.502 6zM13.5 3A1.5 1.5 0 0012 4.5h4.5A1.5 1.5 0 0015 3h-1.5z"
-                  />
-                  <path
-                    clipRule="evenodd"
-                    fillRule="evenodd"
-                    d="M3 9.375C3 8.339 3.84 7.5 4.875 7.5h9.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 013 20.625V9.375zM6 12a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V12zm2.25 0a.75.75 0 01.75-.75h3.75a.75.75 0 010 1.5H9a.75.75 0 01-.75-.75zM6 15a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V15zm2.25 0a.75.75 0 01.75-.75h3.75a.75.75 0 010 1.5H9a.75.75 0 01-.75-.75zM6 18a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V18zm2.25 0a.75.75 0 01.75-.75h3.75a.75.75 0 010 1.5H9a.75.75 0 01-.75-.75z"
-                  />
-                </svg>
+                <ClipboardIcon className="h-5 w-5 cursor-pointer text-purple-500 hover:text-gray-500" />
               )}
             </button>
           </InputRightElement>
         </InputGroup>
       </div>
       {password && (
-        <div className=" flex items-center gap-2">
-          <p className=" mb-4 text-center">Password</p>
+        <div className="mb-4 flex flex-col gap-2">
+          <p>Password:</p>
           <InputGroup size="md">
             <Input
               value={password}
               disabled
-              name="url"
+              name="password"
               focusBorderColor={"purple.500"}
               borderColor={"purple.500"}
-              color={"white"}
-              className="mb-4 text-white"
+              className={classNames("mb-4 pr-4", {
+                "text-white": mode === "dark",
+                "text-black": mode === "light",
+              })}
               resize={"none"}
             />
-            <InputRightElement width="3.5rem">
-              <button className=" bg-purple-500 p-1" onClick={() => onCopy()}>
-                {hasCopied ? (
-                  <svg
-                    fill="currentColor"
-                    className="w-5 text-white"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true"
-                  >
-                    <path
-                      clipRule="evenodd"
-                      fillRule="evenodd"
-                      d="M7.502 6h7.128A3.375 3.375 0 0118 9.375v9.375a3 3 0 003-3V6.108c0-1.505-1.125-2.811-2.664-2.94a48.972 48.972 0 00-.673-.05A3 3 0 0015 1.5h-1.5a3 3 0 00-2.663 1.618c-.225.015-.45.032-.673.05C8.662 3.295 7.554 4.542 7.502 6zM13.5 3A1.5 1.5 0 0012 4.5h4.5A1.5 1.5 0 0015 3h-1.5z"
-                    />
-                    <path
-                      clipRule="evenodd"
-                      fillRule="evenodd"
-                      d="M3 9.375C3 8.339 3.84 7.5 4.875 7.5h9.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 013 20.625V9.375zm9.586 4.594a.75.75 0 00-1.172-.938l-2.476 3.096-.908-.907a.75.75 0 00-1.06 1.06l1.5 1.5a.75.75 0 001.116-.062l3-3.75z"
-                    />
-                  </svg>
+            <InputRightElement>
+              <button onClick={() => onCopyPassword()}>
+                {hasCopiedPassword ? (
+                  <ClipboardCopiedIcon className="h-5 w-5 text-gray-500" />
                 ) : (
-                  <svg
-                    fill="currentColor"
-                    className=" w-5 cursor-pointer text-white"
-                    onClick={() => {
-                      onCopy();
-                    }}
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true"
-                  >
-                    <path
-                      clipRule="evenodd"
-                      fillRule="evenodd"
-                      d="M7.502 6h7.128A3.375 3.375 0 0118 9.375v9.375a3 3 0 003-3V6.108c0-1.505-1.125-2.811-2.664-2.94a48.972 48.972 0 00-.673-.05A3 3 0 0015 1.5h-1.5a3 3 0 00-2.663 1.618c-.225.015-.45.032-.673.05C8.662 3.295 7.554 4.542 7.502 6zM13.5 3A1.5 1.5 0 0012 4.5h4.5A1.5 1.5 0 0015 3h-1.5z"
-                    />
-                    <path
-                      clipRule="evenodd"
-                      fillRule="evenodd"
-                      d="M3 9.375C3 8.339 3.84 7.5 4.875 7.5h9.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 013 20.625V9.375zM6 12a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V12zm2.25 0a.75.75 0 01.75-.75h3.75a.75.75 0 010 1.5H9a.75.75 0 01-.75-.75zM6 15a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V15zm2.25 0a.75.75 0 01.75-.75h3.75a.75.75 0 010 1.5H9a.75.75 0 01-.75-.75zM6 18a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V18zm2.25 0a.75.75 0 01.75-.75h3.75a.75.75 0 010 1.5H9a.75.75 0 01-.75-.75z"
-                    />
-                  </svg>
+                  <ClipboardIcon className="h-5 w-5 cursor-pointer text-purple-500 hover:text-gray-500" />
                 )}
               </button>
             </InputRightElement>
@@ -167,7 +118,7 @@ const ImageUploadSuccess: React.FC<Props> = ({
       )}
       <div className="flex flex-col items-center">
         <button
-          className=" btn-p py-2"
+          className="btn-p py-2"
           onClick={() => {
             setUploadingState("not-started"), clearFile();
           }}
