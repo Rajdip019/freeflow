@@ -42,7 +42,7 @@ export default async function handler(
 
       const sendPromises = emails.map(async (email: string) => {
         await resend.sendEmail({
-          from: "FreeFlow <noreply@resend.dev>",
+          from: "FreeFlow <noreply@freeflow.to>",
           to: email,
           subject: `[FreeFlow] ${data.uploadedBy} requested your feedback on a design`,
           // @ts-expect-error
