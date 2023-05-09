@@ -15,12 +15,14 @@ interface Props {
   imageId: string;
   wrapperClassName?: string;
   inputClassName?: string;
+  onSuccess?: () => void;
 }
 
 const SendInvitesInput = ({
   imageId,
   wrapperClassName,
   inputClassName,
+  onSuccess = () => {},
 }: Props) => {
   const toast = useToast();
 
@@ -52,6 +54,7 @@ const SendInvitesInput = ({
         isClosable: true,
         position: "bottom-right",
       });
+      onSuccess();
     } catch (err) {
       setInvitesSendStatus("idle");
       toast({
