@@ -10,5 +10,5 @@ export const newUserEvent = async (user: Partial<IUser>) => {
 
 export const newReviewImageEvent = async (image: IReviewImageData) => {
   if (!IS_PRODUCTION) return;
-  await postJson("/api/events/new-user", { image });
+  await postJson("/api/events/new-review-image", { image });
 };
