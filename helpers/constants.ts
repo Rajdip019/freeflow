@@ -1,5 +1,7 @@
 import { INewThread, IThread } from "@/interfaces/Thread";
 
+export const IS_PRODUCTION = process.env.NEXT_PUBLIC_ENV === "prod";
+
 export const APP_URL =
   process.env.NEXT_PUBLIC_ENV === "prod"
     ? "https://freeflow.to"
