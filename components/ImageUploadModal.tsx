@@ -243,6 +243,7 @@ const ImageUploadModal = () => {
                           borderColor={"purple.500"}
                           className=" text-gray-200"
                           placeholder="Enter photo title"
+                          maxLength={24}
                         />
                       </div>
                       <div className="mt-5">
@@ -298,7 +299,7 @@ const ImageUploadModal = () => {
                     )}
                     {uploadingState === "not-started" && (
                       <button
-                        disabled={!!!image}
+                        disabled={!!!image || !!!imageName}
                         className=" btn-p mt-5 w-full py-2"
                         onClick={uploadFile}
                       >
