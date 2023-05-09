@@ -292,6 +292,7 @@ const ImageUploader = () => {
                     borderColor={"purple.500"}
                     className=" text-black"
                     placeholder="Enter photo title"
+                    maxLength={24}
                   />
                 </div>
                 <div className="mt-5 text-black">
