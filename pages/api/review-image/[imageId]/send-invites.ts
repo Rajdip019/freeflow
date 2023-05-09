@@ -59,7 +59,7 @@ export default async function handler(
       // Update sentEmailInvites field in db
       const existingEmailInvites = data.sentEmailInvites ?? [];
       const updatedEmailInvites = uniq([...existingEmailInvites, ...emails]);
-      updateDoc(docRef, {
+      await updateDoc(docRef, {
         sentEmailInvites: updatedEmailInvites,
       });
       return res.status(200).end();

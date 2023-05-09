@@ -21,6 +21,7 @@ import { APP_URL } from "@/helpers/constants";
 import Head from "next/head";
 import PasswordCopy from "@/components/PasswordCopy";
 import SendInvitesIconModal from "@/components/ImageReview/SendInvitesIconModal";
+import { orderBy } from "lodash-es";
 
 const Design = () => {
   const { images } = useImageContext();
@@ -56,7 +57,7 @@ const Design = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {images.map((image) => {
+              {orderBy(images, ["timeStamp"], ["desc"]).map((image) => {
                 return (
                   <Tr className="hover:bg-sec-black text-white" key={image.id}>
                     <Td>
