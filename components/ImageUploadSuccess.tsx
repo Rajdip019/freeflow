@@ -1,17 +1,15 @@
 import { APP_URL } from "@/helpers/constants";
-import React, { useState } from "react";
+import React from "react";
 import {
   Input,
   InputGroup,
   InputRightElement,
   useClipboard,
-  useToast,
 } from "@chakra-ui/react";
 import ClipboardCopiedIcon from "@/components/Icons/ClipboardCopiedIcon";
 import ClipboardIcon from "@/components/Icons/ClipboardIcon";
-import SendIcon from "@/components/Icons/SendIcon";
-import SendCompleteIcon from "@/components/Icons/SendCompleteIcon";
 import classNames from "classnames";
+import SendInvitesInput from "./ImageReview/SendInvitesInput";
 
 interface Props {
   imageId: string;
@@ -30,34 +28,11 @@ const ImageUploadSuccess: React.FC<Props> = ({
   mode,
   password = "",
 }) => {
-  const toast = useToast();
-
   const reviewImageUrl = `${APP_URL}/review-image/${imageId}`;
   const { onCopy: onCopyImageUrl, hasCopied: hasCopiedImageUrl } =
     useClipboard(reviewImageUrl);
   const { onCopy: onCopyPassword, hasCopied: hasCopiedPassword } =
     useClipboard(password);
-  const [invitesInputText, setInvitesInputText] = useState("");
-  const [invitesSendStatus, setInvitesSendStatus] = useState<
-    "idle" | "loading" | "done"
-  >("idle");
-
-  const handleSendInvites = async () => {
-    setInvitesSendStatus("loading");
-    setTimeout(() => {
-      setInvitesSendStatus("done");
-      toast({
-        title: "Invites sent successfully",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom-right",
-      });
-    }, 2000);
-    setTimeout(() => {
-      setInvitesSendStatus("idle");
-    }, 4000);
-  };
 
   return (
     <div>
@@ -68,48 +43,16 @@ const ImageUploadSuccess: React.FC<Props> = ({
       >
         <p className="text-2xl font-semibold">Done! Ready to get feedback?</p>
       </div>
-      <div className="mb-4 flex flex-col gap-2">
-        <p>Send email invites:</p>
-        <InputGroup size="md">
-          <Input
-            placeholder="email1@gmail.com, email2@gmail.com, etc."
-            value={invitesInputText}
-            name="emailInvites"
-            focusBorderColor={"purple.500"}
-            borderColor={"purple.500"}
-            className={classNames("mb-4 pr-4", {
-              "text-white": mode === "dark",
-              "text-black": mode === "light",
-            })}
-            onChange={(e) => setInvitesInputText(e.target.value)}
-          />
-          <InputRightElement>
-            <button
-              className={classNames({
-                "cursor-pointer": invitesSendStatus === "idle",
-                "cursor-not-allowed":
-                  invitesSendStatus === "loading" ||
-                  invitesSendStatus === "done",
-              })}
-              onClick={handleSendInvites}
-            >
-              {["idle", "loading"].includes(invitesSendStatus) && (
-                <SendIcon
-                  className={classNames(
-                    "h-5 w-5 text-purple-500 hover:text-gray-500",
-                    {
-                      "animate-pulse": invitesSendStatus === "loading",
-                    }
-                  )}
-                />
-              )}
-              {invitesSendStatus === "done" && (
-                <SendCompleteIcon className="h-5 w-5 text-purple-500" />
-              )}
-            </button>
-          </InputRightElement>
-        </InputGroup>
-      </div>
+
+      <SendInvitesInput
+        imageId={imageId}
+        inputClassName={classNames({
+          "text-white": mode === "dark",
+          "text-black": mode === "light",
+        })}
+        wrapperClassName="mb-4"
+      />
+
       <div className="my-4 flex flex-col gap-2">
         <p
           className={classNames("text-center text-2xl", {

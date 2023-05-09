@@ -92,6 +92,7 @@ const ImageUploadModal = () => {
                   id: docRef.id,
                   imageURL: downloadURL,
                   uploadedBy: user?.name as string,
+                  uploadedByEmail: authUser?.email ?? "",
                   uploadedById: authUser?.uid,
                   timeStamp: Date.now(),
                   imageName: imageName as string,

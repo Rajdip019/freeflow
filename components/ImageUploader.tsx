@@ -82,6 +82,7 @@ const ImageUploader = () => {
                   id: docRef.id,
                   imageURL: downloadURL,
                   uploadedBy: user?.name as string,
+                  uploadedByEmail: email,
                   uploadedById: authUser?.uid,
                   timeStamp: Date.now(),
                   imageName: imageName as string,
@@ -167,6 +168,7 @@ const ImageUploader = () => {
                   uploadedBy: email
                     ? (email?.slice(0, email?.indexOf("@")) as string)
                     : "",
+                  uploadedByEmail: email,
                   timeStamp: Date.now(),
                   imageName: imageName as string,
                   lastUpdated: Date.now(),
