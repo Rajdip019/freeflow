@@ -10,6 +10,7 @@ import { useUserContext } from "@/contexts/UserContext";
 import { useImageContext } from "@/contexts/ImagesContext";
 import ImageUploadSuccess from "./ImageUploadSuccess";
 import { validateEmail } from "@/helpers/validators";
+import { newReviewImageEvent } from "@/lib/events";
 
 const ImageUploader = () => {
   const [imageName, setImageName] = useState<string>();
@@ -103,6 +104,7 @@ const ImageUploader = () => {
                   isClosable: true,
                   position: "bottom-right",
                 });
+                newReviewImageEvent(data);
                 setUploadingState("success");
                 setUploadedImageId(docRef.id);
                 getImages();
@@ -185,6 +187,7 @@ const ImageUploader = () => {
                   isClosable: true,
                   position: "bottom-right",
                 });
+                newReviewImageEvent(data);
                 setUploadingState("success");
                 setUploadedImageId(docRef.id);
               }
