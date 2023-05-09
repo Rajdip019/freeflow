@@ -502,7 +502,7 @@ const ReviewImage = () => {
                               <img
                                 src={imageData?.imageURL}
                                 ref={imageRef}
-                                className=" max-h-[85vh] rounded-lg"
+                                className=" max-h-[85vh]"
                                 onClick={handleClick}
                                 onLoad={handleImage}
                               />
