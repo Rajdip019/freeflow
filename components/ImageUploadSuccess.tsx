@@ -41,7 +41,9 @@ const ImageUploadSuccess: React.FC<Props> = ({
           mode === "dark" ? "text-white" : "text-black"
         } `}
       >
-        <p className="text-2xl font-semibold">Done! Ready to get feedback?</p>
+        <p className="text-2xl font-semibold">
+          Done! Share the link to let anyone leave feedback
+        </p>
       </div>
 
       <SendInvitesInput
