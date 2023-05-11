@@ -65,8 +65,14 @@ const Design = () => {
                         target="_blank"
                         rel="noreferrer"
                         href={`/review-image/${image.id}`}
+                        className=" flex items-center gap-4"
                       >
-                        <p className="group flex items-center gap-2 hover:underline">
+                        <img
+                          src={image.imageURL}
+                          alt=""
+                          className=" aspect-square w-10 rounded bg-purple-900 object-contain p-1 "
+                        />
+                        <p className="group flex items-center gap-2 truncate hover:underline">
                           {image.imageName}{" "}
                           <svg
                             fill="none"

@@ -64,14 +64,14 @@ const ReviewImage = () => {
 
   const handleClick = (event: React.MouseEvent<HTMLImageElement>) => {
     const { left, top } = commentRef.current!.getBoundingClientRect();
-    const x = event.clientX - left - 12;
-    const y = event.clientY - top - 12;
+    const x = event.clientX - left;
+    const y = event.clientY - top;
     setNewThread((prev: any) => {
       return {
         ...prev,
         pos: { top: y, left: x },
         comment: { value: "" },
-        color: "gray-900",
+        color: "purple-500",
         isHidden: false,
       };
     });
@@ -344,7 +344,7 @@ const ReviewImage = () => {
                                   <div className=" hidden text-green-500"></div>
                                   <div className=" hidden text-blue-500"></div>
                                   <div
-                                    className={`h-7 w-7 rounded-r-full rounded-t-full bg-${newThread.color} ring ring-white`}
+                                    className={`h-7 w-7 rounded-r-full rounded-t-full bg-${newThread.color} border border-white`}
                                   ></div>
                                   <div
                                     className={` absolute w-72 rounded bg-gray-800 p-2 text-white ${
@@ -420,7 +420,7 @@ const ReviewImage = () => {
                                               };
                                             });
                                           }}
-                                          className="h-5 w-5 cursor-pointer rounded-full bg-gray-900 ring-2 active:ring-4"
+                                          className="h-5 w-5 cursor-pointer rounded-full bg-gray-900 ring-1 active:ring-4"
                                         ></div>
                                         <div
                                           onClick={() => {
@@ -432,6 +432,17 @@ const ReviewImage = () => {
                                             });
                                           }}
                                           className="h-5 w-5 cursor-pointer rounded-full bg-white ring-2 active:ring-4"
+                                        ></div>
+                                        <div
+                                          onClick={() => {
+                                            setNewThread((prev) => {
+                                              return {
+                                                ...prev,
+                                                color: "purple-500",
+                                              };
+                                            });
+                                          }}
+                                          className="h-5 w-5 cursor-pointer rounded-full bg-purple-500 ring-1 active:ring-4"
                                         ></div>
                                         <div
                                           onClick={() => {
@@ -497,7 +508,7 @@ const ReviewImage = () => {
                           >
                             <div
                               onClick={handleClick}
-                              className="cursor-crosshair"
+                              className="cursor-[url(/cursor/cursor.svg),_pointer] transition-all"
                             >
                               <img
                                 src={imageData?.imageURL}
