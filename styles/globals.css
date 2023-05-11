@@ -20,6 +20,10 @@ body {
   }
 }
 
+/* .custom-cur {
+  cursor: url('/cursor/cursor.svg');
+} */
+
 .linkify__text {
   text-decoration: underline;
   color: rgb(4, 165, 239);
