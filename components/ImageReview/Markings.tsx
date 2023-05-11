@@ -48,7 +48,7 @@ const Markings: React.FC<Props> = ({
             thread.color
           } ${
             highlightedComment.id === thread.id
-              ? "scale-125 ring-4 ring-white transition-all"
+              ? "scale-125 ring-2 ring-white transition-all"
               : ""
           } `}
         ></div>
