@@ -1,5 +1,6 @@
 import { useClipboard, Box } from "@chakra-ui/react";
 import { useState } from "react";
+import PublicAndPrivate from "./ImageReview/PublicAndPrivate";
 
 interface Props {
   align?: "right" | "left";
@@ -7,7 +8,7 @@ interface Props {
 }
 
 const PasswordCopy = ({ align = "left", value }: Props) => {
-  const { onCopy, hasCopied } = useClipboard(value);
+  // const { onCopy, hasCopied } = useClipboard(value);
   const [isShown, setIsShown] = useState<boolean>(false);
 
   return (
@@ -53,7 +54,7 @@ const PasswordCopy = ({ align = "left", value }: Props) => {
           </svg>
         </>
       )}
-      {hasCopied ? (
+      {/* {hasCopied ? (
         <svg
           fill="currentColor"
           className="w-5 text-gray-400"
@@ -94,7 +95,7 @@ const PasswordCopy = ({ align = "left", value }: Props) => {
             d="M3 9.375C3 8.339 3.84 7.5 4.875 7.5h9.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 013 20.625V9.375zM6 12a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V12zm2.25 0a.75.75 0 01.75-.75h3.75a.75.75 0 010 1.5H9a.75.75 0 01-.75-.75zM6 15a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V15zm2.25 0a.75.75 0 01.75-.75h3.75a.75.75 0 010 1.5H9a.75.75 0 01-.75-.75zM6 18a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V18zm2.25 0a.75.75 0 01.75-.75h3.75a.75.75 0 010 1.5H9a.75.75 0 01-.75-.75z"
           />
         </svg>
-      )}
+      )} */}
     </Box>
   );
 };

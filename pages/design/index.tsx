@@ -22,6 +22,8 @@ import Head from "next/head";
 import PasswordCopy from "@/components/PasswordCopy";
 import SendInvitesIconModal from "@/components/ImageReview/SendInvitesIconModal";
 import { orderBy } from "lodash-es";
+import Copy from "@/components/shared/Copy";
+import PublicAndPrivate from "@/components/ImageReview/PublicAndPrivate";
 
 const Design = () => {
   const { images } = useImageContext();
@@ -70,7 +72,7 @@ const Design = () => {
                         <img
                           src={image.imageURL}
                           alt=""
-                          className=" aspect-square w-10 rounded bg-purple-900 object-contain p-1 "
+                          className=" aspect-square w-8 rounded object-cover "
                         />
                         <p className="group flex items-center gap-2 truncate hover:underline">
                           {image.imageName}{" "}
@@ -93,14 +95,9 @@ const Design = () => {
                       </Link>
                     </Td>
                     <Td isNumeric>
-                      {image.private?.password ? (
-                        <PasswordCopy
-                          align="right"
-                          value={image.private.password}
-                        />
-                      ) : (
-                        <p className="text-gray-400">Public</p>
-                      )}
+                      <div className=" flex justify-end">
+                        <PublicAndPrivate image={image} isText={true} />
+                      </div>
                     </Td>
                     <Td isNumeric>{image.views}</Td>
                     <Td isNumeric>
@@ -111,27 +108,7 @@ const Design = () => {
                     <Td isNumeric>
                       <div className="flex gap-2">
                         <ImageDeleteModalConfirmation image={image} />
-                        <Tooltip label={tooltipText}>
-                          <div onClick={handleClick}>
-                            <CopyToClipboard
-                              text={`${APP_URL}/review-image/${image.id}`}
-                            >
-                              <svg
-                                className="w-5 cursor-pointer text-gray-400 hover:text-white"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                                aria-hidden="true"
-                              >
-                                <path
-                                  clipRule="evenodd"
-                                  fillRule="evenodd"
-                                  d="M19.902 4.098a3.75 3.75 0 00-5.304 0l-4.5 4.5a3.75 3.75 0 001.035 6.037.75.75 0 01-.646 1.353 5.25 5.25 0 01-1.449-8.45l4.5-4.5a5.25 5.25 0 117.424 7.424l-1.757 1.757a.75.75 0 11-1.06-1.06l1.757-1.757a3.75 3.75 0 000-5.304zm-7.389 4.267a.75.75 0 011-.353 5.25 5.25 0 011.449 8.45l-4.5 4.5a5.25 5.25 0 11-7.424-7.424l1.757-1.757a.75.75 0 111.06 1.06l-1.757 1.757a3.75 3.75 0 105.304 5.304l4.5-4.5a3.75 3.75 0 00-1.035-6.037.75.75 0 01-.354-1z"
-                                />
-                              </svg>
-                            </CopyToClipboard>
-                          </div>
-                        </Tooltip>
+                        <Copy value={`${APP_URL}/review-image/${image.id}`} />
                         <SendInvitesIconModal image={image} />
                       </div>
                     </Td>
