@@ -10,16 +10,13 @@ import {
   Td,
   Th,
   Thead,
-  Tooltip,
   Tr,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
 import Moment from "react-moment";
-import CopyToClipboard from "react-copy-to-clipboard";
 import { APP_URL } from "@/helpers/constants";
 import Head from "next/head";
-import PasswordCopy from "@/components/PasswordCopy";
 import SendInvitesIconModal from "@/components/ImageReview/SendInvitesIconModal";
 import { orderBy } from "lodash-es";
 import Copy from "@/components/shared/Copy";
@@ -27,16 +24,6 @@ import PublicAndPrivate from "@/components/ImageReview/PublicAndPrivate";
 
 const Design = () => {
   const { images } = useImageContext();
-
-  const [tooltipText, setTooltipText] = useState<string>("Copy");
-
-  const handleClick = () => {
-    setTooltipText("Copied");
-
-    setTimeout(() => {
-      setTooltipText("Copy");
-    }, 5000);
-  };
 
   return (
     <DashboardLayout>
