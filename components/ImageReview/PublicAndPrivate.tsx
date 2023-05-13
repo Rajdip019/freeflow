@@ -8,7 +8,6 @@ import {
   PopoverContent,
   PopoverArrow,
   PopoverCloseButton,
-  PopoverHeader,
   PopoverBody,
   useToast,
   Spinner,
@@ -23,7 +22,9 @@ interface Props {
 }
 
 const PublicAndPrivate: React.FC<Props> = ({ image, isText = false }) => {
-  const [password, setPassword] = React.useState<string>("");
+  const [password, setPassword] = React.useState<string>(
+    image.private?.password ? image.private.password : ""
+  );
   const [isPrivate, setIsPrivate] = React.useState<boolean>(
     image?.isPrivate ? true : false
   );
@@ -78,10 +79,16 @@ const PublicAndPrivate: React.FC<Props> = ({ image, isText = false }) => {
 
   return (
     <Popover>
+      <div className=" mr-2">
+        {isPrivate ? (
+          <>{isText && <PasswordCopy value={password} />} </>
+        ) : (
+          <>{isText && <p className="text-gray-400">Public</p>}</>
+        )}
+      </div>
       <PopoverTrigger>
         {isPrivate ? (
           <div className=" flex items-center gap-2">
-            {isText && <PasswordCopy value={""} />}
             <svg
               className=" w-5 cursor-pointer text-gray-400 transition-all hover:text-gray-50"
               fill="currentColor"
@@ -98,7 +105,6 @@ const PublicAndPrivate: React.FC<Props> = ({ image, isText = false }) => {
           </div>
         ) : (
           <div className=" flex items-center gap-2">
-            {isText && <p className="text-gray-400">Public</p>}
             <svg
               className=" w-5 cursor-pointer text-gray-400 transition-all hover:text-gray-50"
               fill="currentColor"
