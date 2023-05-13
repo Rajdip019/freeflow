@@ -1,7 +1,10 @@
 import AddEmailAndPassword from "@/components/ImageReview/AddEmailAndPassword";
 import Markings from "@/components/ImageReview/Markings";
+import ReviewImageToolbarAdmin from "@/components/ImageReview/ReviewImageToolbarAdmin";
+import ReviewImageToolbar from "@/components/ImageReview/ReviewToolbar";
 import SidebarComments from "@/components/ImageReview/SidebarComments";
 import ThreadsExpanded from "@/components/ImageReview/ThreadsExpanded";
+import Navbar from "@/components/LandingPage/Navbar";
 import ReviewImageMobile from "@/components/MobileView/ReviewImageMobile";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserContext } from "@/contexts/UserContext";
@@ -13,14 +16,7 @@ import { IImageDimension } from "@/interfaces/Image";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { IThread, INewThread } from "@/interfaces/Thread";
 import { db } from "@/lib/firebaseConfig";
-import {
-  Avatar,
-  Spinner,
-  Switch,
-  Textarea,
-  Tooltip,
-  useToast,
-} from "@chakra-ui/react";
+import { Avatar, Spinner, Textarea, Tooltip, useToast } from "@chakra-ui/react";
 import {
   addDoc,
   collection,
@@ -34,7 +30,6 @@ import {
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
-import Moment from "react-moment";
 
 const ReviewImage = () => {
   const router = useRouter();
@@ -44,7 +39,7 @@ const ReviewImage = () => {
   const [threads, setThreads] = useState<IThread[]>([]);
   const [isNewThreadAddLoading, setIsNewThreadAddLoading] =
     useState<boolean>(false);
-  const [isCommentsOn, setIsCommentsOn] = useState<number>(1);
+  const [isCommentsOn, setIsCommentsOn] = useState<boolean>(true);
   const [highlightedComment, setHighlightedComment] = useState<IThread>(
     defaultHighlightedThread
   );
@@ -58,6 +53,7 @@ const ReviewImage = () => {
   const [isThreadsLoading, setIsThreadsLoading] = useState<boolean>(false);
   const [uname, setUname] = useState<string | undefined>("");
   const [isUnameValid, setIsUnameValid] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   const { authUser } = useAuth();
   const { user } = useUserContext();
@@ -224,6 +220,7 @@ const ReviewImage = () => {
   useEffect(() => {
     if (authUser) {
       if (authUser.uid === imageData?.uploadedById) {
+        setIsAdmin(true);
         setIsUnameValid(true);
       }
     }
@@ -236,14 +233,23 @@ const ReviewImage = () => {
           <Head>
             <title>FreeFlow | Invalid Link</title>
           </Head>
-          <div className=" flex h-[80vh] w-screen flex-col items-center justify-center bg-gray-900 text-4xl">
-            <p>Invalid URL</p>
-            <button
-              onClick={() => router.push("/")}
-              className=" btn-p mt-5 py-2"
-            >
-              Go back
-            </button>
+          <div className="flex h-screen flex-col bg-gray-900 ">
+            <Navbar />
+            <div className="flex flex-col items-center justify-center">
+              <p className=" mt-40 text-4xl text-white">Invalid URL</p>
+              <button
+                onClick={() => {
+                  if (user) {
+                    router.push("/dashboard");
+                  } else {
+                    router.push("/");
+                  }
+                }}
+                className=" btn-p mt-5 w-fit py-2 text-xl"
+              >
+                Go back
+              </button>
+            </div>
           </div>
         </>
       ) : (
@@ -259,47 +265,42 @@ const ReviewImage = () => {
                 <ReviewImageMobile imageData={imageData as IReviewImageData} />
               </div>
               <div className="hidden h-screen w-full flex-col bg-gray-900 text-white md:flex">
+                <div className=" flex items-center justify-between bg-gray-800 px-5 py-3">
+                  <div
+                    className=" flex cursor-pointer gap-2"
+                    onClick={() => router.push("/")}
+                  >
+                    <img src="/freeflow.png" alt="" className=" w-32" />
+                  </div>
+                  <p className=" flex items-center justify-center gap-2 font-semibold">
+                    {imageData?.imageName}{" "}
+                    <Tooltip label="Coming Soon...">
+                      <p className=" cursor-not-allowed text-xs text-purple-400">
+                        Versions
+                      </p>
+                    </Tooltip>
+                  </p>
+                  {isAdmin ? (
+                    <ReviewImageToolbarAdmin
+                      imageData={imageData as IReviewImageData}
+                      isCommentsOn={isCommentsOn}
+                      setIsCommentsOn={setIsCommentsOn}
+                    />
+                  ) : (
+                    <ReviewImageToolbar
+                      imageData={imageData as IReviewImageData}
+                      isCommentsOn={isCommentsOn}
+                      setIsCommentsOn={setIsCommentsOn}
+                    />
+                  )}
+                </div>
                 <div className=" flex h-screen w-full">
                   <div></div>
                   <div className=" w-9/12">
-                    <div className=" flex h-[8vh] items-center justify-between bg-gray-800 px-5">
-                      <div
-                        className=" flex cursor-pointer gap-2"
-                        onClick={() => router.push("/")}
-                      >
-                        <img src="/freeflow.png" alt="" className=" w-32" />
-                      </div>
-                      <p className=" font-semibold">
-                        Click on the image anywhere to start commenting
-                      </p>
-                      <div className=" flex items-center gap-2">
-                        <p className=" font-semibold">Show Comments</p>
-                        <Switch
-                          color="purple.500"
-                          colorScheme="purple"
-                          defaultChecked
-                          value={isCommentsOn}
-                          onChange={() => {
-                            isCommentsOn === 1
-                              ? setIsCommentsOn(0)
-                              : setIsCommentsOn(1);
-                          }}
-                        />
-                        {user && (
-                          <Tooltip label={user.email}>
-                            <Avatar
-                              className=" ml-5 w-8 ring-2 ring-purple-500"
-                              src={user?.imageURL as string}
-                              name={user?.name}
-                            />
-                          </Tooltip>
-                        )}
-                      </div>
-                    </div>
                     <div className="flex h-[92vh] items-center justify-center px-10 ">
                       <>
                         <div className=" relative">
-                          {isCommentsOn === 1 && (
+                          {isCommentsOn && (
                             <>
                               {threads.map((thread) => {
                                 return (
@@ -523,8 +524,8 @@ const ReviewImage = () => {
                       </>
                     </div>
                   </div>
-                  <div className=" h-screen w-3/12 bg-gray-800">
-                    <div className="flex h-[8vh] w-full flex-col items-center justify-center bg-purple-500">
+                  <div className=" h-[93.05vh] w-3/12 bg-gray-800">
+                    {/* <div className="flex h-[8vh] w-full flex-col items-center justify-center bg-purple-500">
                       <h2 className=" text-lg font-semibold">
                         {imageData?.imageName}
                       </h2>
@@ -536,8 +537,8 @@ const ReviewImage = () => {
                           {imageData?.timeStamp}
                         </Moment>
                       </div>
-                    </div>
-                    <div className=" h-[92vh] overflow-y-scroll">
+                    </div> */}
+                    <div className=" h-[93.05vh] overflow-y-scroll">
                       {isFocusedThread ? (
                         <ThreadsExpanded
                           setHighlightedComment={setHighlightedComment}
@@ -557,6 +558,14 @@ const ReviewImage = () => {
                             </div>
                           ) : (
                             <>
+                              <div className=" sticky top-0 flex gap-3 border-y border-black bg-gray-800 py-2 pl-2">
+                                <p className=" font-sec font-semibold">
+                                  Threads
+                                </p>
+                                <p className=" flex h-6 w-6 justify-center rounded-full bg-gray-600">
+                                  {threads.length}
+                                </p>
+                              </div>
                               {threads.length > 0 ? (
                                 <div>
                                   {threads.map((thread, index) => {
@@ -587,13 +596,21 @@ const ReviewImage = () => {
                                   })}
                                 </div>
                               ) : (
-                                <div className="text-center">
-                                  <p className=" mt-4 font-semibold">
-                                    No reviews on this image !
-                                  </p>
-                                  <p className=" mt-1">
-                                    Add first to add a review.
-                                  </p>
+                                <div className="mt-32 flex flex-col justify-center">
+                                  <div className="p-4 text-center">
+                                    <img src="/no-comments.png" alt="" />
+                                    <p className=" font-sec">No Comments yet</p>
+                                    <div className="my-10 h-0.5 w-full bg-gray-700"></div>
+                                    <img
+                                      src="/no-comments-left-arrow.png"
+                                      alt=""
+                                      className="p-10"
+                                    />
+                                    <p className=" font-sec text-gray-500">
+                                      Click anywhere on the image to add a
+                                      thread
+                                    </p>
+                                  </div>
                                 </div>
                               )}
                             </>
