@@ -9,6 +9,7 @@ import {
   orderBy,
   query,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import {
@@ -22,6 +23,8 @@ import {
 import { useAuth } from "./AuthContext";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { useToast } from "@chakra-ui/react";
+import { useUserContext } from "./UserContext";
+import { useRouter } from "next/router";
 
 interface Props {
   children: JSX.Element[] | JSX.Element;
@@ -56,6 +59,8 @@ export const ImageContextProvider = ({ children }: Props) => {
   const [storage, setStorage] = useState<number>(defaultValues.storage);
   const { authUser } = useAuth();
   const toast = useToast();
+  const { user } = useUserContext();
+  const router = useRouter();
 
   const getImages = async () => {
     if (authUser) {
@@ -110,6 +115,11 @@ export const ImageContextProvider = ({ children }: Props) => {
       position: "bottom-right",
     });
     getImages();
+    if (user && router.pathname !== "/design") {
+      router.push("/design");
+    } else {
+      router.push("/");
+    }
   };
 
   useEffect(() => {

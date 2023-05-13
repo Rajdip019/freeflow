@@ -1,4 +1,5 @@
 import { IThread } from "@/interfaces/Thread";
+import { Avatar } from "@chakra-ui/react";
 import React from "react";
 import Moment from "react-moment";
 interface Props {
@@ -13,20 +14,26 @@ const SidebarComments: React.FC<Props> = ({
   setIsFocusedThread,
 }) => {
   return (
-    <div className="my-1.5 flex bg-gray-700 transition-all hover:bg-gray-600">
+    <div className="flex border-b border-black">
       <div className={`w-1 bg-${thread.color}`}></div>
       <div className="p-2">
-        <span className=" font-semibold">{thread.name}</span>
-        <Moment fromNow className="ml-2">
-          {thread.timeStamp}
-        </Moment>
-        <p>{thread.initialComment}</p>
+        <div className=" flex items-center">
+          <Avatar size="sm" name={thread.name} className="mr-2" />
+          <span className=" font-sec font-semibold">{thread.name}</span>
+          <Moment
+            fromNow
+            className="font-sec ml-2 text-sm font-semibold text-gray-400"
+          >
+            {thread.timeStamp}
+          </Moment>
+        </div>
+        <p className=" font-sec mt-2 text-sm">{thread.initialComment}</p>
         <button
           onClick={() => {
             setHighlightedComment(thread);
             setIsFocusedThread(true);
           }}
-          className=" mt-1 font-semibold"
+          className=" font-sec mt-1 text-sm text-gray-400 hover:text-gray-200"
         >
           Reply
         </button>
