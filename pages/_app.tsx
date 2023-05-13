@@ -7,7 +7,6 @@ import { UserContextProvider } from "@/contexts/UserContext";
 import { ImageContextProvider } from "@/contexts/ImagesContext";
 import Script from "next/script";
 import { IS_PRODUCTION } from "@/helpers/constants";
-``;
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

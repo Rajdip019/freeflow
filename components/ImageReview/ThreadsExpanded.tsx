@@ -1,7 +1,7 @@
 import { defaultHighlightedThread } from "@/helpers/constants";
 import { IThread } from "@/interfaces/Thread";
 import { db } from "@/lib/firebaseConfig";
-import { Spinner, Textarea, useToast } from "@chakra-ui/react";
+import { Avatar, Spinner, Textarea, useToast } from "@chakra-ui/react";
 import {
   getDocs,
   query,
@@ -131,7 +131,7 @@ const ThreadsExpanded: React.FC<Props> = ({
   return (
     <div className=" flex h-[91vh] flex-col justify-between">
       <div>
-        <div className=" sticky top-0 flex w-full items-center justify-between border-b border-gray-600 bg-[#581C87] px-2 py-2 text-lg  font-semibold">
+        <div className=" sticky top-0 flex w-full items-center border-y border-black px-2 py-2 text-lg  font-semibold">
           <button
             onClick={() => {
               setIsFocusedThread(false);
@@ -139,31 +139,47 @@ const ThreadsExpanded: React.FC<Props> = ({
             }}
           >
             <svg
-              fill="none"
               className=" mr-3 w-5"
-              stroke="currentColor"
-              strokeWidth={1.5}
+              fill="currentColor"
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
             >
               <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19.5 12h-15m0 0l6.75 6.75M4.5 12l6.75-6.75"
+                clipRule="evenodd"
+                fillRule="evenodd"
+                d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z"
               />
             </svg>
           </button>
-          <p> {comments.length} Comments</p>
+          <p className=" font-sec">Comments</p>
+          <p className=" ml-2 flex h-6 w-6 items-center justify-center rounded-full bg-gray-600">
+            {comments.length}
+          </p>
         </div>
-        <div className="mb-1.5 flex bg-gray-700">
+        <div className="flex border-b border-black">
           <div className={`w-1 bg-${highlightedComment.color}`}></div>
           <div className="p-2">
-            <span className=" font-semibold">{highlightedComment.name}</span>
-            <Moment fromNow className="ml-2">
-              {highlightedComment.timeStamp}
-            </Moment>
-            <p>{highlightedComment.initialComment}</p>
+            <div className={`w-1 bg-${highlightedComment.color}`}></div>
+            <div className=" flex items-center">
+              <Avatar
+                size="sm"
+                name={highlightedComment.name}
+                className="mr-2"
+              />
+              <span className=" font-sec font-semibold">
+                {highlightedComment.name}
+              </span>
+              <Moment
+                fromNow
+                className="font-sec ml-2 text-sm font-semibold text-gray-400"
+              >
+                {highlightedComment.timeStamp}
+              </Moment>
+            </div>
+            <p className=" font-sec mt-2 text-sm">
+              {highlightedComment.initialComment}
+            </p>
           </div>
         </div>
         {isCommentsLoading ? (
@@ -180,18 +196,28 @@ const ThreadsExpanded: React.FC<Props> = ({
                 {comments.map((comment, index: number) => {
                   return (
                     <div
-                      className=" flex border-b border-gray-600 bg-gray-700"
+                      className=" flex border-b border-black pl-2"
                       key={comment.timeStamp}
                     >
-                      <div className="p-2 pl-5">
-                        <span className=" font-semibold">{comment.name}</span>
-                        <Moment fromNow className="ml-2">
-                          {comment.timeStamp}
-                        </Moment>
-                        <p>
-                          <Linkify componentDecorator={componentDecorator}>
-                            {comment.comment}
-                          </Linkify>
+                      <div className="p-2">
+                        <div className=" flex items-center">
+                          <Avatar
+                            size="sm"
+                            name={highlightedComment.name}
+                            className="mr-2"
+                          />
+                          <span className=" font-sec font-semibold">
+                            {highlightedComment.name}
+                          </span>
+                          <Moment
+                            fromNow
+                            className="font-sec ml-2 text-sm font-semibold text-gray-400"
+                          >
+                            {highlightedComment.timeStamp}
+                          </Moment>
+                        </div>
+                        <p className=" font-sec mt-2 text-sm">
+                          {highlightedComment.initialComment}
                         </p>
                       </div>
                     </div>
@@ -199,17 +225,26 @@ const ThreadsExpanded: React.FC<Props> = ({
                 })}
               </>
             ) : (
-              <div className="text-center">
-                <p className=" mt-4 font-semibold">
-                  No comments in this thread !
-                </p>
-                <p className=" mt-1">Add first comment to this thread.</p>
+              <div className="mt-20 flex flex-col justify-center">
+                <div className="p-4 text-center">
+                  <img src="/no-comments.png" alt="" />
+                  <p className=" font-sec">No Comments yet</p>
+                  <div className="my-10 h-0.5 w-full bg-gray-700"></div>
+                  <img
+                    src="/no-comments-left-arrow.png"
+                    alt=""
+                    className="p-10"
+                  />
+                  <p className=" font-sec text-gray-500">
+                    Type anything on the box below to add a comment.
+                  </p>
+                </div>
               </div>
             )}
           </>
         )}
       </div>
-      <div className=" sticky bottom-0 flex items-end gap-1 bg-gray-800 px-2 py-3">
+      <div className=" sticky bottom-0 flex items-end gap-1 bg-gray-800 px-2 pt-3">
         <Textarea
           className="h-5"
           size="sm"

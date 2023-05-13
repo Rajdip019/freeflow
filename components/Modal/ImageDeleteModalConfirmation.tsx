@@ -4,7 +4,6 @@ import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
   ModalCloseButton,
   ModalBody,
   useDisclosure,
@@ -22,47 +21,60 @@ const ImageDeleteModalConfirmation: React.FC<Props> = ({ image }) => {
 
   return (
     <div>
-      <Tooltip label="Delete image">
+      <Tooltip label="Delete">
         <button onClick={onOpen}>
           <svg
-            fill="currentColor"
-            className=" w-5 cursor-pointer text-gray-400 hover:text-white"
+            className="mt-1 w-5 cursor-pointer text-gray-400 hover:text-white"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.5}
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
             aria-hidden="true"
           >
             <path
-              clipRule="evenodd"
-              fillRule="evenodd"
-              d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
             />
           </svg>
         </button>
       </Tooltip>
 
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered size={"xl"}>
         <ModalOverlay />
-        <ModalContent bgColor={"gray.800"} color={"white"}>
-          <ModalHeader>Delete Design</ModalHeader>
+        <ModalContent bgColor={"#475569"} color={"white"}>
           <ModalCloseButton />
           <ModalBody></ModalBody>
           <div className="flex flex-col items-center justify-center pb-8">
-            <h4 className=" mb-10 text-center text-xl text-white">
+            <h4 className=" font-sec mb-6 mt-8 text-center text-xl text-white">
               Are you sure tou want to delete <br />{" "}
               <span className=" font-semibold">{image.imageName} </span>?
             </h4>
+            <div className=" mb-6 flex w-10/12 justify-center">
+              <div className=" w-1 bg-red-500"></div>
+              <div className="font-sec bg-[#FECDD3] px-3 py-2">
+                <p className="font-bold text-red-700">Warning</p>
+                <p className=" text-black">
+                  By deleting this file you will also delete any feedback on it{" "}
+                </p>
+              </div>
+            </div>
             <div className=" flex gap-3">
+              <button
+                className="rounded-full bg-[#334155] px-6 font-bold"
+                onClick={onClose}
+              >
+                Cancel
+              </button>
               <button
                 onClick={async () => {
                   await deleteImage(image);
                   onClose();
                 }}
-                className=" rounded-full bg-red-500 px-8 py-2 text-white transition-all hover:bg-red-600"
+                className=" font-sec rounded-full bg-red-500 px-6 py-2 font-bold text-white transition-all hover:bg-red-600"
               >
-                Delete
-              </button>
-              <button className=" btn-p py-2" onClick={onClose}>
-                Cancel
+                Delete it
               </button>
             </div>
           </div>
