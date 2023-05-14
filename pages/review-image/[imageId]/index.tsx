@@ -16,7 +16,7 @@ import { IImageDimension } from "@/interfaces/Image";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { IThread, INewThread } from "@/interfaces/Thread";
 import { db } from "@/lib/firebaseConfig";
-import { Avatar, Spinner, Textarea, Tooltip, useToast } from "@chakra-ui/react";
+import { Spinner, Textarea, Tooltip, useToast } from "@chakra-ui/react";
 import {
   addDoc,
   collection,
@@ -264,10 +264,10 @@ const ReviewImage = () => {
               <div className=" md:hidden">
                 <ReviewImageMobile imageData={imageData as IReviewImageData} />
               </div>
-              <div className="hidden h-screen w-full flex-col bg-gray-900 text-white md:flex">
-                <div className=" flex items-center justify-between bg-gray-800 px-5 py-3">
+              <div className="hidden h-screen overflow-hidden bg-gray-900 text-white md:block">
+                <div className="flex h-16 items-center justify-between bg-gray-800 px-5">
                   <div
-                    className=" flex cursor-pointer gap-2"
+                    className="flex cursor-pointer gap-2"
                     onClick={() => router.push("/")}
                   >
                     <img src="/freeflow.png" alt="" className=" w-32" />
@@ -294,10 +294,9 @@ const ReviewImage = () => {
                     />
                   )}
                 </div>
-                <div className=" flex h-screen w-full">
-                  <div></div>
-                  <div className=" w-9/12">
-                    <div className="flex h-[92vh] items-center justify-center px-10 ">
+                <div className=" flex h-[calc(100vh-4rem)]">
+                  <div className="w-9/12">
+                    <div className="flex h-[calc(100vh-4rem)] items-center justify-center px-10 ">
                       <>
                         <div className=" relative">
                           {isCommentsOn && (
@@ -524,21 +523,8 @@ const ReviewImage = () => {
                       </>
                     </div>
                   </div>
-                  <div className=" h-[93.05vh] w-3/12 bg-gray-800">
-                    {/* <div className="flex h-[8vh] w-full flex-col items-center justify-center bg-purple-500">
-                      <h2 className=" text-lg font-semibold">
-                        {imageData?.imageName}
-                      </h2>
-                      <div className=" flex flex-col flex-wrap items-center justify-center">
-                        <p className=" text-sm">
-                          Uploaded by {imageData?.uploadedBy}
-                        </p>
-                        <Moment fromNow className="text-xs">
-                          {imageData?.timeStamp}
-                        </Moment>
-                      </div>
-                    </div> */}
-                    <div className=" h-[93.05vh] overflow-y-scroll">
+                  <div className=" h-[calc(100vh-4rem)] w-3/12 bg-gray-800">
+                    <div className=" h-[calc(100vh-4rem)] overflow-y-scroll">
                       {isFocusedThread ? (
                         <ThreadsExpanded
                           setHighlightedComment={setHighlightedComment}
