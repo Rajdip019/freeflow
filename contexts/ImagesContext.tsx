@@ -5,11 +5,8 @@ import {
   deleteDoc,
   doc,
   getDoc,
-  getDocs,
-  orderBy,
+  onSnapshot,
   query,
-  setDoc,
-  updateDoc,
   where,
 } from "firebase/firestore";
 import {
@@ -19,6 +16,7 @@ import {
   useEffect,
   Dispatch,
   SetStateAction,
+  useCallback,
 } from "react";
 import { useAuth } from "./AuthContext";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
@@ -36,6 +34,7 @@ interface IDefaultValues {
   storage: number;
   getImages: () => any;
   deleteImage: (image: IReviewImageData) => any;
+  getPassword: (image: IReviewImageData) => any;
 }
 
 const defaultValues: IDefaultValues = {
@@ -44,6 +43,7 @@ const defaultValues: IDefaultValues = {
   storage: 0,
   getImages: () => {},
   deleteImage: () => {},
+  getPassword: () => {},
 };
 
 const imagesContext = createContext(defaultValues);
@@ -62,64 +62,77 @@ export const ImageContextProvider = ({ children }: Props) => {
   const { user } = useUserContext();
   const router = useRouter();
 
-  const getImages = async () => {
+  const getImages = useCallback(async () => {
     if (authUser) {
       const imagesRef = collection(db, "reviewImages");
       const q = query(imagesRef, where("uploadedById", "==", authUser?.uid));
-      const querySnapShot = await getDocs(q);
-      const promises = querySnapShot.docs.map(async (docSnap) => {
-        const data = docSnap.data() as IReviewImageData;
-        let imagePassword;
-        if (data.isPrivate) {
-          const passDocRef = doc(
-            db,
-            "reviewImages",
-            data.id,
-            "private",
-            "password"
-          );
-          const passDocSnap = await getDoc(passDocRef);
-          if (passDocSnap.exists()) {
-            imagePassword = passDocSnap.data().password;
-          }
+      const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+        const _images: IReviewImageData[] = [];
+        querySnapshot.forEach(async (docSnap) => {
+          const data = docSnap.data() as IReviewImageData;
+          const finalData = {
+            // @ts-expect-error //
+            id: doc.id,
+            // ...(imagePassword && { private: { password: imagePassword } }),
+            ...data,
+          } as IReviewImageData;
+          _images.push(finalData);
+        });
+        setImages(_images);
+        if (_images.length !== 0) {
+          const sum = _images.reduce((accumulator, object: any) => {
+            return accumulator + object.size;
+          }, 0);
+          const finalSum =
+            Math.round((Math.round(sum * 100) / 100 / 1024) * 100) / 100;
+          setStorage(finalSum);
         }
-        return {
-          // @ts-expect-error
-          id: doc.id,
-          ...(imagePassword && { private: { password: imagePassword } }),
-          ...data,
-        } as IReviewImageData;
       });
-      const _images: IReviewImageData[] = await Promise.all(promises);
-
-      setImages(_images);
-      if (_images.length !== 0) {
-        const sum = _images.reduce((accumulator, object: any) => {
-          return accumulator + object.size;
-        }, 0);
-        const finalSum =
-          Math.round((Math.round(sum * 100) / 100 / 1024) * 100) / 100;
-        setStorage(finalSum);
-      }
     }
-  };
+  }, [authUser]);
 
   const deleteImage = async (image: IReviewImageData) => {
     await deleteDoc(doc(db, "reviewImages", image.id as string));
     toast({
       title: "Design Deleted Successfully.",
-      description: "Please try again",
       status: "error",
       duration: 5000,
       isClosable: true,
       position: "bottom-right",
     });
-    getImages();
     if (user && router.pathname !== "/design") {
       router.push("/design");
+    } else if (router.pathname === "/design") {
+      console.log("🚀 > deleteImage > router.pathname", router.pathname);
     } else {
       router.push("/");
     }
+  };
+
+  const getPassword = async (image: IReviewImageData) => {
+    let imagePassword: any;
+    if (image.isPrivate) {
+      const passDocRef = doc(
+        db,
+        "reviewImages",
+        image.id,
+        "private",
+        "password"
+      );
+      const passDocSnap = await getDoc(passDocRef);
+      if (passDocSnap.exists()) {
+        imagePassword = await passDocSnap.data().password;
+      }
+    }
+    const newState = images.map((obj) => {
+      // 👇️ if id equals 2, update country property
+      if (obj.id === image.id) {
+        return { ...obj, private: { password: imagePassword } };
+      }
+      // 👇️ otherwise return the object as is
+      return obj;
+    });
+    setImages(newState);
   };
 
   useEffect(() => {
@@ -134,6 +147,7 @@ export const ImageContextProvider = ({ children }: Props) => {
     storage,
     getImages,
     deleteImage,
+    getPassword,
   };
 
   return (

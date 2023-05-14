@@ -63,22 +63,22 @@ const Design = () => {
                         />
                         <p className="group flex items-center gap-2 truncate hover:underline">
                           {image.imageName}{" "}
-                          <svg
-                            fill="none"
-                            className="w-4 cursor-pointer text-gray-400 group-hover:text-white"
-                            stroke="currentColor"
-                            strokeWidth={1.5}
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                            aria-hidden="true"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
-                            />
-                          </svg>
                         </p>
+                        <svg
+                          fill="none"
+                          className="relative z-40 w-4 cursor-pointer text-gray-400 group-hover:text-white"
+                          stroke="currentColor"
+                          strokeWidth={1.5}
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                          aria-hidden="true"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
+                          />
+                        </svg>
                       </Link>
                     </Td>
                     <Td isNumeric>
@@ -88,7 +88,7 @@ const Design = () => {
                     </Td>
                     <Td isNumeric>{image.views}</Td>
                     <Td isNumeric>
-                      <Moment className="text-gray-400" format="MMM Do YYYY">
+                      <Moment className="text-gray-400" format="MMM Do">
                         {image.timeStamp}
                       </Moment>
                     </Td>
