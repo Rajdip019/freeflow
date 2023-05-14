@@ -27,7 +27,7 @@ const ImageUploader = () => {
   const toast = useToast();
   const { authUser } = useAuth();
   const { user } = useUserContext();
-  const { getImages, storage: storageUsed } = useImageContext();
+  const { storage: storageUsed } = useImageContext();
 
   const handleFileUploaded = (file: File) => {
     setUploadedFile(file);
@@ -107,7 +107,6 @@ const ImageUploader = () => {
                 newReviewImageEvent(data);
                 setUploadingState("success");
                 setUploadedImageId(docRef.id);
-                getImages();
               }
             );
           } catch (error) {

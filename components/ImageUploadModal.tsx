@@ -37,7 +37,7 @@ const ImageUploadModal = () => {
   const toast = useToast();
   const { user } = useUserContext();
   const { authUser } = useAuth();
-  const { storage: storageUsed, getImages } = useImageContext();
+  const { storage: storageUsed } = useImageContext();
 
   const handleFileUploaded = (file: File) => {
     setUploadedFile(file);
@@ -123,7 +123,6 @@ const ImageUploadModal = () => {
                 newReviewImageEvent(data);
                 setUploadingState("success");
                 setUploadedImageId(docRef.id);
-                getImages();
               }
             );
           } catch (error) {

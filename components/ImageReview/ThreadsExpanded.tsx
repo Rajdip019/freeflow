@@ -3,13 +3,13 @@ import { IThread } from "@/interfaces/Thread";
 import { db } from "@/lib/firebaseConfig";
 import { Avatar, Spinner, Textarea, useToast } from "@chakra-ui/react";
 import {
-  getDocs,
   query,
   collection,
   orderBy,
   addDoc,
   updateDoc,
   doc,
+  onSnapshot,
 } from "firebase/firestore";
 import error from "next/error";
 import React, { useEffect, useRef, useState } from "react";
@@ -43,31 +43,33 @@ const ThreadsExpanded: React.FC<Props> = ({
 
   const toast = useToast();
   const { authUser } = useAuth();
-
   const getComments = async () => {
-    setIsCommentsLoading(true);
-    const _comments: unknown[] = [];
-    const querySnapshot = await getDocs(
-      query(
-        collection(
-          db,
-          `reviewImages/${imageId}/threads/${highlightedComment.id}/comments`
-        ),
-        orderBy("timeStamp", "asc")
-      )
+    const q = query(
+      collection(
+        db,
+        `reviewImages/${imageId}/threads/${highlightedComment.id}/comments`
+      ),
+      orderBy("timeStamp", "asc")
     );
-    querySnapshot.forEach((doc) => {
-      console.log(doc.id, " => ", doc.data());
-      _comments.push(doc.data());
+    onSnapshot(q, async (querySnapshot) => {
+      const _comments: unknown[] = [];
+      querySnapshot.forEach(async (docSnap) => {
+        const data = docSnap.data();
+        const finalData = {
+          ...data,
+        };
+        _comments.push(finalData);
+      });
+      setComments(
+        _comments as { name: string; comment: string; timeStamp: number }[]
+      );
     });
-    setComments(
-      _comments as { name: string; comment: string; timeStamp: number }[]
-    );
-    setIsCommentsLoading(false);
   };
 
   useEffect(() => {
+    setIsCommentsLoading(true);
     getComments();
+    setIsCommentsLoading(false);
   }, [highlightedComment]);
 
   useEffect(() => {
@@ -77,7 +79,6 @@ const ThreadsExpanded: React.FC<Props> = ({
   }, [textareaRef, highlightedComment]);
 
   const addNewComment = async () => {
-    setIsNewCommentLoading(true);
     try {
       const name = uname
         ? uname.slice(0, uname.indexOf("@"))
@@ -99,16 +100,7 @@ const ThreadsExpanded: React.FC<Props> = ({
         lastUpdated: Date.now(),
         newUpdate: "New Comment",
       });
-      toast({
-        title: "Comment added successfully",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-        position: "top-right",
-      });
       setNewComment("");
-      getComments();
-      setIsNewCommentLoading(false);
     } catch (e) {
       console.error("Error", error);
       toast({
@@ -116,9 +108,8 @@ const ThreadsExpanded: React.FC<Props> = ({
         status: "error",
         duration: 5000,
         isClosable: true,
-        position: "top-right",
+        position: "bottom-right",
       });
-      setIsCommentsLoading(false);
     }
   };
 
@@ -193,31 +184,33 @@ const ThreadsExpanded: React.FC<Props> = ({
           <>
             {comments.length > 0 ? (
               <>
-                {comments.map((comment, index: number) => {
+                {comments.map((comment) => {
                   return (
                     <div
-                      className=" flex border-b border-black pl-2"
+                      className=" flex flex-col border-b border-black pl-2"
                       key={comment.timeStamp}
                     >
                       <div className="p-2">
                         <div className=" flex items-center">
                           <Avatar
                             size="sm"
-                            name={highlightedComment.name}
+                            name={comment.name}
                             className="mr-2"
                           />
                           <span className=" font-sec font-semibold">
-                            {highlightedComment.name}
+                            {comment.name}
                           </span>
                           <Moment
                             fromNow
                             className="font-sec ml-2 text-sm font-semibold text-gray-400"
                           >
-                            {highlightedComment.timeStamp}
+                            {comment.timeStamp}
                           </Moment>
                         </div>
-                        <p className=" font-sec mt-2 text-sm">
-                          {highlightedComment.initialComment}
+                        <p className=" font-sec wrap mt-2 text-sm">
+                          <Linkify componentDecorator={componentDecorator}>
+                            {comment.comment}
+                          </Linkify>
                         </p>
                       </div>
                     </div>

@@ -18,11 +18,14 @@ import { IThread, INewThread } from "@/interfaces/Thread";
 import { db } from "@/lib/firebaseConfig";
 import { Spinner, Textarea, Tooltip, useToast } from "@chakra-ui/react";
 import {
+  DocumentData,
+  DocumentSnapshot,
   addDoc,
   collection,
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
   orderBy,
   query,
   updateDoc,
@@ -82,38 +85,36 @@ const ReviewImage = () => {
 
   // Get the details of the image
   const getImageDetails = async () => {
-    const docRef = doc(db, "reviewImages", imageId as string);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      setImageData(docSnap.data() as IReviewImageData);
-    } else {
-      setError(true);
-      console.log("No such document!");
-    }
+    onSnapshot(
+      doc(db, "reviewImages", imageId as string),
+      (docSnap: DocumentSnapshot<DocumentData>) => {
+        if (docSnap.exists()) {
+          setImageData(docSnap.data() as IReviewImageData);
+        } else {
+          setError(true);
+          console.log("No such document!");
+        }
+      }
+    );
   };
 
   // Get each thread on an image
   const getThreads = async () => {
-    setIsThreadsLoading(true);
-    const _comments: unknown[] = [];
-    const querySnapshot = await getDocs(
-      query(
-        collection(db, `reviewImages/${imageId}/threads`),
-        orderBy("timeStamp", "desc")
-      )
+    const q = query(
+      collection(db, `reviewImages/${imageId}/threads`),
+      orderBy("timeStamp", "desc")
     );
-    querySnapshot.forEach((doc) => {
-      console.log(doc.id, " => ", doc.data());
-      _comments.push({ ...doc.data(), id: doc.id });
+    onSnapshot(q, (querySnapshot) => {
+      const _comments: unknown[] = [];
+      querySnapshot.forEach((doc) => {
+        _comments.push({ ...doc.data(), id: doc.id });
+      });
+      setThreads(_comments as IThread[]);
     });
-    setThreads(_comments as IThread[]);
-    setIsThreadsLoading(false);
   };
 
   // Adds a new thread
   const addNewThread = async () => {
-    setIsNewThreadAddLoading(true);
     try {
       await addDoc(collection(db, `reviewImages/${imageId}/threads`), {
         top: newThread.pos.top,
@@ -135,14 +136,12 @@ const ReviewImage = () => {
         isClosable: true,
         position: "bottom-right",
       });
-      getThreads();
       setNewThread((prev: any) => {
         return {
           ...prev,
           isHidden: true,
         };
       });
-      setIsNewThreadAddLoading(false);
     } catch (e) {
       console.error("Error", error);
       toast({
@@ -152,7 +151,6 @@ const ReviewImage = () => {
         isClosable: true,
         position: "bottom-right",
       });
-      setIsNewThreadAddLoading(false);
     }
   };
 
