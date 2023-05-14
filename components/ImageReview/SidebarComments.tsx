@@ -2,17 +2,29 @@ import { IThread } from "@/interfaces/Thread";
 import { Avatar } from "@chakra-ui/react";
 import React from "react";
 import Moment from "react-moment";
+import Linkify from "react-linkify";
 interface Props {
   thread: IThread;
   setHighlightedComment: React.Dispatch<React.SetStateAction<IThread>>;
   setIsFocusedThread: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+const componentDecorator = (href: string, text: string, key: any) => (
+  <a className="linkify__text" href={href} key={key} target="_blank">
+    {text}
+  </a>
+);
 const SidebarComments: React.FC<Props> = ({
   thread,
   setHighlightedComment,
   setIsFocusedThread,
 }) => {
+  const componentDecorator = (href: string, text: string, key: any) => (
+    <a className="linkify__text" href={href} key={key} target="_blank">
+      {text}
+    </a>
+  );
+
   return (
     <div className="flex border-b border-black">
       <div className={`w-1 bg-${thread.color}`}></div>
@@ -27,7 +39,12 @@ const SidebarComments: React.FC<Props> = ({
             {thread.timeStamp}
           </Moment>
         </div>
-        <p className=" font-sec mt-2 text-sm">{thread.initialComment}</p>
+        <p className=" font-sec mt-2 text-sm">
+          {" "}
+          <Linkify componentDecorator={componentDecorator}>
+            {thread.initialComment}
+          </Linkify>
+        </p>
         <button
           onClick={() => {
             setHighlightedComment(thread);

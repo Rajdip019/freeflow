@@ -1,15 +1,17 @@
 import { Box } from "@chakra-ui/react";
 import { useState } from "react";
-import PublicAndPrivate from "./ImageReview/PublicAndPrivate";
+import { useImageContext } from "@/contexts/ImagesContext";
+import { IReviewImageData } from "@/interfaces/ReviewImageData";
 
 interface Props {
   align?: "right" | "left";
-  value: string;
+  image: IReviewImageData;
 }
 
-const PasswordCopy = ({ align = "left", value }: Props) => {
+const PasswordCopy = ({ align = "left", image }: Props) => {
   // const { onCopy, hasCopied } = useClipboard(value);
   const [isShown, setIsShown] = useState<boolean>(false);
+  const { getPassword } = useImageContext();
 
   return (
     <Box
@@ -20,7 +22,7 @@ const PasswordCopy = ({ align = "left", value }: Props) => {
     >
       {isShown ? (
         <>
-          <span>{value}</span>
+          <span>{image.private?.password}</span>
           <svg
             className="w-5 cursor-pointer text-gray-400"
             onClick={() => setIsShown(!isShown)}
@@ -40,7 +42,10 @@ const PasswordCopy = ({ align = "left", value }: Props) => {
           <svg
             fill="currentColor"
             className="w-5 cursor-pointer text-gray-400"
-            onClick={() => setIsShown(!isShown)}
+            onClick={async () => {
+              await getPassword(image);
+              setIsShown(!isShown);
+            }}
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
             aria-hidden="true"

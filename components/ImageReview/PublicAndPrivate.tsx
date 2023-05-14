@@ -4,7 +4,6 @@ import {
   Input,
   Popover,
   PopoverTrigger,
-  Button,
   PopoverContent,
   PopoverArrow,
   PopoverCloseButton,
@@ -25,11 +24,10 @@ const PublicAndPrivate: React.FC<Props> = ({ image, isText = false }) => {
   const [password, setPassword] = React.useState<string>(
     image.private?.password ? image.private.password : ""
   );
-  const [isPrivate, setIsPrivate] = React.useState<boolean>(
-    image?.isPrivate ? true : false
-  );
+  // const [isPrivate, setIsPrivate] = React.useState<boolean>(
+  //   image?.isPrivate ? true : false
+  // );
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-
   const toast = useToast();
 
   const generatePassword = () => {
@@ -56,7 +54,7 @@ const PublicAndPrivate: React.FC<Props> = ({ image, isText = false }) => {
       isClosable: true,
       position: "bottom-right",
     });
-    setIsPrivate(true);
+    // setIsPrivate(true);
     setIsLoading(false);
   };
 
@@ -73,18 +71,18 @@ const PublicAndPrivate: React.FC<Props> = ({ image, isText = false }) => {
       isClosable: true,
       position: "bottom-right",
     });
-    setIsPrivate(false);
+    // setIsPrivate(false);
     setIsLoading(false);
   };
 
   return (
     <Popover>
-      {isPrivate ? (
+      {image?.isPrivate ? (
         <>
           {isText && (
             <div className=" pr-2">
               {" "}
-              <PasswordCopy value={password} />
+              <PasswordCopy image={image} />
             </div>
           )}
         </>
@@ -98,7 +96,7 @@ const PublicAndPrivate: React.FC<Props> = ({ image, isText = false }) => {
         </>
       )}
       <PopoverTrigger>
-        {isPrivate ? (
+        {image?.isPrivate ? (
           <svg
             className=" w-5 cursor-pointer text-gray-400 transition-all hover:text-gray-50"
             fill="currentColor"
@@ -128,7 +126,7 @@ const PublicAndPrivate: React.FC<Props> = ({ image, isText = false }) => {
         <PopoverArrow />
         <PopoverCloseButton />
         <PopoverBody>
-          {isPrivate ? (
+          {image?.isPrivate ? (
             <div>
               <p className=" mt-4 text-center text-lg font-semibold">
                 Unlock Image
