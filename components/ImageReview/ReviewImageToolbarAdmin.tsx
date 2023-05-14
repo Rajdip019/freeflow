@@ -23,8 +23,8 @@ const ReviewImageToolbarAdmin: React.FC<Props> = ({
   const { authUser } = useAuth();
   const { user } = useUserContext();
   return (
-    <div className=" flex h-full items-center gap-5">
-      <>
+    <div className="flex h-16 items-center gap-5">
+      <div>
         {!isCommentsOn ? (
           <Tooltip label="Show Comments">
             <svg
@@ -73,7 +73,7 @@ const ReviewImageToolbarAdmin: React.FC<Props> = ({
             </svg>
           </Tooltip>
         )}
-      </>
+      </div>
       <PublicAndPrivate image={imageData} />
       <Copy value={`${APP_URL}/review-image/${imageData.id}`} />
       <SendInvitesIconModal image={imageData} />
@@ -82,7 +82,7 @@ const ReviewImageToolbarAdmin: React.FC<Props> = ({
         {authUser?.uid === imageData?.uploadedById && (
           <Tooltip label={user?.email}>
             <Avatar
-              className=" ml-5 ring-1 ring-purple-500"
+              className="ring-1 ring-purple-500"
               src={user?.imageURL as string}
               name={user?.name}
               size={"sm"}
