@@ -1,10 +1,9 @@
 import {
   Body,
+  Button,
   Container,
   Heading,
   Html,
-  Img,
-  Link,
   Preview,
   Section,
   Tailwind,
@@ -41,25 +40,24 @@ export const DesignReviewInvite: React.FC<
           <Heading className="my-8 p-0 text-center text-2xl font-normal text-black">
             {inviter.toUpperCase()} requested your feedback on FreeFlow!
           </Heading>
-          <Section>
-            <Text className="my-0 text-black">
-              <Link
-                className="my-0 text-blue-500 no-underline"
-                href={designReviewUrl}
-              >
-                Click here
-              </Link>{" "}
-              to access your feedback link.
-            </Text>
-          </Section>
+
           {designReviewPassword && (
-            <Section>
-              <Text className="text-black">
+            <Section className="mb-8">
+              <Text className="text-center text-black">
                 Password to access the design:{" "}
                 <strong>{designReviewPassword}</strong>
               </Text>
             </Section>
           )}
+
+          <Section className="flex items-center justify-center">
+            <Button
+              className="rounded-md bg-purple-500 px-8 py-4 text-center font-semibold text-white no-underline antialiased"
+              href={designReviewUrl}
+            >
+              View Design
+            </Button>
+          </Section>
         </Container>
       </Body>
     </Tailwind>
