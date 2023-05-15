@@ -38,12 +38,15 @@ export const DesignReviewInvite: React.FC<
       <Body className="mx-auto my-auto bg-white font-sans text-black">
         <Container className="my-8 w-[600px] rounded border border-solid border-gray-300 p-5 py-8">
           <HeroLogo />
-          <Heading className="my-8 p-0 text-center text-2xl font-normal">
+          <Heading className="my-8 p-0 text-center text-2xl font-normal text-black">
             {inviter.toUpperCase()} requested your feedback on FreeFlow!
           </Heading>
           <Section>
-            <Text className="my-0">
-              <Link className="my-0 no-underline" href={designReviewUrl}>
+            <Text className="my-0 text-black">
+              <Link
+                className="my-0 text-blue-500 no-underline"
+                href={designReviewUrl}
+              >
                 Click here
               </Link>{" "}
               to access your feedback link.
@@ -51,7 +54,7 @@ export const DesignReviewInvite: React.FC<
           </Section>
           {designReviewPassword && (
             <Section>
-              <Text>
+              <Text className="text-black">
                 Password to access the design:{" "}
                 <strong>{designReviewPassword}</strong>
               </Text>
