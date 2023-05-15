@@ -36,3 +36,6 @@ next-env.d.ts
 
 # File used for testing and debugging
 /pages/api/test.ts
+
+# Generated directory for developing email templates
+.react-email
