@@ -2,7 +2,9 @@ import {
   Body,
   Button,
   Container,
+  Head,
   Heading,
+  Hr,
   Html,
   Preview,
   Section,
@@ -30,12 +32,13 @@ export const DesignReviewInvite: React.FC<
   inviter = IS_EMAIL_DEV ? "John Doe" : "",
 }) => (
   <Html>
+    <Head />
     <Preview>
       {inviter.toUpperCase()} requested your feedback on FreeFlow!
     </Preview>
     <Tailwind>
       <Body className="mx-auto my-auto bg-white font-sans text-black">
-        <Container className="my-8 w-[600px] rounded border border-solid border-gray-300 p-5 py-8">
+        <Container className="mx-auto my-8 w-[600px] rounded-md border border-solid border-gray-300 p-5 py-8 shadow-lg">
           <HeroLogo />
           <Heading className="my-8 p-0 text-center text-2xl font-normal text-black">
             {inviter.toUpperCase()} requested your feedback on FreeFlow!
@@ -43,14 +46,14 @@ export const DesignReviewInvite: React.FC<
 
           {designReviewPassword && (
             <Section className="mb-8">
-              <Text className="text-center text-black">
+              <Text className="my-0 text-center text-black">
                 Password to access the design:{" "}
                 <strong>{designReviewPassword}</strong>
               </Text>
             </Section>
           )}
 
-          <Section className="flex items-center justify-center">
+          <Section className="text-center">
             <Button
               className="rounded-md bg-purple-500 px-8 py-4 text-center font-semibold text-white no-underline antialiased"
               href={designReviewUrl}
