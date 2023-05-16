@@ -14,8 +14,6 @@ import {
 import { doc, setDoc, updateDoc } from "firebase/firestore";
 import React from "react";
 import PasswordCopy from "../PasswordCopy";
-import { useImageContext } from "@/contexts/ImagesContext";
-import { get } from "http";
 
 interface Props {
   image: IReviewImageData;
@@ -31,7 +29,6 @@ const PublicAndPrivate: React.FC<Props> = ({ image, isText = false }) => {
   // );
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const toast = useToast();
-  const { getImages } = useImageContext();
 
   const generatePassword = () => {
     const randomPassword = Math.random().toString(36).slice(-8);
@@ -58,7 +55,6 @@ const PublicAndPrivate: React.FC<Props> = ({ image, isText = false }) => {
       position: "bottom-right",
     });
     setIsLoading(false);
-    getImages();
   };
 
   const unlockImage = async () => {

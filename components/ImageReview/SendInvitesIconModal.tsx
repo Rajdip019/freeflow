@@ -22,17 +22,9 @@ import SendCompleteIcon from "../Icons/SendCompleteIcon";
 
 interface Props {
   image: IReviewImageData;
-  isText?: boolean;
-  isIcon?: boolean;
-  isTooltip?: boolean;
 }
 
-const ImageDeleteModalConfirmation: React.FC<Props> = ({
-  image,
-  isText = false,
-  isTooltip = true,
-  isIcon = true,
-}) => {
+const ImageDeleteModalConfirmation: React.FC<Props> = ({ image }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [invitesInputText, setInvitesInputText] = useState("");
@@ -78,23 +70,11 @@ const ImageDeleteModalConfirmation: React.FC<Props> = ({
 
   return (
     <div>
-      {isTooltip ? (
-        <Tooltip label={"Send email invites"}>
-          <button onClick={onOpen} className=" flex w-full items-center">
-            {isText && "Send Email Invites"}
-            {isIcon && (
-              <SendIcon className="mt-1.5 w-5 text-gray-400 hover:text-white" />
-            )}
-          </button>
-        </Tooltip>
-      ) : (
-        <button onClick={onOpen} className=" flex w-full items-center">
-          {isText && "Send Email Invites"}
-          {isIcon && (
-            <SendIcon className="mt-1.5 w-5 text-gray-400 hover:text-white" />
-          )}
+      <Tooltip label={"Send email invites"}>
+        <button onClick={onOpen}>
+          <SendIcon className="mt-1.5 w-5 text-gray-400 hover:text-white" />
         </button>
-      )}
+      </Tooltip>
 
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
