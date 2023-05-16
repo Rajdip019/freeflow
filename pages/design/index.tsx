@@ -4,6 +4,11 @@ import ImageUploadModal from "@/components/ImageUploadModal";
 import ImageDeleteModalConfirmation from "@/components/Modal/ImageDeleteModalConfirmation";
 import { useImageContext } from "@/contexts/ImagesContext";
 import {
+  Button,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Table,
   TableContainer,
   Tbody,
@@ -21,6 +26,7 @@ import SendInvitesIconModal from "@/components/ImageReview/SendInvitesIconModal"
 import { orderBy } from "lodash-es";
 import Copy from "@/components/shared/Copy";
 import PublicAndPrivate from "@/components/ImageReview/PublicAndPrivate";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 const Design = () => {
   const { images } = useImageContext();
@@ -97,6 +103,18 @@ const Design = () => {
                         <ImageDeleteModalConfirmation image={image} />
                         <Copy value={`${APP_URL}/review-image/${image.id}`} />
                         <SendInvitesIconModal image={image} />
+                        {/* <Menu>
+                          <MenuButton>
+                            <svg className="w-6 text-gray-400 hover:text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                              <path clipRule="evenodd" fillRule="evenodd" d="M10.5 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm0 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm0 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" />
+                            </svg>
+                          </MenuButton>
+                          <MenuList bgColor={"#475569"} border={0}>
+                            <MenuItem  bgColor={"#475569"} className=" hover:bg-purple-500 transition-all">Change File name</MenuItem>
+                            <MenuItem bgColor={"#475569"} className=" hover:bg-purple-500 transition-all">Copy Password</MenuItem>
+                            <MenuItem disabled={true} bgColor={"#475569"} className=" hover:bg-purple-500 transition-all disabled:hover:bg-[#475569]">Edit Versions</MenuItem>
+                          </MenuList>
+                        </Menu> */}
                       </div>
                     </Td>
                   </Tr>
