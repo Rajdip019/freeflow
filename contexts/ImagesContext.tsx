@@ -20,7 +20,7 @@ import {
 } from "react";
 import { useAuth } from "./AuthContext";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
-import { useClipboard, useToast } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 import { useUserContext } from "./UserContext";
 import { useRouter } from "next/router";
 
@@ -67,7 +67,7 @@ export const ImageContextProvider = ({ children }: Props) => {
     if (authUser) {
       const imagesRef = collection(db, "reviewImages");
       const q = query(imagesRef, where("uploadedById", "==", authUser?.uid));
-      const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+      onSnapshot(q, async (querySnapshot) => {
         const promises = querySnapshot.docs.map(async (docSnap) => {
           const data = docSnap.data() as IReviewImageData;
           let password;
