@@ -80,18 +80,18 @@ const ImageDeleteModalConfirmation: React.FC<Props> = ({
     <div>
       {isTooltip ? (
         <Tooltip label={"Send email invites"}>
-          <button onClick={onOpen} className=" flex w-full items-center">
+          <button onClick={onOpen} className=" flex w-full">
             {isText && "Send Email Invites"}
             {isIcon && (
-              <SendIcon className="mt-1.5 w-5 text-gray-400 hover:text-white" />
+              <SendIcon className=" w-5 text-gray-400 hover:text-white" />
             )}
           </button>
         </Tooltip>
       ) : (
-        <button onClick={onOpen} className=" flex w-full items-center">
+        <button onClick={onOpen} className=" flex w-full">
           {isText && "Send Email Invites"}
           {isIcon && (
-            <SendIcon className="mt-1.5 w-5 text-gray-400 hover:text-white" />
+            <SendIcon className=" w-5 text-gray-400 hover:text-white" />
           )}
         </button>
       )}

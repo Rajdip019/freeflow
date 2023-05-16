@@ -10,6 +10,7 @@ export interface IThread {
   initialComment: string;
   timeStamp: number;
   color: string;
+  version: number;
 }
 
 export interface INewThread {

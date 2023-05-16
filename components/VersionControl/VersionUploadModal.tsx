@@ -12,17 +12,21 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, setDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import React, { useState } from "react";
-import ImageUploaderDropzone from "./ImageDropZones/ImageUploaderDropzone";
+import ImageUploaderDropzone from "../ImageDropZones/ImageUploaderDropzone";
 import { useUserContext } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useImageContext } from "@/contexts/ImagesContext";
-import ImageUploadSuccess from "./ImageUploadSuccess";
+import ImageUploadSuccess from "../ImageUploadSuccess";
 import { newReviewImageEvent } from "@/lib/events";
 
-const ImageUploadModal = () => {
+interface Props {
+  prevImage: IReviewImageData;
+}
+
+const VersionUploadModal: React.FC<Props> = ({ prevImage }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [imageName, setImageName] = useState<string>();
   const [password, setPassword] = useState<string>("");
@@ -87,42 +91,26 @@ const ImageUploadModal = () => {
                 );
                 console.log("File available at", downloadURL);
 
-                const docRef = doc(collection(db, "reviewImages"));
+                const docRef = doc(db, "reviewImages", prevImage.id);
 
-                const data: IReviewImageData = {
-                  id: docRef.id,
-                  imageURL: [downloadURL],
-                  uploadedBy: user?.name as string,
-                  uploadedByEmail: authUser?.email ?? "",
-                  uploadedById: authUser?.uid,
-                  timeStamp: Date.now(),
-                  imageName: imageName as string,
-                  size: bytes / (1024 * 1024),
-                  views: 0,
-                  threads: 0,
+                const data: Partial<IReviewImageData> = {
+                  imageURL: [...prevImage.imageURL, downloadURL],
+                  size: (prevImage.size as number) + bytes / (1024 * 1024),
                   lastUpdated: Date.now(),
-                  newUpdate: "Uploaded",
-                  isPrivate: Boolean(password),
-                  currentVersion: 1,
+                  newUpdate: "New Version Uploaded",
+                  currentVersion: prevImage.currentVersion + 1,
                 };
 
-                await setDoc(docRef, data);
-                await setDoc(
-                  doc(db, "reviewImages", docRef.id, "private/password"),
-                  {
-                    password,
-                  }
-                );
+                await updateDoc(docRef, data);
 
                 toast({
-                  title: "Image uploaded successfully",
+                  title: "Version Updated successfully",
                   status: "success",
                   duration: 5000,
                   isClosable: true,
                   position: "bottom-right",
                 });
-                newReviewImageEvent(data);
-                setUploadingState("success");
+                onClose();
                 setUploadedImageId(docRef.id);
               }
             );
@@ -160,12 +148,6 @@ const ImageUploadModal = () => {
     }
   };
 
-  //generate random password
-  const generatePassword = () => {
-    const randomPassword = Math.random().toString(36).slice(-8);
-    setPassword(randomPassword);
-  };
-
   return (
     <>
       <button
@@ -174,11 +156,11 @@ const ImageUploadModal = () => {
           clearFile();
           setUploadingState("not-started");
         }}
-        className=" font-sec btn-p flex items-center gap-3 rounded px-1 py-1 font-semibold md:px-6 md:py-3"
+        className=" font-sec flex w-full items-center gap-3 px-3 py-1.5 font-semibold"
       >
         <svg
           fill="currentColor"
-          className="md-w-6 w-8 text-white"
+          className="w-4 text-white"
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
           aria-hidden="true"
@@ -189,7 +171,7 @@ const ImageUploadModal = () => {
             d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z"
           />
         </svg>
-        <p className=" hidden md:block">Upload Photo </p>
+        <p className=" hidden md:block">Upload a new version</p>
       </button>
 
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -229,64 +211,7 @@ const ImageUploadModal = () => {
                       setImage={setImage}
                     />
                   </div>
-                  {image && (
-                    <>
-                      <div className="mt-5">
-                        <p className=" mb-2 text-sm text-gray-500">Title</p>
-                        <Input
-                          value={imageName}
-                          onChange={(e) => {
-                            setImageName(e.target.value);
-                          }}
-                          type="text"
-                          focusBorderColor="purple.500"
-                          borderColor={"purple.500"}
-                          className=" text-gray-200"
-                          placeholder="Enter photo title"
-                          maxLength={24}
-                        />
-                      </div>
-                      <div className="mt-5">
-                        <span className=" font-semibold">Image name: </span>
-                        <span>{imageName}</span>
-                      </div>
-                      <div className="mt-5">
-                        <p className="mb-2 text-sm text-gray-500">
-                          Password (optional)
-                        </p>
-                        <Input
-                          value={password}
-                          onChange={(e) => {
-                            setPassword(e.target.value);
-                          }}
-                          type="text"
-                          focusBorderColor="purple.500"
-                          borderColor={"purple.500"}
-                          className=" text-gray-200"
-                          placeholder="Enter a password for image review"
-                        />
-                        <button
-                          className=" mt-2 flex items-center text-sm text-purple-400 underline underline-offset-4"
-                          onClick={generatePassword}
-                        >
-                          Generate random password{" "}
-                          <svg
-                            fill="currentColor"
-                            className=" ml-2 w-4"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                            aria-hidden="true"
-                          >
-                            <path
-                              clipRule="evenodd"
-                              fillRule="evenodd"
-                              d="M4.755 10.059a7.5 7.5 0 0112.548-3.364l1.903 1.903h-3.183a.75.75 0 100 1.5h4.992a.75.75 0 00.75-.75V4.356a.75.75 0 00-1.5 0v3.18l-1.9-1.9A9 9 0 003.306 9.67a.75.75 0 101.45.388zm15.408 3.352a.75.75 0 00-.919.53 7.5 7.5 0 01-12.548 3.364l-1.902-1.903h3.183a.75.75 0 000-1.5H2.984a.75.75 0 00-.75.75v4.992a.75.75 0 001.5 0v-3.18l1.9 1.9a9 9 0 0015.059-4.035.75.75 0 00-.53-.918z"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </>
-                  )}
+
                   <div>
                     {uploadingState === "uploading" && (
                       <div className="mt-5 flex w-full items-center justify-center">
@@ -294,12 +219,12 @@ const ImageUploadModal = () => {
                           value={uploadPercentage}
                           color="purple.500"
                         />
-                        <p className="ml-5 text-lg">Uploading file....</p>
+                        <p className="ml-5 text-lg">Updating version....</p>
                       </div>
                     )}
                     {uploadingState === "not-started" && (
                       <button
-                        disabled={!!!image || !!!imageName}
+                        disabled={!!!image}
                         className=" btn-p mt-5 w-full py-2"
                         onClick={uploadFile}
                       >
@@ -309,7 +234,7 @@ const ImageUploadModal = () => {
                   </div>
                 </>
               )}
-              {uploadingState === "success" && (
+              {/* {uploadingState === "success" && (
                 <ImageUploadSuccess
                   imageId={uploadedImageId}
                   setUploadingState={setUploadingState}
@@ -317,7 +242,7 @@ const ImageUploadModal = () => {
                   password={password}
                   mode="dark"
                 />
-              )}
+              )} */}
               {uploadingState === "error" && (
                 <div className=" flex w-full flex-col items-center justify-center">
                   <p className=" text-center text-xl font-semibold text-red-500">
@@ -339,4 +264,4 @@ const ImageUploadModal = () => {
   );
 };
 
-export default ImageUploadModal;
+export default VersionUploadModal;

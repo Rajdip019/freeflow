@@ -18,6 +18,7 @@ export const defaultHighlightedThread: IThread = {
   timeStamp: 0,
   name: "",
   color: "",
+  version: 1,
 };
 
 export const defaultNewThread: INewThread = {

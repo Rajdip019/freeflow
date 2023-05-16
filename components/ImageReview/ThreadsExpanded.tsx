@@ -44,26 +44,28 @@ const ThreadsExpanded: React.FC<Props> = ({
   const toast = useToast();
   const { authUser } = useAuth();
   const getComments = async () => {
-    const q = query(
-      collection(
-        db,
-        `reviewImages/${imageId}/threads/${highlightedComment.id}/comments`
-      ),
-      orderBy("timeStamp", "asc")
-    );
-    onSnapshot(q, async (querySnapshot) => {
-      const _comments: unknown[] = [];
-      querySnapshot.forEach(async (docSnap) => {
-        const data = docSnap.data();
-        const finalData = {
-          ...data,
-        };
-        _comments.push(finalData);
-      });
-      setComments(
-        _comments as { name: string; comment: string; timeStamp: number }[]
+    if (highlightedComment !== defaultHighlightedThread) {
+      const q = query(
+        collection(
+          db,
+          `reviewImages/${imageId}/threads/${highlightedComment.id}/comments`
+        ),
+        orderBy("timeStamp", "asc")
       );
-    });
+      onSnapshot(q, async (querySnapshot) => {
+        const _comments: unknown[] = [];
+        querySnapshot.forEach(async (docSnap) => {
+          const data = docSnap.data();
+          const finalData = {
+            ...data,
+          };
+          _comments.push(finalData);
+        });
+        setComments(
+          _comments as { name: string; comment: string; timeStamp: number }[]
+        );
+      });
+    }
   };
 
   useEffect(() => {
