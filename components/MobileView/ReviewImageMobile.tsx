@@ -30,7 +30,14 @@ const ReviewImageMobile: React.FC<Props> = ({ imageData }) => {
             </div>
           </div>
           <div className=" mt-40 px-5">
-            <img src={imageData.imageURL} alt="" />
+            <img
+              src={
+                imageData.currentVersion
+                  ? imageData.imageURL[imageData.currentVersion]
+                  : (imageData.imageURL as any)
+              }
+              alt=""
+            />
           </div>
           <div className=" absolute bottom-10 px-10 text-center text-gray-300">
             <p className=" text-2xl">
