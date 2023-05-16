@@ -20,7 +20,7 @@ import {
 } from "react";
 import { useAuth } from "./AuthContext";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
-import { useToast } from "@chakra-ui/react";
+import { useClipboard, useToast } from "@chakra-ui/react";
 import { useUserContext } from "./UserContext";
 import { useRouter } from "next/router";
 
@@ -61,6 +61,7 @@ export const ImageContextProvider = ({ children }: Props) => {
   const toast = useToast();
   const { user } = useUserContext();
   const router = useRouter();
+  // const { onCopy, hasCopied } = useClipboard(value);
 
   const getImages = useCallback(async () => {
     if (authUser) {

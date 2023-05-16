@@ -4,13 +4,13 @@ import { useToast, Input, CircularProgress } from "@chakra-ui/react";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import React, { useState } from "react";
-import ImageUploaderDropzone from "./ImageUploaderDropzone";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserContext } from "@/contexts/UserContext";
 import { useImageContext } from "@/contexts/ImagesContext";
 import ImageUploadSuccess from "./ImageUploadSuccess";
 import { validateEmail } from "@/helpers/validators";
 import { newReviewImageEvent } from "@/lib/events";
+import ImageUploadDropZoneLandingPage from "./ImageDropZones/ImageUploadDropZoneLandingPage";
 
 const ImageUploader = () => {
   const [imageName, setImageName] = useState<string>();
@@ -220,17 +220,89 @@ const ImageUploader = () => {
 
   return (
     <div>
-      <div className="mx-auto flex min-h-[400px] flex-col justify-center rounded-2xl bg-white p-10 md:mx-0 md:w-96 ">
+      <div className="mx-auto flex min-h-[400px] flex-col justify-center rounded-2xl bg-white p-5 md:mx-0 md:w-96 ">
         {(uploadingState === "not-started" ||
           uploadingState === "uploading") && (
           <>
-            <div className=" mb-8 flex items-center justify-center gap-3 text-center">
-              <p className=" text-2xl font-semibold text-black">Upload Photo</p>
+            {/* {image && (
+                <div className=" flex justify-end">
+                  <svg
+                    onClick={() => {
+                      clearFile();
+                    }}
+                    fill="currentColor"
+                    className="w-6 cursor-pointer text-black"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <path
+                      clipRule="evenodd"
+                      fillRule="evenodd"
+                      d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
+                    />
+                  </svg>
+                </div>
+              )} */}
+            <div className=" cursor-pointer">
+              {/* <ImageUploaderDropzone
+                  onFileUploaded={handleFileUploaded}
+                  image={image}
+                  setImage={setImage}
+                /> */}
+              <ImageUploadDropZoneLandingPage
+                onFileUploaded={handleFileUploaded}
+                image={image}
+                setImage={setImage}
+              />
             </div>
-            {authUser ? null : (
-              <div className="mt-5">
+            <>
+              <div className="mt-5 border-y border-gray-400 py-2">
+                {imageName && (
+                  <p className=" mb-2 text-sm text-gray-500">Image name</p>
+                )}
+                <Input
+                  value={imageName}
+                  onChange={(e) => {
+                    setImageName(e.target.value);
+                  }}
+                  variant={"unstyled"}
+                  type="text"
+                  focusBorderColor="purple.500"
+                  borderColor={"purple.500"}
+                  className=" text-black"
+                  placeholder="Enter image name"
+                  maxLength={24}
+                />
+              </div>
+              {/* <div className="mt-5 text-black">
+                    <span className=" font-semibold">Image name: </span>
+                    <span>{imageName}</span>
+                  </div> */}
+            </>
+            {authUser ? (
+              <div className="mt-5 border-b border-gray-400">
                 <div className=" mb-2 flex items-center gap-1">
-                  <p className=" text-sm text-gray-500">Email </p>
+                  <p className=" b text-sm text-gray-500">Email </p>
+                </div>
+                <Input
+                  value={authUser?.email as string}
+                  // onChange={(e) => {
+                  //   setEmail(e.target.value);
+                  // }}
+                  disabled
+                  variant={"unstyled"}
+                  type="text"
+                  focusBorderColor={"purple.500"}
+                  // borderColor={`${emailValidation ? "purple.500" : "red.500"} `}
+                  className=" mb-4 text-black"
+                  placeholder="Enter your email"
+                />
+              </div>
+            ) : (
+              <div className="mt-3 border-b border-gray-400">
+                <div className=" mb-2 flex items-center gap-1">
+                  {email && <p className=" text-sm text-gray-500">Email </p>}
                 </div>
                 <Input
                   value={email}
@@ -242,6 +314,7 @@ const ImageUploader = () => {
                   borderColor={`${emailValidation ? "purple.500" : "red.500"} `}
                   className=" mb-4 text-black"
                   placeholder="Enter your email"
+                  variant={"unstyled"}
                 />
                 {!emailValidation ? (
                   <p className=" text-xs text-red-500">
@@ -250,56 +323,6 @@ const ImageUploader = () => {
                 ) : null}
               </div>
             )}
-            {image && (
-              <div className=" flex justify-end">
-                <svg
-                  onClick={() => {
-                    clearFile();
-                  }}
-                  fill="currentColor"
-                  className="w-6 cursor-pointer text-black"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <path
-                    clipRule="evenodd"
-                    fillRule="evenodd"
-                    d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
-                  />
-                </svg>
-              </div>
-            )}
-            <div className=" mt-2 cursor-pointer">
-              <ImageUploaderDropzone
-                onFileUploaded={handleFileUploaded}
-                image={image}
-                setImage={setImage}
-              />
-            </div>
-            {image && (
-              <>
-                <div className="mt-5">
-                  <p className=" mb-2 text-sm text-gray-500">Title</p>
-                  <Input
-                    value={imageName}
-                    onChange={(e) => {
-                      setImageName(e.target.value);
-                    }}
-                    type="text"
-                    focusBorderColor="purple.500"
-                    borderColor={"purple.500"}
-                    className=" text-black"
-                    placeholder="Enter photo title"
-                    maxLength={24}
-                  />
-                </div>
-                <div className="mt-5 text-black">
-                  <span className=" font-semibold">Image name: </span>
-                  <span>{imageName}</span>
-                </div>
-              </>
-            )}
             <div>
               {uploadingState === "uploading" && (
                 <div className="mt-5 flex w-full items-center justify-center">
@@ -307,18 +330,18 @@ const ImageUploader = () => {
                     value={uploadPercentage}
                     color="purple.500"
                   />
-                  <p className="ml-5 text-lg">Uploading file....</p>
+                  <p className="ml-5 text-lg">Generating link....</p>
                 </div>
               )}
               {uploadingState === "not-started" && (
                 <>
                   {authUser ? (
                     <button
-                      disabled={!!!image}
+                      disabled={!!!imageName || !!!image}
                       className=" btn-p mt-5 w-full py-2"
                       onClick={uploadFile}
                     >
-                      Upload
+                      Get Link
                     </button>
                   ) : (
                     <button
@@ -326,7 +349,7 @@ const ImageUploader = () => {
                       className=" btn-p mt-5 w-full py-2"
                       onClick={uploadFile}
                     >
-                      Upload
+                      Get Link
                     </button>
                   )}
                 </>

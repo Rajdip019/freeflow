@@ -9,7 +9,6 @@ interface Props {
 }
 
 const PasswordCopy = ({ align = "left", image }: Props) => {
-  // const { onCopy, hasCopied } = useClipboard(value);
   const [isShown, setIsShown] = useState<boolean>(false);
   const { getPassword } = useImageContext();
 

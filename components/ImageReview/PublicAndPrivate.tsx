@@ -54,7 +54,6 @@ const PublicAndPrivate: React.FC<Props> = ({ image, isText = false }) => {
       isClosable: true,
       position: "bottom-right",
     });
-    // setIsPrivate(true);
     setIsLoading(false);
   };
 
@@ -71,7 +70,6 @@ const PublicAndPrivate: React.FC<Props> = ({ image, isText = false }) => {
       isClosable: true,
       position: "bottom-right",
     });
-    // setIsPrivate(false);
     setIsLoading(false);
   };
 

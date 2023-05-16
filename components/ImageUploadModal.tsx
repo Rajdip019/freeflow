@@ -15,7 +15,7 @@ import {
 import { collection, doc, setDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import React, { useState } from "react";
-import ImageUploaderDropzone from "./ImageUploaderDropzone";
+import ImageUploaderDropzone from "./ImageDropZones/ImageUploaderDropzone";
 import { useUserContext } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useImageContext } from "@/contexts/ImagesContext";
