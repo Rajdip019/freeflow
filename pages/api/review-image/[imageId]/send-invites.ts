@@ -1,4 +1,4 @@
-import DesignReviewInvite from "@/components/EmailTemplates/DesignReviewInvite";
+import DesignReviewInvite from "@/emails/DesignReviewInvite";
 import { APP_URL } from "@/helpers/constants";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { resend } from "@/lib/api/mailer";
