@@ -1,6 +1,5 @@
 import { Box } from "@chakra-ui/react";
 import { useState } from "react";
-import { useImageContext } from "@/contexts/ImagesContext";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 
 interface Props {
@@ -10,7 +9,6 @@ interface Props {
 
 const PasswordCopy = ({ align = "left", image }: Props) => {
   const [isShown, setIsShown] = useState<boolean>(false);
-  const { getPassword } = useImageContext();
 
   return (
     <Box
@@ -42,7 +40,6 @@ const PasswordCopy = ({ align = "left", image }: Props) => {
             fill="currentColor"
             className="w-5 cursor-pointer text-gray-400"
             onClick={async () => {
-              await getPassword(image);
               setIsShown(!isShown);
             }}
             viewBox="0 0 24 24"
