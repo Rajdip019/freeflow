@@ -3,7 +3,7 @@ import { useUserContext } from "@/contexts/UserContext";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { Tooltip, Avatar } from "@chakra-ui/react";
 import React from "react";
-import SendInvitesIconModal from "./SendInvitesIconModal";
+import SendInvitesIconModal from "../Modal/SendInvitesIconModal";
 import ImageDeleteModalConfirmation from "@/components/Modal/ImageDeleteModalConfirmation";
 import Copy from "../shared/Copy";
 import { APP_URL } from "@/helpers/constants";
