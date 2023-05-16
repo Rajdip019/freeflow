@@ -68,17 +68,24 @@ export const ImageContextProvider = ({ children }: Props) => {
       const imagesRef = collection(db, "reviewImages");
       const q = query(imagesRef, where("uploadedById", "==", authUser?.uid));
       const unsubscribe = onSnapshot(q, async (querySnapshot) => {
-        const _images: IReviewImageData[] = [];
-        querySnapshot.forEach(async (docSnap) => {
+        const promises = querySnapshot.docs.map(async (docSnap) => {
           const data = docSnap.data() as IReviewImageData;
+          let password;
+          if (data.isPrivate) {
+            const passDocSnap = await getDoc(
+              doc(db, "reviewImages", docSnap.id, "private/password")
+            );
+            password = passDocSnap.data()?.password;
+          }
           const finalData = {
             // @ts-expect-error //
-            id: doc.id,
-            // ...(imagePassword && { private: { password: imagePassword } }),
+            id: docSnap.id,
+            ...(password && { private: { password } }),
             ...data,
           } as IReviewImageData;
-          _images.push(finalData);
+          return finalData;
         });
+        const _images = await Promise.all(promises);
         setImages(_images);
         if (_images.length !== 0) {
           const sum = _images.reduce((accumulator, object: any) => {
