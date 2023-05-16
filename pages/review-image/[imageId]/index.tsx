@@ -6,6 +6,7 @@ import SidebarComments from "@/components/ImageReview/SidebarComments";
 import ThreadsExpanded from "@/components/ImageReview/ThreadsExpanded";
 import Navbar from "@/components/LandingPage/Navbar";
 import ReviewImageMobile from "@/components/MobileView/ReviewImageMobile";
+import VersionUploadModal from "@/components/VersionControl/VersionUploadModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserContext } from "@/contexts/UserContext";
 import {
@@ -16,15 +17,22 @@ import { IImageDimension } from "@/interfaces/Image";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { IThread, INewThread } from "@/interfaces/Thread";
 import { db } from "@/lib/firebaseConfig";
-import { Spinner, Textarea, Tooltip, useToast } from "@chakra-ui/react";
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Spinner,
+  Textarea,
+  useToast,
+} from "@chakra-ui/react";
 import {
   DocumentData,
   DocumentSnapshot,
   addDoc,
   collection,
   doc,
-  getDoc,
-  getDocs,
   onSnapshot,
   orderBy,
   query,
@@ -57,6 +65,7 @@ const ReviewImage = () => {
   const [uname, setUname] = useState<string | undefined>("");
   const [isUnameValid, setIsUnameValid] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [version, setVersion] = useState<number>();
 
   const { authUser } = useAuth();
   const { user } = useUserContext();
@@ -90,6 +99,7 @@ const ReviewImage = () => {
       (docSnap: DocumentSnapshot<DocumentData>) => {
         if (docSnap.exists()) {
           setImageData(docSnap.data() as IReviewImageData);
+          setVersion(docSnap.data().currentVersion);
         } else {
           setError(true);
           console.log("No such document!");
@@ -124,6 +134,7 @@ const ReviewImage = () => {
         initialComment: newThread.comment.value,
         timeStamp: Date.now(),
         color: newThread.color,
+        version: version,
       });
       await updateDoc(doc(db, `reviewImages`, imageId as string), {
         lastUpdated: Date.now(),
@@ -272,11 +283,43 @@ const ReviewImage = () => {
                   </div>
                   <p className=" flex items-center justify-center gap-2 font-semibold">
                     {imageData?.imageName}{" "}
-                    <Tooltip label="Coming Soon...">
-                      <p className=" cursor-not-allowed text-xs text-purple-400">
-                        Versions
-                      </p>
-                    </Tooltip>
+                    {imageData?.currentVersion ? (
+                      <Menu>
+                        <MenuButton className="text-sm text-purple-500 focus:outline-none">
+                          {`V${version}`} <ChevronDownIcon />
+                        </MenuButton>
+                        <MenuList bgColor={"#475569"} border={0}>
+                          <p
+                            className=" flex w-full p-2 py-1 text-sm text-white hover:bg-gray-700"
+                            // bgColor={"#475569"}
+                          >
+                            <VersionUploadModal
+                              prevImage={imageData as IReviewImageData}
+                            />
+                          </p>
+                          {imageData?.imageURL.map((_, index) => {
+                            return (
+                              <MenuItem
+                                className=" flex w-full p-2 py-1 text-sm text-white hover:bg-gray-700"
+                                bgColor={"#475569"}
+                                key={index}
+                                onClick={() => {
+                                  setHighlightedComment(
+                                    defaultHighlightedThread
+                                  );
+                                  setIsFocusedThread(false);
+                                  setVersion(imageData.imageURL.length - index);
+                                }}
+                              >
+                                {`V${imageData.imageURL.length - index}`}
+                              </MenuItem>
+                            );
+                          })}
+                        </MenuList>
+                      </Menu>
+                    ) : (
+                      <p className="text-sm text-red-500">Deprecated</p>
+                    )}
                   </p>
                   {isAdmin ? (
                     <ReviewImageToolbarAdmin
@@ -301,21 +344,25 @@ const ReviewImage = () => {
                             <>
                               {threads.map((thread) => {
                                 return (
-                                  <Markings
-                                    setIsFocusedThread={setIsFocusedThread}
-                                    highlightedComment={
-                                      highlightedComment as IThread
-                                    }
-                                    thread={thread}
-                                    imageDimension={
-                                      imageDimension as IImageDimension
-                                    }
-                                    setHighlightedComment={
-                                      setHighlightedComment as React.Dispatch<
-                                        React.SetStateAction<IThread>
-                                      >
-                                    }
-                                  />
+                                  <>
+                                    {version === thread.version && (
+                                      <Markings
+                                        setIsFocusedThread={setIsFocusedThread}
+                                        highlightedComment={
+                                          highlightedComment as IThread
+                                        }
+                                        thread={thread}
+                                        imageDimension={
+                                          imageDimension as IImageDimension
+                                        }
+                                        setHighlightedComment={
+                                          setHighlightedComment as React.Dispatch<
+                                            React.SetStateAction<IThread>
+                                          >
+                                        }
+                                      />
+                                    )}
+                                  </>
                                 );
                               })}
                             </>
@@ -504,18 +551,57 @@ const ReviewImage = () => {
                             ref={commentRef}
                             className="flex items-center justify-center"
                           >
-                            <div
-                              onClick={handleClick}
-                              className="cursor-[url(/cursor/cursor.svg),_pointer] transition-all"
-                            >
-                              <img
-                                src={imageData?.imageURL}
-                                ref={imageRef}
-                                className=" max-h-[85vh]"
-                                onClick={handleClick}
-                                onLoad={handleImage}
-                              />
-                            </div>
+                            {imageData?.currentVersion ? (
+                              <>
+                                {version === imageData?.currentVersion && (
+                                  <div
+                                    onClick={handleClick}
+                                    className="cursor-[url(/cursor/cursor.svg),_pointer] transition-all"
+                                  >
+                                    <img
+                                      src={
+                                        imageData?.imageURL[
+                                          (version as number) - 1
+                                        ]
+                                      }
+                                      ref={imageRef}
+                                      className=" max-h-[85vh]"
+                                      onClick={handleClick}
+                                      onLoad={handleImage}
+                                    />
+                                  </div>
+                                )}
+                                {version !== imageData?.currentVersion && (
+                                  <div>
+                                    <img
+                                      src={
+                                        imageData?.imageURL[
+                                          (version as number) - 1
+                                        ]
+                                      }
+                                      ref={imageRef}
+                                      className=" max-h-[85vh]"
+                                      onLoad={handleImage}
+                                    />
+                                  </div>
+                                )}
+                              </>
+                            ) : (
+                              <div>
+                                <img
+                                  src={
+                                    imageData?.currentVersion
+                                      ? imageData?.imageURL[
+                                          (version as number) - 1
+                                        ]
+                                      : (imageData?.imageURL as any)
+                                  }
+                                  ref={imageRef}
+                                  className=" max-h-[85vh]"
+                                  onLoad={handleImage}
+                                />
+                              </div>
+                            )}
                           </div>
                         </div>
                       </>
@@ -559,6 +645,7 @@ const ReviewImage = () => {
                                           <SidebarComments
                                             key={index}
                                             thread={thread}
+                                            version={version as number}
                                             setHighlightedComment={
                                               setHighlightedComment as React.Dispatch<
                                                 React.SetStateAction<IThread>

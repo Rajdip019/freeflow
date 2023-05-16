@@ -81,7 +81,7 @@ const ImageUploader = () => {
 
                 const data: IReviewImageData = {
                   id: docRef.id,
-                  imageURL: downloadURL,
+                  imageURL: [downloadURL],
                   uploadedBy: user?.name as string,
                   uploadedByEmail: email,
                   uploadedById: authUser?.uid,
@@ -93,6 +93,7 @@ const ImageUploader = () => {
                   lastUpdated: Date.now(),
                   newUpdate: "Uploaded",
                   isPrivate: false,
+                  currentVersion: 1,
                 };
 
                 await setDoc(docRef, data);
@@ -165,7 +166,7 @@ const ImageUploader = () => {
 
                 const data: IReviewImageData = {
                   id: docRef.id,
-                  imageURL: downloadURL,
+                  imageURL: [downloadURL],
                   uploadedBy: email
                     ? (email?.slice(0, email?.indexOf("@")) as string)
                     : "",
@@ -175,6 +176,7 @@ const ImageUploader = () => {
                   lastUpdated: Date.now(),
                   newUpdate: "Uploaded",
                   isPrivate: false,
+                  currentVersion: 1,
                 };
 
                 await setDoc(docRef, data);
