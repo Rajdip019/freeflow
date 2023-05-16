@@ -289,14 +289,16 @@ const ReviewImage = () => {
                           {`V${version}`} <ChevronDownIcon />
                         </MenuButton>
                         <MenuList bgColor={"#475569"} border={0}>
-                          <p
-                            className=" flex w-full p-2 py-1 text-sm text-white hover:bg-gray-700"
-                            // bgColor={"#475569"}
-                          >
-                            <VersionUploadModal
-                              prevImage={imageData as IReviewImageData}
-                            />
-                          </p>
+                          {isAdmin && (
+                            <p
+                              className=" flex w-full p-2 py-1 text-sm text-white hover:bg-gray-700"
+                              // bgColor={"#475569"}
+                            >
+                              <VersionUploadModal
+                                prevImage={imageData as IReviewImageData}
+                              />
+                            </p>
+                          )}
                           {imageData?.imageURL.map((_, index) => {
                             return (
                               <MenuItem
