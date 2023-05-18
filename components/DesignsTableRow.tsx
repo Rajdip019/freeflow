@@ -17,6 +17,7 @@ import PublicAndPrivate from "./ImageReview/PublicAndPrivate";
 import ImageDeleteModalConfirmation from "./Modal/ImageDeleteModalConfirmation";
 import ChangeFileNameModal from "./Modal/ChangeFileNameModal";
 import SendInvitesIconModal from "./Modal/SendInvitesIconModal";
+import VersionUploadModal from "./VersionControl/VersionUploadModal";
 
 interface Props {
   image: IReviewImageData;
@@ -72,7 +73,10 @@ const DesignsTableRow: React.FC<Props> = ({ image }) => {
       </Td> */}
       <Td isNumeric>
         <div className=" flex justify-end">
-          {image.currentVersion ? `V${image.currentVersion}` : "Deprecated"}
+          {image.currentVersion
+            ? `Version ${image.currentVersion}`
+            : "Deprecated"}
+          {/* <img src="/icons/version.png" alt="version" /> */}
         </div>
       </Td>
       <Td isNumeric>{image.views}</Td>
@@ -112,6 +116,15 @@ const DesignsTableRow: React.FC<Props> = ({ image }) => {
                   isTooltip={false}
                 />
               </p>
+              <MenuItem
+                className=" flex w-full justify-start p-2 py-1 text-sm text-white hover:bg-purple-500"
+                bgColor={"#475569"}
+              >
+                <VersionUploadModal
+                  prevImage={image as IReviewImageData}
+                  pos={"start"}
+                />
+              </MenuItem>
               <p className=" px-3 py-1.5 transition-all hover:bg-purple-500">
                 <SendInvitesIconModal
                   image={image}
