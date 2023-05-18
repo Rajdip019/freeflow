@@ -24,9 +24,10 @@ import { newReviewImageEvent } from "@/lib/events";
 
 interface Props {
   prevImage: IReviewImageData;
+  pos: "start" | "mid" | "end";
 }
 
-const VersionUploadModal: React.FC<Props> = ({ prevImage }) => {
+const VersionUploadModal: React.FC<Props> = ({ prevImage, pos }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [imageName, setImageName] = useState<string>();
   const [password, setPassword] = useState<string>("");
@@ -156,9 +157,13 @@ const VersionUploadModal: React.FC<Props> = ({ prevImage }) => {
           clearFile();
           setUploadingState("not-started");
         }}
-        className=" font-sec flex w-full items-center gap-3 px-3 py-1.5 font-semibold"
+        className={`font-sec hidden w-full items-center gap-3 hover:text-white ${
+          pos === "start" && "md:flex"
+        } ${pos === "mid" && "md:block"} ${
+          pos === "end" && "md: justify-end"
+        } md:block`}
       >
-        <svg
+        {/* <svg
           fill="currentColor"
           className="w-4 text-white"
           viewBox="0 0 24 24"
@@ -170,8 +175,8 @@ const VersionUploadModal: React.FC<Props> = ({ prevImage }) => {
             fillRule="evenodd"
             d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z"
           />
-        </svg>
-        <p className=" hidden md:block">Upload a new version</p>
+        </svg> */}
+        Upload new version
       </button>
 
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
