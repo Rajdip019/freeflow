@@ -89,9 +89,7 @@ const DesignsTableRow: React.FC<Props> = ({ image }) => {
         <div className="flex gap-3">
           <Copy value={`${APP_URL}/review-image/${image.id}`} />
           <PublicAndPrivate image={image} isText={false} />
-          {image?.currentVersion && (
-            <ImageDeleteModalConfirmation image={image} />
-          )}
+          <ImageDeleteModalConfirmation image={image} />
           {/* <SendInvitesIconModal image={image} /> */}
           <Menu>
             <MenuButton>
@@ -118,15 +116,17 @@ const DesignsTableRow: React.FC<Props> = ({ image }) => {
                   isTooltip={false}
                 />
               </p>
-              <MenuItem
-                className=" flex w-full justify-start p-2 py-1 text-sm text-white hover:bg-purple-500"
-                bgColor={"#475569"}
-              >
-                <VersionUploadModal
-                  prevImage={image as IReviewImageData}
-                  pos={"start"}
-                />
-              </MenuItem>
+              {image?.currentVersion && (
+                <MenuItem
+                  className=" flex w-full justify-start p-2 py-1 text-sm text-white hover:bg-purple-500"
+                  bgColor={"#475569"}
+                >
+                  <VersionUploadModal
+                    prevImage={image as IReviewImageData}
+                    pos={"start"}
+                  />
+                </MenuItem>
+              )}
               <p className=" px-3 py-1.5 transition-all hover:bg-purple-500">
                 <SendInvitesIconModal
                   image={image}
