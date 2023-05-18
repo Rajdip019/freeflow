@@ -126,6 +126,12 @@ const ReviewImage = () => {
   // Adds a new thread
   const addNewThread = async () => {
     try {
+      setNewThread((prev: any) => {
+        return {
+          ...prev,
+          isHidden: true,
+        };
+      });
       await addDoc(collection(db, `reviewImages/${imageId}/threads`), {
         top: newThread.pos.top,
         left: newThread.pos.left,
@@ -141,7 +147,7 @@ const ReviewImage = () => {
         newUpdate: "New Thread",
       });
       toast({
-        title: "Comment added successfully",
+        title: "Thread added successfully",
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -285,25 +291,26 @@ const ReviewImage = () => {
                     {imageData?.imageName}{" "}
                     {imageData?.currentVersion ? (
                       <Menu>
-                        <MenuButton className="text-sm text-purple-500 focus:outline-none">
-                          {`V${version}`} <ChevronDownIcon />
+                        <MenuButton className="rounded bg-purple-500 p-1 text-xs font-semibold text-white focus:outline-none">
+                          {`v${version}`} <ChevronDownIcon />
                         </MenuButton>
                         <MenuList bgColor={"#475569"} border={0}>
 
                           {isAdmin && (
-                            <p
-                              className=" flex w-full p-2 py-1 text-sm text-white hover:bg-gray-700"
-                              // bgColor={"#475569"}
+                            <MenuItem
+                              className=" flex w-full justify-center p-2 py-1 text-sm text-white hover:bg-purple-500"
+                              bgColor={"#475569"}
                             >
                               <VersionUploadModal
                                 prevImage={imageData as IReviewImageData}
+                                pos="mid"
                               />
-                            </p>
+                            </MenuItem>
                           )}
                           {imageData?.imageURL.map((_, index) => {
                             return (
                               <MenuItem
-                                className=" flex w-full p-2 py-1 text-sm text-white hover:bg-gray-700"
+                                className="font-sec flex justify-center p-2 py-1 text-sm text-white hover:bg-purple-500"
                                 bgColor={"#475569"}
                                 key={index}
                                 onClick={() => {
@@ -314,7 +321,7 @@ const ReviewImage = () => {
                                   setVersion(imageData.imageURL.length - index);
                                 }}
                               >
-                                {`V${imageData.imageURL.length - index}`}
+                                {`Version ${imageData.imageURL.length - index}`}
                               </MenuItem>
                             );
                           })}
@@ -457,6 +464,12 @@ const ReviewImage = () => {
                                             };
                                           });
                                         }}
+                                        //   onKeyPress={(e) => {
+                                        //     if(newThread.comment.value === "") return;
+                                        //     if (e.key === "Enter") {
+                                        //       addNewThread();
+                                        //     }
+                                        // }}
                                       />
                                       <div className=" mt-3 flex gap-2">
                                         <div
