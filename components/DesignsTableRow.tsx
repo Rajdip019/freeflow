@@ -89,7 +89,9 @@ const DesignsTableRow: React.FC<Props> = ({ image }) => {
         <div className="flex gap-3">
           <Copy value={`${APP_URL}/review-image/${image.id}`} />
           <PublicAndPrivate image={image} isText={false} />
-          <ImageDeleteModalConfirmation image={image} />
+          {image?.currentVersion && (
+            <ImageDeleteModalConfirmation image={image} />
+          )}
           {/* <SendInvitesIconModal image={image} /> */}
           <Menu>
             <MenuButton>
