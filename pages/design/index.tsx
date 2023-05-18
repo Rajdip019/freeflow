@@ -1,7 +1,6 @@
 import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import Header from "@/components/Dashboard/Header";
 import ImageUploadModal from "@/components/ImageUploadModal";
-import ImageDeleteModalConfirmation from "@/components/Modal/ImageDeleteModalConfirmation";
 import { useImageContext } from "@/contexts/ImagesContext";
 import { Table, TableContainer, Tbody, Th, Thead, Tr } from "@chakra-ui/react";
 import React from "react";
