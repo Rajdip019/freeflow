@@ -3,30 +3,10 @@ import Header from "@/components/Dashboard/Header";
 import ImageUploadModal from "@/components/ImageUploadModal";
 import ImageDeleteModalConfirmation from "@/components/Modal/ImageDeleteModalConfirmation";
 import { useImageContext } from "@/contexts/ImagesContext";
-import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-  useClipboard,
-} from "@chakra-ui/react";
-import Link from "next/link";
+import { Table, TableContainer, Tbody, Th, Thead, Tr } from "@chakra-ui/react";
 import React from "react";
-import Moment from "react-moment";
-import { APP_URL } from "@/helpers/constants";
 import Head from "next/head";
-import SendInvitesIconModal from "@/components/Modal/SendInvitesIconModal";
 import { orderBy } from "lodash-es";
-import Copy from "@/components/shared/Copy";
-import PublicAndPrivate from "@/components/ImageReview/PublicAndPrivate";
-import ChangeFileNameModal from "@/components/Modal/ChangeFileNameModal";
 import DesignsTableRow from "@/components/DesignsTableRow";
 
 const Design = () => {
