@@ -281,6 +281,15 @@ const ReviewImage = () => {
                                   </MenuItem>
                                 );
                               })}
+                              <MenuItem
+                                className=" flex w-full justify-center p-2 py-1 text-sm text-white hover:bg-purple-500"
+                                bgColor={"#475569"}
+                                onClick={() => {
+                                  setIsCompareView(true);
+                                }}
+                              >
+                                Compare Versions
+                              </MenuItem>
                             </MenuList>
                           </Menu>
                         )}
