@@ -31,7 +31,13 @@ const SidebarComments: React.FC<Props> = ({
   return (
     <>
       {version === thread.version && (
-        <div className="flex border-b border-black">
+        <div
+          className="flex cursor-pointer border-b border-black transition-all hover:bg-gray-900"
+          onClick={() => {
+            setHighlightedComment(thread);
+            setIsFocusedThread(true);
+          }}
+        >
           <div className={`w-1 bg-${thread.color}`}></div>
           <div className="p-2">
             <div className=" flex items-center">
@@ -50,7 +56,7 @@ const SidebarComments: React.FC<Props> = ({
                 {thread.initialComment}
               </Linkify>
             </p>
-            <button
+            {/* <button
               onClick={() => {
                 setHighlightedComment(thread);
                 setIsFocusedThread(true);
@@ -58,7 +64,7 @@ const SidebarComments: React.FC<Props> = ({
               className=" font-sec mt-1 text-sm text-gray-400 hover:text-gray-200"
             >
               Reply
-            </button>
+            </button> */}
           </div>
         </div>
       )}
