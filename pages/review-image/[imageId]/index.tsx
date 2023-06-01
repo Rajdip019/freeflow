@@ -378,11 +378,12 @@ const ReviewImage = () => {
                                       className="cursor-[url(/cursor/cursor.svg),_pointer] transition-all"
                                     >
                                       <img
-                                        src={
-                                          imageData?.imageURL[
-                                            (version as number) - 1
-                                          ]
-                                        }
+                                        src={imageData?.imageURL[
+                                          (version as number) - 1
+                                        ].replace(
+                                          "https://firebasestorage.googleapis.com",
+                                          "https://ik.imagekit.io/freeflow"
+                                        )}
                                         ref={imageRef}
                                         className=" max-h-[85vh]"
                                         onClick={handleClick}
@@ -393,11 +394,12 @@ const ReviewImage = () => {
                                   {version !== imageData?.currentVersion && (
                                     <div>
                                       <img
-                                        src={
-                                          imageData?.imageURL[
-                                            (version as number) - 1
-                                          ]
-                                        }
+                                        src={imageData?.imageURL[
+                                          (version as number) - 1
+                                        ].replace(
+                                          "https://firebasestorage.googleapis.com",
+                                          "https://ik.imagekit.io/freeflow"
+                                        )}
                                         ref={imageRef}
                                         className=" max-h-[85vh]"
                                         onLoad={handleImage}
@@ -412,7 +414,10 @@ const ReviewImage = () => {
                                       imageData?.currentVersion
                                         ? imageData?.imageURL[
                                             (version as number) - 1
-                                          ]
+                                          ].replace(
+                                            "https://firebasestorage.googleapis.com",
+                                            "https://ik.imagekit.io/freeflow"
+                                          )
                                         : (imageData?.imageURL as any)
                                     }
                                     ref={imageRef}
