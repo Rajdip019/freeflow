@@ -180,7 +180,7 @@ const Test = () => {
   return (
     <>
       <div className=" font-sec hidden h-[100vh] w-[100vw] bg-gray-900 md:flex">
-        <div className=" absolute left-3 top-3 z-50 flex gap-2">
+        {/* <div className=" absolute left-3 top-3 z-50 flex gap-2">
           <button
             className="w-6 rounded-full bg-white p-1"
             onClick={() =>
@@ -213,7 +213,7 @@ const Test = () => {
               className="w-6"
             />
           </button>
-        </div>
+        </div> */}
         <div>
           <canvas ref={canvasRef} className=" h-[75vh] w-[75vw]"></canvas>
           <div className=" mt-5 w-[75vw] px-5">
