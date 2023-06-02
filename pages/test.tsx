@@ -1,22 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
+import View3D, { Annotation } from "@egjs/react-view3d";
+import "@egjs/react-view3d/css/view3d-bundle.min.css";
 
 const Test = () => {
-  const imageRef = useRef<HTMLImageElement>(null);
-  const [image, setImage] = useState<string>();
-
-  useEffect(() => {
-    console.log(imageRef.current?.height);
-  }, [imageRef, image]);
-
-  useEffect(() => {
-    setImage(
-      "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg"
-    );
-  }, []);
-
+  // const newAnn = new Annotation(View3D, )
   return (
     <div>
-      <img ref={imageRef} className="w-full" src={image} alt="" />
+      <View3D
+        tag="div"
+        src="/skybox.jpg"
+        envmap="/uploads_files_2397542_black_leather_chair.gltf.hdr"
+        className="h-screen w-screen"
+        // onReady={(e) => {
+        //   console.log(e.target.annotation.add());
+        // }}
+      ></View3D>
     </div>
   );
 };
