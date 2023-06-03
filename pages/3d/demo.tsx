@@ -86,17 +86,17 @@ const Test = () => {
           scene
         );
 
-        var textureGround = new BABYLON.DynamicTexture(
+        const textureGround = new BABYLON.DynamicTexture(
           "dynamic texture",
           { width: 800, height: 800 },
           scene
         );
-        var materialGround = new BABYLON.StandardMaterial("Mat", scene);
+        const materialGround = new BABYLON.StandardMaterial("Mat", scene);
         materialGround.diffuseTexture = textureGround;
         disc.material = materialGround;
 
         //Add text to dynamic texture
-        var font = "bold 500px monospace";
+        const font = "bold 500px monospace";
         textureGround.drawText(
           `${annotations.length + 1}`,
           260,
@@ -112,9 +112,11 @@ const Test = () => {
         disc.actionManager.registerAction(
           new BABYLON.ExecuteCodeAction(
             BABYLON.ActionManager.OnPickTrigger,
-            () => {
+            (e) => {
               // Do something when the disc is clicked/tapped
-              console.log("Annotation clicked");
+              console.log("Clicked", e);
+              camera.speed = 0.01;
+              camera.setPosition({ ...position, _z: position._z + 10 });
             }
           )
         );
@@ -166,6 +168,7 @@ const Test = () => {
     annotations[annotations.length - 1].uname = "Rajdeep Sengupta";
     annotations[annotations.length - 1].comment = annotationComment;
     annotations[annotations.length - 1].timeStampNew = new Date();
+
     setIsCommenting(false);
   }
 
