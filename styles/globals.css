@@ -85,3 +85,8 @@ body {
     @apply text-[#9333EA];
   }
 }
+
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
