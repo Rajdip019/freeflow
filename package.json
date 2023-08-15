@@ -10,6 +10,8 @@
     "lint": "next lint",
     "pretty-quick": "pretty-quick --staged --branch main",
     "prepare": "husky install",
+    "format": "prettier --write .",
+    "pre-commit": "npm run format && git add -A .",
     "deploy:prod": "git checkout main && git pull origin main && ./scripts/deploy_prod.sh",
     "deploy:stage": "git checkout stage && git pull origin stage && ./scripts/deploy_stage.sh"
   },
@@ -52,7 +54,7 @@
     "@types/react-copy-to-clipboard": "^5.0.4",
     "@types/react-linkify": "^1.0.1",
     "autoprefixer": "^10.4.14",
-    "husky": "^8.0.0",
+    "husky": "^8.0.3",
     "postcss": "^8.4.23",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.2.8",
