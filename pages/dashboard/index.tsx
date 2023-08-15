@@ -16,7 +16,7 @@ const Dashboard = () => {
       </Head>
       <Header title="Dashboard" />
       <div className=" px-10">
-        <div className=" mt-8 flex gap-10 overflow-x-scroll no-scrollbar">
+        <div className=" no-scrollbar mt-8 flex gap-10 overflow-x-scroll">
           <TotalImagesStats />
           <TotalViews />
           <StorageStats />

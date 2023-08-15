@@ -10,6 +10,8 @@
     "lint": "next lint",
     "pretty-quick": "pretty-quick --staged --branch main",
     "prepare": "husky install",
+    "format": "prettier --write .",
+    "pre-commit": "npm run format && git add -A .",
     "deploy:prod": "git checkout main && git pull origin main && ./scripts/deploy_prod.sh",
     "deploy:stage": "git checkout stage && git pull origin stage && ./scripts/deploy_stage.sh"
   },
