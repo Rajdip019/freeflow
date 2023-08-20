@@ -111,20 +111,7 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({ imageSrc, imageId, version,
             reader.readAsDataURL(file);
         });
     };
-
-    async function dataURLtoFile(dataurl : any) {
-        let arr = dataurl.split(','),
-            //@ts-ignore
-            mime = arr[0].match(/:(.*?);/)[1],
-            bstr = atob(arr[arr.length - 1]), 
-            n = bstr.length, 
-            u8arr = new Uint8Array(n);
-        while(n--){
-            u8arr[n] = bstr.charCodeAt(n);
-        }
-        return new File([u8arr], imageData.imageName, {type:mime});
-    }
-
+    
     const addThread = async () => {
         setIsLoading(true);
         //@ts-ignore
@@ -135,7 +122,7 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({ imageSrc, imageId, version,
         await addNewReviewToDatabase(blob);
         //@ts-ignore
         await editorRef?.current?.editor.loadImage(cachedImage);
-        // add a 5 sec timeout to show the edited image
+        setComment("");
         setIsLoading(false);
     };
 

@@ -20,13 +20,9 @@ body {
   }
 }
 
-/* .custom-cur {
-  cursor: url('/cursor/cursor.svg');
-} */
-
 .pintura-editor {
-  --color-background: 17, 24, 39;
-  --color-foreground: 255, 255, 255;
+  --color-background: 17, 24, 39 !important;
+  --color-foreground: 255, 255, 255 !important;
 }
 
 .linkify__text {
