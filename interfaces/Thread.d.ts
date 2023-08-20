@@ -1,27 +1,13 @@
-export interface IThread {
+export interface IReview {
   id: string;
-  top: number;
-  left: number;
-  imageDimension: {
-    height: number;
-    width: number;
-  };
   name: string;
   initialComment: string;
   timeStamp: number;
-  color: string;
   version: number;
+  imageURL: string;
 }
 
-export interface INewThread {
-  pos: {
-    top: number;
-    left: number;
-  };
-  comment: {
-    name: string;
-    value: string;
-  };
-  color: string;
-  isHidden: boolean;
+export interface INewComment {
+  name: string;
+  value: string;
 }

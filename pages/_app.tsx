@@ -1,4 +1,5 @@
 import { ChakraProvider } from "@chakra-ui/react";
+import '@pqina/pintura/pintura.css';
 import "@/styles/globals.css";
 import { AppProps } from "next/app";
 import { Analytics } from "@vercel/analytics/react";

@@ -1,7 +1,7 @@
 import AddEmailAndPassword from "@/components/ImageReview/AddEmailAndPassword";
 import CompareView from "@/components/ImageReview/CompareView";
-import Markings from "@/components/ImageReview/Markings";
-import NewThread from "@/components/ImageReview/NewThread";
+import PreviewCanvas from "@/components/ImageReview/PreviewCanvas";
+import ReviewCanvas from "@/components/ImageReview/ReviewCanvas";
 import ReviewImageToolbarAdmin from "@/components/ImageReview/ReviewImageToolbarAdmin";
 import ReviewImageToolbar from "@/components/ImageReview/ReviewToolbar";
 import SidebarComments from "@/components/ImageReview/SidebarComments";
@@ -13,11 +13,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useUserContext } from "@/contexts/UserContext";
 import {
   defaultHighlightedThread,
-  defaultNewThread,
 } from "@/helpers/constants";
-import { IImageDimension } from "@/interfaces/Image";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
-import { IThread, INewThread } from "@/interfaces/Thread";
+import { IReview } from "@/interfaces/Thread";
 import { db } from "@/lib/firebaseConfig";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
@@ -25,7 +23,6 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  useToast,
 } from "@chakra-ui/react";
 import {
   DocumentData,
@@ -46,19 +43,13 @@ const ReviewImage = () => {
   const { imageId } = router.query;
   const [imageData, setImageData] = useState<IReviewImageData>();
   const [error, setError] = useState<boolean>(false);
-  const [threads, setThreads] = useState<IThread[]>([]);
-  const [isNewThreadAddLoading, setIsNewThreadAddLoading] =
-    useState<boolean>(false);
+  const [threads, setThreads] = useState<IReview[]>([]);
   const [isCommentsOn, setIsCommentsOn] = useState<boolean>(true);
-  const [highlightedComment, setHighlightedComment] = useState<IThread>(
+  const [highlightedComment, setHighlightedComment] = useState<IReview>(
     defaultHighlightedThread
   );
   const imageRef = useRef<HTMLImageElement>(null);
-  const commentRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isFocusedThread, setIsFocusedThread] = useState<boolean>(false);
-  const [newThread, setNewThread] = useState<INewThread>(defaultNewThread);
-  const [imageDimension, setImageDimension] = useState<IImageDimension>();
   const [isThreadsLoading, setIsThreadsLoading] = useState<boolean>(false);
   const [uname, setUname] = useState<string | undefined>("");
   const [isUnameValid, setIsUnameValid] = useState<boolean>(false);
@@ -68,28 +59,6 @@ const ReviewImage = () => {
 
   const { authUser } = useAuth();
   const { user } = useUserContext();
-
-  const handleClick = (event: React.MouseEvent<HTMLImageElement>) => {
-    const { left, top } = commentRef.current!.getBoundingClientRect();
-    const x = event.clientX - left;
-    const y = event.clientY - top;
-    setNewThread((prev: any) => {
-      return {
-        ...prev,
-        pos: { top: y, left: x },
-        comment: { value: "" },
-        color: "purple-500",
-        isHidden: false,
-      };
-    });
-    console.log(`Mouse position inside comment div: ${x}, ${y}`);
-  };
-
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
-  }, [textareaRef, handleClick]);
 
   // Get the details of the image
   const getImageDetails = async () => {
@@ -118,7 +87,7 @@ const ReviewImage = () => {
       querySnapshot.forEach((doc) => {
         _comments.push({ ...doc.data(), id: doc.id });
       });
-      setThreads(_comments as IThread[]);
+      setThreads(_comments as IReview[]);
     });
   };
 
@@ -138,17 +107,8 @@ const ReviewImage = () => {
   }, [authUser, uname]);
 
   // Handle image rendering with different width and height
-  const handleImage = () => {
-    const width = imageRef.current?.clientWidth;
-    setImageDimension({
-      width: width as number,
-      height: imageRef.current?.clientHeight as number,
-    });
-  };
-
   useEffect(() => {
     if (router.isReady) {
-      handleImage();
       let isVisited = localStorage.getItem("isVisited");
       if (isVisited) {
         const visited_arr = isVisited.split(",");
@@ -275,9 +235,8 @@ const ReviewImage = () => {
                                       );
                                     }}
                                   >
-                                    {`Version ${
-                                      imageData.imageURL.length - index
-                                    }`}
+                                    {`Version ${imageData.imageURL.length - index
+                                      }`}
                                   </MenuItem>
                                 );
                               })}
@@ -324,110 +283,26 @@ const ReviewImage = () => {
                     />
                   ) : (
                     <div className="w-9/12">
-                      <div className="flex h-[calc(100vh-4rem)] items-center justify-center px-10 ">
+                      <div className="flex h-[calc(100vh-4rem)] items-center justify-center px-5 ">
                         <>
-                          <div className=" relative">
-                            {isCommentsOn && (
-                              <>
-                                {threads.map((thread) => {
-                                  return (
-                                    <>
-                                      {version === thread.version && (
-                                        <Markings
-                                          setIsFocusedThread={
-                                            setIsFocusedThread
-                                          }
-                                          highlightedComment={
-                                            highlightedComment as IThread
-                                          }
-                                          thread={thread}
-                                          imageDimension={
-                                            imageDimension as IImageDimension
-                                          }
-                                          setHighlightedComment={
-                                            setHighlightedComment as React.Dispatch<
-                                              React.SetStateAction<IThread>
-                                            >
-                                          }
-                                        />
-                                      )}
-                                    </>
-                                  );
-                                })}
-                              </>
-                            )}
-                            <NewThread
-                              newThread={newThread}
-                              setNewThread={setNewThread}
-                              isNewThreadAddLoading={isNewThreadAddLoading}
-                              uname={uname as string}
-                              version={version as number}
-                              imageDimension={imageDimension as IImageDimension}
-                              imageId={imageId as string}
-                            />
-                            <div
-                              // style={{ width: imageDimension.width, height: imageDimension.height }}
-                              ref={commentRef}
-                              className="flex items-center justify-center"
-                            >
-                              {imageData?.currentVersion ? (
-                                <>
-                                  {version === imageData?.currentVersion && (
-                                    <div
-                                      onClick={handleClick}
-                                      className="cursor-[url(/cursor/cursor.svg),_pointer] transition-all"
-                                    >
-                                      <img
-                                        src={imageData?.imageURL[
-                                          (version as number) - 1
-                                        ].replace(
-                                          "https://firebasestorage.googleapis.com",
-                                          "https://ik.imagekit.io/freeflow"
-                                        )}
-                                        ref={imageRef}
-                                        className=" max-h-[85vh]"
-                                        onClick={handleClick}
-                                        onLoad={handleImage}
-                                      />
-                                    </div>
-                                  )}
-                                  {version !== imageData?.currentVersion && (
-                                    <div>
-                                      <img
-                                        src={imageData?.imageURL[
-                                          (version as number) - 1
-                                        ].replace(
-                                          "https://firebasestorage.googleapis.com",
-                                          "https://ik.imagekit.io/freeflow"
-                                        )}
-                                        ref={imageRef}
-                                        className=" max-h-[85vh]"
-                                        onLoad={handleImage}
-                                      />
-                                    </div>
-                                  )}
-                                </>
-                              ) : (
-                                <div>
-                                  <img
-                                    src={
-                                      imageData?.currentVersion
-                                        ? imageData?.imageURL[
-                                            (version as number) - 1
-                                          ].replace(
-                                            "https://firebasestorage.googleapis.com",
-                                            "https://ik.imagekit.io/freeflow"
-                                          )
-                                        : (imageData?.imageURL as any)
-                                    }
-                                    ref={imageRef}
-                                    className=" max-h-[85vh]"
-                                    onLoad={handleImage}
-                                  />
-                                </div>
-                              )}
-                            </div>
+                        {highlightedComment.imageURL ? (
+                          <div className=" w-full">
+                            <PreviewCanvas imageSrc={highlightedComment.imageURL} height="85vh" />
                           </div>
+                        ) : (
+                          <div className=" w-full">
+                            <ReviewCanvas imageSrc={imageData?.currentVersion
+                              ? imageData?.imageURL[
+                                (version as number) - 1
+                              ]
+                              : (imageData?.imageURL as any)}
+                              imageId={imageId as string}
+                              version={version as number}
+                              imageData={imageData as IReviewImageData}
+                              uname={uname as string}
+                              />
+                          </div>
+                        )}
                         </>
                       </div>
                     </div>
@@ -437,11 +312,11 @@ const ReviewImage = () => {
                       <div className=" h-[calc(100vh-4rem)] overflow-y-scroll">
                         {isFocusedThread ? (
                           <ThreadsExpanded
+                             highlightedComment={highlightedComment as IReview}
                             setHighlightedComment={setHighlightedComment}
                             setIsFocusedThread={setIsFocusedThread}
                             uname={uname as string}
                             imageId={imageId as string}
-                            highlightedComment={highlightedComment as IThread}
                           />
                         ) : (
                           <div>
@@ -472,14 +347,14 @@ const ReviewImage = () => {
                                     {threads.map((thread, index) => {
                                       return (
                                         <>
-                                          {thread.imageDimension ? (
+                                          {thread.imageURL ? (
                                             <SidebarComments
                                               key={index}
                                               thread={thread}
                                               version={version as number}
                                               setHighlightedComment={
                                                 setHighlightedComment as React.Dispatch<
-                                                  React.SetStateAction<IThread>
+                                                  React.SetStateAction<IReview>
                                                 >
                                               }
                                               setIsFocusedThread={

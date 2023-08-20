@@ -53,7 +53,7 @@ const ImageUploader = () => {
           try {
             const storageRef = ref(
               storage,
-              `reviewImages/${authUser?.uid}/public/${imageName}_${Date.now()}`
+              `reviewImages/${authUser?.uid}/public/${imageName}-${Date.now()}`
             );
             let bytes: number = 0;
             const uploadTask = uploadBytesResumable(
