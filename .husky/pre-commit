@@ -1,2 +1,4 @@
-echo "Running Husky pre-commit hooks"
-npm run pretty-quick
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+npm run pre-commit

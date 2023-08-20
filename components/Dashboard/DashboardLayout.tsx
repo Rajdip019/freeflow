@@ -10,7 +10,6 @@ const DashboardLayout = ({ children }: any) => {
         <div className=" flex w-full flex-col justify-between bg-black">
           <div>{children}</div>
           <div className="h-10 w-full bg-gradient-to-t from-[#8248bd] to-black "></div>
-
         </div>
       </div>
     </FFPage>
