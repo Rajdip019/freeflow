@@ -24,6 +24,11 @@ body {
   cursor: url('/cursor/cursor.svg');
 } */
 
+.pintura-editor {
+  --color-background: 17, 24, 39;
+  --color-foreground: 255, 255, 255;
+}
+
 .linkify__text {
   text-decoration: underline;
   color: rgb(4, 165, 239);
