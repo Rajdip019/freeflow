@@ -12,9 +12,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { validateCommaSeparatedEmails } from "@/helpers/validators";
 import classNames from "classnames";
-import SendCompleteIcon from "../Icons/SendCompleteIcon";
 import { db } from "@/lib/firebaseConfig";
 import { updateDoc, doc } from "firebase/firestore";
 

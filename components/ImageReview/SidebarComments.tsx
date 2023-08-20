@@ -1,20 +1,14 @@
-import { IThread } from "@/interfaces/Thread";
+import { IReview } from "@/interfaces/Thread";
 import { Avatar } from "@chakra-ui/react";
 import React from "react";
 import Moment from "react-moment";
 import Linkify from "react-linkify";
 interface Props {
-  thread: IThread;
-  setHighlightedComment: React.Dispatch<React.SetStateAction<IThread>>;
+  thread: IReview;
+  setHighlightedComment: React.Dispatch<React.SetStateAction<IReview>>;
   setIsFocusedThread: React.Dispatch<React.SetStateAction<boolean>>;
   version: number;
 }
-
-const componentDecorator = (href: string, text: string, key: any) => (
-  <a className="linkify__text" href={href} key={key} target="_blank">
-    {text}
-  </a>
-);
 
 const SidebarComments: React.FC<Props> = ({
   thread,
@@ -38,7 +32,6 @@ const SidebarComments: React.FC<Props> = ({
             setIsFocusedThread(true);
           }}
         >
-          <div className={`w-1 bg-${thread.color}`}></div>
           <div className="p-2">
             <div className=" flex items-center">
               <Avatar size="sm" name={thread.name} className="mr-2" />
