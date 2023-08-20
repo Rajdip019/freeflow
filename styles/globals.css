@@ -58,6 +58,10 @@ body {
   font-family: "Space Grotesk", sans-serif;
 }
 
+.aspect-gridImage {
+  aspect-ratio: 3/2.5;
+}
+
 @layer components {
   .text-gradient-p {
     @apply bg-gradient-to-r from-[#9333EA] to-[#FF8383] bg-clip-text text-transparent;
