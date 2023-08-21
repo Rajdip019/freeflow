@@ -27,7 +27,9 @@ const CompareView: React.FC<Props> = ({ imageData, currentVersion }) => {
               {imageData.imageName}
             </p>
             <div className=" w-[45vw]">
-              <PreviewCanvas imageSrc={imageData?.imageURL[(version1 as number) - 1]} />
+              <PreviewCanvas
+                imageSrc={imageData?.imageURL[(version1 as number) - 1]}
+              />
             </div>
             <div className=" mt-5">
               <Menu>
@@ -62,12 +64,14 @@ const CompareView: React.FC<Props> = ({ imageData, currentVersion }) => {
           <div
             // style={{ width: imageDimension.width, height: imageDimension.height }}
             className="flex w-full flex-col items-center justify-center   "
-          > 
+          >
             <p className=" mb-5 text-sm  font-semibold">
               {imageData.imageName}
             </p>
             <div className="w-[45vw]">
-               <PreviewCanvas imageSrc={imageData?.imageURL[(version2 as number) - 1]} />
+              <PreviewCanvas
+                imageSrc={imageData?.imageURL[(version2 as number) - 1]}
+              />
             </div>
             <div className=" mt-5">
               <Menu>
