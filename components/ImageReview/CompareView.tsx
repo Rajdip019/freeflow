@@ -1,9 +1,8 @@
-import { defaultHighlightedThread } from "@/helpers/constants";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
-import React, { version } from "react";
-import VersionUploadModal from "../VersionControl/VersionUploadModal";
+import React from "react";
+import PreviewCanvas from "./PreviewCanvas";
 
 interface Props {
   imageData: IReviewImageData;
@@ -17,20 +16,19 @@ const CompareView: React.FC<Props> = ({ imageData, currentVersion }) => {
   console.log("version2", version2);
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] w-full items-center justify-center px-10 ">
+    <div className="flex w-full items-center justify-center">
       <div className="">
         <div className=" flex justify-around gap-5 ">
           <div
             // style={{ width: imageDimension.width, height: imageDimension.height }}
-            className="flex w-6/12 flex-col items-center justify-center"
+            className="flex w-full flex-col items-center justify-center"
           >
             <p className=" mb-5 text-sm  font-semibold">
               {imageData.imageName}
             </p>
-            <img
-              src={imageData?.imageURL[(version1 as number) - 1]}
-              className=" max-h-[85vh]"
-            />
+            <div className=" w-[45vw]">
+              <PreviewCanvas imageSrc={imageData?.imageURL[(version1 as number) - 1]} />
+            </div>
             <div className=" mt-5">
               <Menu>
                 <MenuButton className="rounded bg-purple-500 px-4 py-2 text-xs font-semibold text-white focus:outline-none">
@@ -63,15 +61,14 @@ const CompareView: React.FC<Props> = ({ imageData, currentVersion }) => {
           <div className=" h-[calc(100vh-4rem)] w-0.5 bg-gray-400"></div>
           <div
             // style={{ width: imageDimension.width, height: imageDimension.height }}
-            className="flex w-6/12 flex-col items-center justify-center "
-          >
+            className="flex w-full flex-col items-center justify-center   "
+          > 
             <p className=" mb-5 text-sm  font-semibold">
               {imageData.imageName}
             </p>
-            <img
-              src={imageData?.imageURL[(version2 as number) - 1]}
-              className=" max-h-[85vh]"
-            />
+            <div className="w-[45vw]">
+               <PreviewCanvas imageSrc={imageData?.imageURL[(version2 as number) - 1]} />
+            </div>
             <div className=" mt-5">
               <Menu>
                 <MenuButton className="rounded bg-purple-500 px-4 py-2 text-xs font-semibold text-white focus:outline-none">

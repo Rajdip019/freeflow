@@ -1,4 +1,4 @@
-import { INewThread, IThread } from "@/interfaces/Thread";
+import { INewComment, IReview } from "@/interfaces/Thread";
 
 export const IS_PRODUCTION = process.env.NEXT_PUBLIC_ENV === "prod";
 
@@ -9,29 +9,18 @@ export const APP_URL =
     ? "https://freeflow-stage.vercel.app"
     : "http://localhost:3000";
 
-export const defaultHighlightedThread: IThread = {
+export const defaultHighlightedThread: IReview = {
   id: "",
-  imageDimension: { height: 0, width: 0 },
-  top: 0,
-  left: 0,
   initialComment: "",
   timeStamp: 0,
   name: "",
-  color: "",
   version: 1,
+  imageURL: "",
 };
 
-export const defaultNewThread: INewThread = {
-  pos: {
-    top: 0,
-    left: 0,
-  },
-  comment: {
-    name: "",
-    value: "",
-  },
-  color: "gray-900",
-  isHidden: true,
+export const defaultNewThread: INewComment = {
+  name: "",
+  value: "",
 };
 
 export const sidebarData = [

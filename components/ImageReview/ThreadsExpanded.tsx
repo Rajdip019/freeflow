@@ -1,5 +1,5 @@
 import { defaultHighlightedThread } from "@/helpers/constants";
-import { IThread } from "@/interfaces/Thread";
+import { IReview } from "@/interfaces/Thread";
 import { db } from "@/lib/firebaseConfig";
 import { Avatar, Spinner, Textarea, useToast } from "@chakra-ui/react";
 import {
@@ -20,8 +20,8 @@ import { useAuth } from "@/contexts/AuthContext";
 interface Props {
   uname: string;
   imageId: string;
-  highlightedComment: IThread;
-  setHighlightedComment: React.Dispatch<React.SetStateAction<IThread>>;
+  highlightedComment: IReview;
+  setHighlightedComment: React.Dispatch<React.SetStateAction<IReview>>;
   setIsFocusedThread: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -151,9 +151,7 @@ const ThreadsExpanded: React.FC<Props> = ({
           </p>
         </div>
         <div className="flex border-b border-black">
-          <div className={`w-1 bg-${highlightedComment.color}`}></div>
           <div className="p-2">
-            <div className={`w-1 bg-${highlightedComment.color}`}></div>
             <div className=" flex items-center">
               <Avatar
                 size="sm"

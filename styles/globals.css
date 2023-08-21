@@ -20,9 +20,10 @@ body {
   }
 }
 
-/* .custom-cur {
-  cursor: url('/cursor/cursor.svg');
-} */
+.pintura-editor {
+  --color-background: 17, 24, 39 !important;
+  --color-foreground: 255, 255, 255 !important;
+}
 
 .linkify__text {
   text-decoration: underline;
@@ -56,6 +57,10 @@ body {
 
 .font-sec {
   font-family: "Space Grotesk", sans-serif;
+}
+
+.aspect-gridImage {
+  aspect-ratio: 3/2.5;
 }
 
 @layer components {
