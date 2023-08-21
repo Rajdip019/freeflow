@@ -7,23 +7,17 @@ import ReviewImageToolbar from "@/components/ImageReview/ReviewToolbar";
 import SidebarComments from "@/components/ImageReview/SidebarComments";
 import ThreadsExpanded from "@/components/ImageReview/ThreadsExpanded";
 import Navbar from "@/components/LandingPage/Navbar";
+import LinkPreview from "@/components/LinkPreview";
 import ReviewImageMobile from "@/components/MobileView/ReviewImageMobile";
 import VersionUploadModal from "@/components/VersionControl/VersionUploadModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserContext } from "@/contexts/UserContext";
-import {
-  defaultHighlightedThread,
-} from "@/helpers/constants";
+import { defaultHighlightedThread } from "@/helpers/constants";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { IReview } from "@/interfaces/Thread";
 import { db } from "@/lib/firebaseConfig";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-} from "@chakra-ui/react";
+import { Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import {
   DocumentData,
   DocumentSnapshot,
@@ -187,6 +181,14 @@ const ReviewImage = () => {
                   {imageData?.imageName ? imageData.imageName : "Loading..."}
                 </title>
               </Head>
+              <LinkPreview
+                title={imageData?.imageName as string}
+                name={user?.name as string}
+                imageUrl={
+                  imageData?.imageURL[imageData.currentVersion] as string
+                }
+                url={router.pathname}
+              />
               <div className=" md:hidden">
                 <ReviewImageMobile imageData={imageData as IReviewImageData} />
               </div>
@@ -235,8 +237,9 @@ const ReviewImage = () => {
                                       );
                                     }}
                                   >
-                                    {`Version ${imageData.imageURL.length - index
-                                      }`}
+                                    {`Version ${
+                                      imageData.imageURL.length - index
+                                    }`}
                                   </MenuItem>
                                 );
                               })}
@@ -285,24 +288,30 @@ const ReviewImage = () => {
                     <div className="w-9/12">
                       <div className="flex h-[calc(100vh-4rem)] items-center justify-center px-5 ">
                         <>
-                        {highlightedComment.imageURL ? (
-                          <div className=" w-full">
-                            <PreviewCanvas imageSrc={highlightedComment.imageURL} height="85vh" />
-                          </div>
-                        ) : (
-                          <div className=" w-full">
-                            <ReviewCanvas imageSrc={imageData?.currentVersion
-                              ? imageData?.imageURL[
-                                (version as number) - 1
-                              ]
-                              : (imageData?.imageURL as any)}
-                              imageId={imageId as string}
-                              version={version as number}
-                              imageData={imageData as IReviewImageData}
-                              uname={uname as string}
+                          {highlightedComment.imageURL ? (
+                            <div className=" w-full">
+                              <PreviewCanvas
+                                imageSrc={highlightedComment.imageURL}
+                                height="85vh"
                               />
-                          </div>
-                        )}
+                            </div>
+                          ) : (
+                            <div className=" w-full">
+                              <ReviewCanvas
+                                imageSrc={
+                                  imageData?.currentVersion
+                                    ? imageData?.imageURL[
+                                        (version as number) - 1
+                                      ]
+                                    : (imageData?.imageURL as any)
+                                }
+                                imageId={imageId as string}
+                                version={version as number}
+                                imageData={imageData as IReviewImageData}
+                                uname={uname as string}
+                              />
+                            </div>
+                          )}
                         </>
                       </div>
                     </div>
@@ -312,7 +321,7 @@ const ReviewImage = () => {
                       <div className=" h-[calc(100vh-4rem)] overflow-y-scroll">
                         {isFocusedThread ? (
                           <ThreadsExpanded
-                             highlightedComment={highlightedComment as IReview}
+                            highlightedComment={highlightedComment as IReview}
                             setHighlightedComment={setHighlightedComment}
                             setIsFocusedThread={setIsFocusedThread}
                             uname={uname as string}
