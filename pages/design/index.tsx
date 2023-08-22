@@ -2,12 +2,24 @@ import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import Header from "@/components/Dashboard/Header";
 import ImageUploadModal from "@/components/ImageUploadModal";
 import { useImageContext } from "@/contexts/ImagesContext";
-import { Table, TableContainer, Tbody, Th, Thead, Tr } from "@chakra-ui/react";
+import {
+  GridItem,
+  ListIcon,
+  Switch,
+  Table,
+  TableContainer,
+  Tbody,
+  Th,
+  Thead,
+  Tooltip,
+  Tr,
+} from "@chakra-ui/react";
 import React, { useState } from "react";
 import Head from "next/head";
 import { orderBy } from "lodash-es";
 import DesignsTableRow from "@/components/DesignsTableRow";
 import DesignsGridView from "@/components/DesignsGridView";
+import { HamburgerIcon } from "@chakra-ui/icons";
 
 const Design = () => {
   const { images } = useImageContext();
@@ -36,23 +48,49 @@ const Design = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <div className="flex items-center gap-5">
-            <button
-              className={`${
-                isGridView ? "bg-purple-500" : "bg-[#20232A]"
-              } rounded-md px-3 py-2 text-white focus:outline-none`}
-              onClick={() => setIsGridView(true)}
-            >
-              Grid
-            </button>
-            <button
-              className={`${
-                isGridView ? "bg-[#20232A]" : "bg-purple-500"
-              } rounded-md px-3 py-2 text-white focus:outline-none`}
-              onClick={() => setIsGridView(false)}
-            >
-              Table
-            </button>
+          <div className="flex items-center gap-2">
+            <Tooltip label="List View" aria-label="List View">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                className={`h-6 w-6 cursor-pointer transition-all ${
+                  !isGridView
+                    ? "h-7 w-7 text-purple-500 "
+                    : "h-5 w-5 text-gray-500 "
+                }`}
+                onClick={() => setIsGridView(false)}
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z"
+                />
+              </svg>
+            </Tooltip>
+            <Tooltip label="Grid View" aria-label="Grid View">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.7"
+                stroke="currentColor"
+                className={`cursor-pointer transition-all  ${
+                  isGridView
+                    ? "h-7 w-7 text-purple-500 "
+                    : "h-5 w-5 text-gray-500 "
+                }`}
+                onClick={() => setIsGridView(true)}
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"
+                />
+              </svg>
+            </Tooltip>
           </div>
         </div>
       </section>
