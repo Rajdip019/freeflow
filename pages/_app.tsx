@@ -8,6 +8,8 @@ import { UserContextProvider } from "@/contexts/UserContext";
 import { ImageContextProvider } from "@/contexts/ImagesContext";
 import Script from "next/script";
 import { IS_PRODUCTION } from "@/helpers/constants";
+import { ConfigProvider } from "antd";
+import customTheme from "@/theme/themeConfig";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -49,17 +51,18 @@ function MyApp({ Component, pageProps }: AppProps) {
           </Script>
         </>
       )}
-
-      <ChakraProvider>
-        <AuthContextProvider>
-          <UserContextProvider>
-            <ImageContextProvider>
-              <Component {...pageProps} />
-              <Analytics />
-            </ImageContextProvider>
-          </UserContextProvider>
-        </AuthContextProvider>
-      </ChakraProvider>
+      <ConfigProvider theme={customTheme}>
+        <ChakraProvider>
+          <AuthContextProvider>
+            <UserContextProvider>
+              <ImageContextProvider>
+                <Component {...pageProps} />
+                <Analytics />
+              </ImageContextProvider>
+            </UserContextProvider>
+          </AuthContextProvider>
+        </ChakraProvider>
+      </ConfigProvider>
     </>
   );
 }
