@@ -174,6 +174,12 @@ const ReviewImage = () => {
         </>
       ) : (
         <>
+          <LinkPreview
+            title={imageData?.imageName as string}
+            name={user?.name as string}
+            imageUrl={imageData?.imageURL[imageData.currentVersion] as string}
+            url={router.pathname}
+          />
           {isUnameValid ? (
             <>
               <Head>
@@ -181,14 +187,7 @@ const ReviewImage = () => {
                   {imageData?.imageName ? imageData.imageName : "Loading..."}
                 </title>
               </Head>
-              <LinkPreview
-                title={imageData?.imageName as string}
-                name={user?.name as string}
-                imageUrl={
-                  imageData?.imageURL[imageData.currentVersion] as string
-                }
-                url={router.pathname}
-              />
+
               <div className=" md:hidden">
                 <ReviewImageMobile imageData={imageData as IReviewImageData} />
               </div>
