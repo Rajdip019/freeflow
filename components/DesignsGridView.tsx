@@ -2,9 +2,8 @@ import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import Moment from "react-moment";
 import React from "react";
 import Copy from "./shared/Copy";
-import { APP_URL } from "@/helpers/constants";
+import { APP_URL } from "@/utils/constants";
 import PublicAndPrivate from "./ImageReview/PublicAndPrivate";
-import ImageDeleteModalConfirmation from "./Modal/ImageDeleteModalConfirmation";
 import {
   Menu,
   MenuButton,
@@ -51,8 +50,8 @@ const DesignsGridView: React.FC<Props> = ({ image }) => {
         <div className="flex gap-1">
           <Copy value={`${APP_URL}/review-image/${image.id}`} />
           <PublicAndPrivate image={image} isText={false} />
-          <ImageDeleteModalConfirmation image={image} />
-          {/* <SendInvitesIconModal image={image} /> */}
+          {/* Mukesh we need to change this to a pop confirm deleting this modal from the codebase */}
+          {/* <ImageDeleteModalConfirmation image={image} /> */}
           <Menu>
             <MenuButton>
               <svg

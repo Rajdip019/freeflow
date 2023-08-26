@@ -12,7 +12,7 @@ import {
   Avatar,
 } from "@chakra-ui/react";
 import React from "react";
-import { sidebarData } from "@/helpers/constants";
+import { sidebarData } from "@/utils/constants";
 import { useAuth } from "@/contexts/AuthContext";
 import router from "next/router";
 import { useUserContext } from "@/contexts/UserContext";

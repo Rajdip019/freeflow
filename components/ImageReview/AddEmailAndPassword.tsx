@@ -1,4 +1,4 @@
-import { validateEmail } from "@/helpers/validators";
+import { validateEmail } from "@/utils/validators";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { Button, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 import React, { useState } from "react";

@@ -12,7 +12,7 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 
-import { IS_EMAIL_DEV } from "../helpers/email-templates";
+import { IS_EMAIL_DEV } from "../utils/email-templates";
 import HeroLogo from "../components/EmailTemplates/HeroLogo";
 
 export interface DesignReviewInviteProps {

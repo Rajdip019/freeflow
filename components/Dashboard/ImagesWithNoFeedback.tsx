@@ -1,6 +1,6 @@
 import { useImageContext } from "@/contexts/ImagesContext";
 import { useUserContext } from "@/contexts/UserContext";
-import { APP_URL } from "@/helpers/constants";
+import { APP_URL } from "@/utils/constants";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { Collapse } from "@chakra-ui/react";
 import Link from "next/link";

@@ -6,30 +6,27 @@ import {
     getEditorDefaults,
 } from "@pqina/pintura";
 import { PinturaEditor } from "@pqina/react-pintura";
-import { Input, Spinner } from "@chakra-ui/react";
-import { useToast } from "@chakra-ui/react";
 import { db, storage } from "@/lib/firebaseConfig";
 import { addDoc, collection, updateDoc, doc } from "firebase/firestore";
 import { useUserContext } from "@/contexts/UserContext";
-import { useImageContext } from "@/contexts/ImagesContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import { Input, notification } from "antd";
+import { useFeedbackContext } from "@/contexts/FeedbackContext";
+import { FFButton } from "@/theme/themeConfig";
+import { ArrowRightOutlined } from "@ant-design/icons";
+import { useNotification } from "../shared/Notification";
 
 interface ReviewCanvasProps {
     imageSrc: string;
     imageId: string;
-    version: number;
-    imageData: IReviewImageData;
-    uname: string;
+    open: boolean;
 }
 
 const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
     imageSrc,
     imageId,
-    version,
-    imageData,
-    uname,
+    open,
 }) => {
     const cachedImage = imageSrc.replace(
         "https://firebasestorage.googleapis.com",
@@ -38,17 +35,18 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
     const editorRef = React.useRef(null);
     const [comment, setComment] = React.useState("");
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
-    const toast = useToast();
     const { user } = useUserContext();
     const { authUser } = useAuth();
-    const { storage: storageUsed } = useImageContext();
+    const { notify, contextHolder } = useNotification();
+
+    const { uname ,  imageData, version} = useFeedbackContext()
 
     const addNewReviewToDatabase = async (blob: Blob) => {
         try {
             const storageRef = ref(
                 storage,
-                `reviewImages/${authUser?.uid}/public/${imageData.imageName
-                }/comments/${imageData.imageName}-${Date.now()}.png`
+                `reviewImages/${authUser?.uid}/public/${imageData?.imageName
+                }/comments/${imageData?.imageName}-${Date.now()}.png`
             );
             let bytes: number = 0;
             const uploadTask = uploadBytesResumable(storageRef, blob as File);
@@ -76,24 +74,12 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
                         lastUpdated: Date.now(),
                         newUpdate: "New Thread",
                     });
-                    toast({
-                        title: "Thread added successfully",
-                        status: "success",
-                        duration: 5000,
-                        isClosable: true,
-                        position: "bottom-right",
-                    });
+                    notify({type : "success", message : "Thread added successfully" });
                 }
             );
         } catch (e) {
             console.error("Error", e);
-            toast({
-                title: "Something went wring please try again.",
-                status: "error",
-                duration: 5000,
-                isClosable: true,
-                position: "bottom-right",
-            });
+            notify({type : "error", message : "Something went wring please try again." });
         }
     };
 
@@ -121,12 +107,13 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
         setIsLoading(false);
     };
 
-    const editorPdfconfig = getEditorDefaults({});
+    const editorConfig = getEditorDefaults({});
     return (
         <div className=" flex flex-col items-center">
+            {contextHolder}
             <div className=" h-[80vh] w-full">
                 <PinturaEditor
-                    {...editorPdfconfig}
+                    {...editorConfig}
                     previewUpscale={true}
                     ref={editorRef}
                     src={cachedImage}
@@ -150,7 +137,6 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
                         lineEndStyleOptions: false,
                         lineHeightOptions: false,
                     })}
-                    enableToolbar={false}
                     enableButtonExport={false}
                     cropEnableZoomInput={false}
                     cropEnableRotationInput={false}
@@ -159,36 +145,24 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
                     cropEnableImageSelection={false}
                 ></PinturaEditor>
             </div>
-            <div className=" flex w-9/12 items-center gap-3">
+            <div className={`flex ${open ? 'w-8/12' : 'w-6/12'} items-center gap-3`}>
                 <Input
                     value={comment}
                     onChange={(e) => {
                         setComment(e.target.value);
                     }}
                     type="text"
-                    focusBorderColor={"purple.500"}
-                    borderColor={"purple.500"}
                     className=" mb-4 text-white"
                     placeholder="Enter Comment"
                 />
-                <button
-                    className=" btn-p mb-4 rounded px-2 py-2 "
+                <FFButton
+                    className="mb-4 rounded px-2 py-2 "
                     disabled={isLoading || !comment}
                     onClick={addThread}
-                >
-                    {isLoading ? (
-                        <Spinner size={"xs"} />
-                    ) : (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            className="h-5 w-5"
-                        >
-                            <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
-                        </svg>
-                    )}
-                </button>
+                    type="primary"
+                    loading={isLoading}
+                >Add Feedback <ArrowRightOutlined />
+                </FFButton>
             </div>
         </div>
     );
