@@ -8,7 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useUserContext } from "@/contexts/UserContext";
 import { useImageContext } from "@/contexts/ImagesContext";
 import ImageUploadSuccess from "./ImageUploadSuccess";
-import { validateEmail } from "@/helpers/validators";
+import { validateEmail } from "@/utils/validators";
 import { newReviewImageEvent } from "@/lib/events";
 import ImageUploadDropZoneLandingPage from "./ImageDropZones/ImageUploadDropZoneLandingPage";
 

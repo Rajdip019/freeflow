@@ -1,4 +1,4 @@
-import { APP_URL } from "@/helpers/constants";
+import { APP_URL } from "@/utils/constants";
 import React from "react";
 import {
   Input,

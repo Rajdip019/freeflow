@@ -1,4 +1,4 @@
-import { IS_PRODUCTION } from "@/helpers/constants";
+import { IS_PRODUCTION } from "@/utils/constants";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { IUser } from "@/interfaces/User";
 import { postJson } from "@/lib/fetch";

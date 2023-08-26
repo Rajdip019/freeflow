@@ -8,8 +8,8 @@ import classNames from "classnames";
 import SendCompleteIcon from "@/components/Icons/SendCompleteIcon";
 import SendIcon from "@/components/Icons/SendIcon";
 import { useState } from "react";
-import { validateCommaSeparatedEmails } from "@/helpers/validators";
-import { formatCommaSeparatedStringToArray } from "@/helpers/formatters";
+import { validateCommaSeparatedEmails } from "@/utils/validators";
+import { formatCommaSeparatedStringToArray } from "@/utils/formatters";
 import { postJson } from "@/lib/fetch";
 
 interface Props {
