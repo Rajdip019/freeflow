@@ -12,11 +12,11 @@ const PreviewCanvas: React.FC<PreviewCanvasProps> = ({
   height = "65vh",
 }) => {
   const editorRef = React.useRef(null);
-  const editorPdfconfig = getEditorDefaults({});
+  const editorConfig = getEditorDefaults({});
   return (
     <div style={{ height: height }}>
       <PinturaEditor
-        {...editorPdfconfig}
+        {...editorConfig}
         previewUpscale={true}
         ref={editorRef}
         src={imageSrc.replace(

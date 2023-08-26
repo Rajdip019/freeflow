@@ -1,6 +1,6 @@
 import { useUserContext } from "@/contexts/UserContext";
 import React from "react";
-import { sidebarData } from "@/helpers/constants";
+import { sidebarData } from "@/utils/constants";
 import { useRouter } from "next/router";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar } from "@chakra-ui/react";

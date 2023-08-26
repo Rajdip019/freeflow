@@ -2,7 +2,7 @@ import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import Moment from "react-moment";
 import React from "react";
 import Copy from "./shared/Copy";
-import { APP_URL } from "@/helpers/constants";
+import { APP_URL } from "@/utils/constants";
 import Link from "next/link";
 import { Dropdown, Image, MenuProps, Tag, Typography } from "antd";
 import VersionUploadModal from "./VersionControl/VersionUploadModal";
