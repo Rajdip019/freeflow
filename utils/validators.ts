@@ -1,5 +1,5 @@
 import { every } from "lodash-es";
-import { formatCommaSeparatedStringToArray } from "@/helpers/formatters";
+import { formatCommaSeparatedStringToArray } from "@/utils/formatters";
 
 export const validateEmail = (email: string) => {
   if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {

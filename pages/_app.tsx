@@ -7,7 +7,9 @@ import { AuthContextProvider } from "@/contexts/AuthContext";
 import { UserContextProvider } from "@/contexts/UserContext";
 import { ImageContextProvider } from "@/contexts/ImagesContext";
 import Script from "next/script";
-import { IS_PRODUCTION } from "@/helpers/constants";
+import { IS_PRODUCTION } from "@/utils/constants";
+import { ConfigProvider } from "antd";
+import customTheme from "@/theme/themeConfig";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -49,16 +51,17 @@ function MyApp({ Component, pageProps }: AppProps) {
           </Script>
         </>
       )}
-
       <ChakraProvider>
-        <AuthContextProvider>
-          <UserContextProvider>
-            <ImageContextProvider>
-              <Component {...pageProps} />
-              <Analytics />
-            </ImageContextProvider>
-          </UserContextProvider>
-        </AuthContextProvider>
+        <ConfigProvider theme={customTheme}>
+          <AuthContextProvider>
+            <UserContextProvider>
+              <ImageContextProvider>
+                <Component {...pageProps} />
+                <Analytics />
+              </ImageContextProvider>
+            </UserContextProvider>
+          </AuthContextProvider>
+        </ConfigProvider>
       </ChakraProvider>
     </>
   );
