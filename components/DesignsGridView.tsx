@@ -44,7 +44,7 @@ const DesignsGridView: React.FC<Props> = ({ image }) => {
     },
     {
       key: "4",
-      label: <ImageDeleteModalConfirmation image={image} onlyText />,
+      label: <ImageDeleteModalConfirmation image={image} onlyIcon />,
     },
   ];
   return (
