@@ -18,7 +18,6 @@ interface Props {
   >;
   clearFile: () => any;
   mode: "dark" | "light";
-  password?: string;
 }
 
 const ImageUploadSuccess: React.FC<Props> = ({
@@ -26,13 +25,10 @@ const ImageUploadSuccess: React.FC<Props> = ({
   setUploadingState,
   clearFile,
   mode,
-  password = "",
 }) => {
   const reviewImageUrl = `${APP_URL}/review-image/${imageId}`;
   const { onCopy: onCopyImageUrl, hasCopied: hasCopiedImageUrl } =
     useClipboard(reviewImageUrl);
-  const { onCopy: onCopyPassword, hasCopied: hasCopiedPassword } =
-    useClipboard(password);
 
   return (
     <div>
@@ -90,34 +86,6 @@ const ImageUploadSuccess: React.FC<Props> = ({
           </InputRightElement>
         </InputGroup>
       </div>
-      {password && (
-        <div className="mb-4 flex flex-col gap-2">
-          <p>Password:</p>
-          <InputGroup size="md">
-            <Input
-              value={password}
-              disabled
-              name="password"
-              focusBorderColor={"purple.500"}
-              borderColor={"purple.500"}
-              className={classNames("mb-4 pr-4", {
-                "text-white": mode === "dark",
-                "text-black": mode === "light",
-              })}
-              resize={"none"}
-            />
-            <InputRightElement>
-              <button onClick={() => onCopyPassword()}>
-                {hasCopiedPassword ? (
-                  <ClipboardCopiedIcon className="h-5 w-5 text-gray-500" />
-                ) : (
-                  <ClipboardIcon className="h-5 w-5 cursor-pointer text-purple-500 hover:text-gray-500" />
-                )}
-              </button>
-            </InputRightElement>
-          </InputGroup>
-        </div>
-      )}
       <div className="flex flex-col items-center">
         <button
           className="btn-p py-2"
