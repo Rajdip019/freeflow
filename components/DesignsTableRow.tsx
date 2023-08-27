@@ -1,19 +1,6 @@
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
-import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Td,
-  Tr,
-  useClipboard,
-} from "@chakra-ui/react";
-import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
 import Moment from "react-moment";
-import Copy from "./shared/Copy";
-import { APP_URL } from "@/utils/constants";
-import PublicAndPrivate from "./ImageReview/PublicAndPrivate";
 import ChangeFileNameModal from "./Modal/ChangeFileNameModal";
 import SendInvitesIconModal from "./Modal/SendInvitesIconModal";
 import VersionUploadModal from "./VersionControl/VersionUploadModal";
@@ -42,38 +29,52 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
           title="Design"
           dataIndex="imageName"
           key="imageName"
+          width={50}
           render={(text, record: IReviewImageData) => (
-            <div className="flex cursor-pointer items-center gap-2">
-              <Image
-                src={
-                  record.currentVersion
-                    ? record.imageURL[record.currentVersion - 1]
-                    : (record.imageURL as any)
-                }
-                width={50}
-                height={50}
-                preview={true}
-                className="rounded"
-              />
-              <Link
-                target="_blank"
-                rel="noreferrer"
-                href={`/review-image/${record.id}`}
-              >
-                <p className="group flex items-center gap-2 truncate hover:underline">
-                  {record.imageName}{" "}
-                </p>
-              </Link>
-            </div>
+            <Image
+              src={
+                record.currentVersion
+                  ? record.imageURL[record.currentVersion - 1]
+                  : (record.imageURL as any)
+              }
+              width={50}
+              height={50}
+              preview={true}
+              className="rounded"
+            />
           )}
         />
         <Column
+          render={(text, record: IReviewImageData) => (
+            <Typography.Text className="group flex items-center truncate hover:underline">
+              {record.imageName}{" "}
+            </Typography.Text>
+          )}
+          className="cursor-pointer"
+          onCell={(record, rowIndex) => {
+            return {
+              onClick: (event) => {
+                window.open(`/review-image/${record.id}`, "_blank");
+              },
+            };
+          }}
+        />
+        <Column
+          // open image on this cell click
           title="Status"
           dataIndex="newUpdate"
           key="newUpdate"
           render={(text, record: IReviewImageData) => (
             <Tag color="green">{record.newUpdate}</Tag>
           )}
+          className="cursor-pointer"
+          onCell={(record, rowIndex) => {
+            return {
+              onClick: (event) => {
+                window.open(`/review-image/${record.id}`, "_blank");
+              },
+            };
+          }}
         />
         <Column
           title="Views"
@@ -88,6 +89,14 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
               )}
             </Typography.Text>
           )}
+          className="cursor-pointer"
+          onCell={(record, rowIndex) => {
+            return {
+              onClick: (event) => {
+                window.open(`/review-image/${record.id}`, "_blank");
+              },
+            };
+          }}
         />
         <Column
           title="Size"
@@ -102,6 +111,14 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
               )}
             </Typography.Text>
           )}
+          className="cursor-pointer"
+          onCell={(record, rowIndex) => {
+            return {
+              onClick: (event) => {
+                window.open(`/review-image/${record.id}`, "_blank");
+              },
+            };
+          }}
         />
         <Column
           title="Created At"
@@ -118,22 +135,27 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
               )}
             </Typography.Text>
           )}
+          className="cursor-pointer"
+          onCell={(record, rowIndex) => {
+            return {
+              onClick: (event) => {
+                window.open(`/review-image/${record.id}`, "_blank");
+              },
+            };
+          }}
         />
         <Column
           title="Action"
           key={"action"}
           render={(text, record: IReviewImageData) => (
             <Space>
-              <Button
-                icon={
-                  <VersionUploadModal
-                    prevImage={record}
-                    isText={false}
-                    pos="start"
-                  />
-                }
-                size="small"
+              <VersionUploadModal
+                prevImage={record}
+                isText={false}
+                pos="start"
+                isMenu={true}
               />
+
               <Dropdown
                 menu={{
                   items: [
@@ -153,9 +175,7 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
                       ),
                     },
                     {
-                      label: (
-                        <ImageDeleteModalConfirmation image={record} onlyText />
-                      ),
+                      label: <ImageDeleteModalConfirmation image={record} />,
                     },
                   ] as MenuProps["items"],
                 }}
