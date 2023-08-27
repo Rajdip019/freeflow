@@ -103,14 +103,14 @@ const ChangeFileNameModal: React.FC<Props> = ({
           <ModalBody>
             <div className="my-4">
               <h2 className=" font-sec mb-4 mt-8 text-center text-xl">
-                SEdit File Name
+                Edit File Name
               </h2>
               {/* <h2 className=" text-center text-lg mb-6 font-sec font-semibold">{image.imageName}</h2> */}
               <div
                 className={classNames(wrapperClassName, "flex flex-col gap-2")}
               >
                 <Input
-                  placeholder="email1@gmail.com, email2@gmail.com, etc."
+                  placeholder="File Name"
                   value={fileName}
                   name="changeFileName"
                   focusBorderColor={"purple.500"}

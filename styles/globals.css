@@ -59,18 +59,13 @@ body {
   font-family: "Space Grotesk", sans-serif;
 }
 
-.aspect-gridImage {
-  aspect-ratio: 3/2.5;
-}
-
-.bg-primary{
+.bg-primary {
   background-color: rgb(0, 0, 0);
 }
 
-.bg-sec{
+.bg-sec {
   background-color: rgb(20, 20, 20);
 }
-
 
 @layer components {
   .text-gradient-p {

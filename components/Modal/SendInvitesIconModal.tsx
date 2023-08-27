@@ -33,10 +33,12 @@ const SendInvitesIconModal: React.FC<Props> = ({
       await postJson(`/api/review-image/${image.id}/send-invites`, {
         emails: formatCommaSeparatedStringToArray(invitesInputText),
       });
-      message.success('Invites sent successfully');
+      message.success("Invites sent successfully");
       setIsModalOpen(false);
     } catch (err) {
-      message.error('There was an error sending invites. Please try again or contact us for support.');
+      message.error(
+        "There was an error sending invites. Please try again or contact us for support."
+      );
     }
   };
 
@@ -44,23 +46,31 @@ const SendInvitesIconModal: React.FC<Props> = ({
     <div>
       {isTooltip ? (
         <Tooltip title={"Send email invites"}>
-          <FFButton onClick={showModal} className=" flex w-full border-none shadow-none">
+          <FFButton
+            onClick={showModal}
+            className=" flex w-full border-none shadow-none"
+          >
             {isText && "Send Email Invites"}
-            {isIcon && (
-              <SendOutlined />
-            )}
+            {isIcon && <SendOutlined />}
           </FFButton>
         </Tooltip>
       ) : (
-        <FFButton onClick={showModal} className=" flex w-full border-none shadow-none">
+        <FFButton
+          onClick={showModal}
+          className=" flex w-full border-none shadow-none"
+        >
           {isText && "Send Email Invites"}
-          {isIcon && (
-            <SendOutlined />
-          )}
+          {isIcon && <SendOutlined />}
         </FFButton>
       )}
 
-      <Modal title="Send email invites" open={isModalOpen} onCancel={() => setIsModalOpen(false)} onOk={handleSendInvites} okText="Send">
+      <Modal
+        title="Send email invites"
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        onOk={handleSendInvites}
+        okText="Send"
+      >
         <div className="my-4">
           <Input
             placeholder="email1@gmail.com, email2@gmail.com, etc."

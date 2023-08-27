@@ -7,13 +7,15 @@ interface Props {
   value: string;
 }
 
-const Copy : React.FC<Props>= ({align, value}) => {
+const Copy: React.FC<Props> = ({ align, value }) => {
   return (
     <Tooltip title={"Copy to clipboard"}>
-        <LinkOutlined onClick={() => {
+      <LinkOutlined
+        onClick={() => {
           copy(value);
-          message.info('Copied to clipboard');
-        }} />
+          message.info("Copied to clipboard");
+        }}
+      />
     </Tooltip>
   );
 };

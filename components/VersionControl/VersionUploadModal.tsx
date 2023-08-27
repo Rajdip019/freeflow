@@ -95,7 +95,7 @@ const VersionUploadModal: React.FC<Props> = ({ prevImage, pos }) => {
                 };
 
                 await updateDoc(docRef, data);
-                message.success("Version updated successfully")
+                message.success("Version updated successfully");
                 setOpen(false);
                 setUploadedImageId(docRef.id);
                 setConfirmLoading(false);
@@ -107,18 +107,22 @@ const VersionUploadModal: React.FC<Props> = ({ prevImage, pos }) => {
             setConfirmLoading(false);
           }
         } else {
-          message.error("Your storage is full. Delete some images and try uploading.");
+          message.error(
+            "Your storage is full. Delete some images and try uploading."
+          );
           setConfirmLoading(false);
         }
       }
     } else {
-      message.error("File size is too large. Please upload a file less than 75 MB");
+      message.error(
+        "File size is too large. Please upload a file less than 75 MB"
+      );
       setConfirmLoading(false);
     }
   };
 
   console.log("confirmLoading", confirmLoading);
-  
+
   return (
     <>
       <Typography.Text
@@ -127,35 +131,48 @@ const VersionUploadModal: React.FC<Props> = ({ prevImage, pos }) => {
           clearFile();
           setUploadingState("not-started");
         }}
-        className={`hidden w-full items-center gap-2 hover:text-white ${pos === "start" && "md:flex"
-          } ${pos === "mid" && "md:block"} ${pos === "end" && "md: justify-end"
-          } md:block`}
+        className={`hidden w-full items-center gap-2 hover:text-white ${
+          pos === "start" && "md:flex"
+        } ${pos === "mid" && "md:block"} ${
+          pos === "end" && "md: justify-end"
+        } md:block`}
       >
         <PlusOutlined />
         <Typography.Text>Upload new version</Typography.Text>
       </Typography.Text>
 
-      <Modal title="Upload new Version" open={open} onCancel={() => {setOpen(false), clearFile()}} okText="Upload" onOk={uploadFile} okButtonProps={{ loading : confirmLoading}}>
-        <div className="mx-auto rounded-2xl my-6 text-white  md:mx-0 ">
+      <Modal
+        title="Upload new Version"
+        open={open}
+        onCancel={() => {
+          setOpen(false), clearFile();
+        }}
+        okText="Upload"
+        onOk={uploadFile}
+        okButtonProps={{ loading: confirmLoading }}
+      >
+        <div className="mx-auto my-6 rounded-2xl text-white  md:mx-0 ">
           {(uploadingState === "not-started" ||
             uploadingState === "uploading") && (
-              <>
-                {image && (
-                  <div className=" flex justify-end">
-                    <CloseOutlined onClick={() => {
+            <>
+              {image && (
+                <div className=" flex justify-end">
+                  <CloseOutlined
+                    onClick={() => {
                       clearFile();
-                    }} />
-                  </div>
-                )}
-                <div className=" mt-2 cursor-pointer">
-                  <ImageUploaderDropzone
-                    onFileUploaded={handleFileUploaded}
-                    image={image}
-                    setImage={setImage}
+                    }}
                   />
                 </div>
-              </>
-            )}
+              )}
+              <div className=" mt-2 cursor-pointer">
+                <ImageUploaderDropzone
+                  onFileUploaded={handleFileUploaded}
+                  image={image}
+                  setImage={setImage}
+                />
+              </div>
+            </>
+          )}
           {uploadingState === "error" && (
             <div className=" flex w-full flex-col items-center justify-center">
               <Typography.Text className=" text-center text-xl font-semibold text-red-500">

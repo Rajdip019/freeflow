@@ -25,9 +25,7 @@ interface Props {
   imageId: string;
 }
 
-const FeedbackExpanded: React.FC<Props> = ({
-  imageId,
-}) => {
+const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
   const [comments, setComments] = useState<
     { name: string; comment: string; timeStamp: number }[]
   >([]);
@@ -35,9 +33,14 @@ const FeedbackExpanded: React.FC<Props> = ({
   const [isCommentsLoading, setIsCommentsLoading] = useState<boolean>(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { TextArea } = Input;
-  const { uname , highlightedComment, setHighlightedComment, setIsFocusedThread } = useFeedbackContext()
+  const {
+    uname,
+    highlightedComment,
+    setHighlightedComment,
+    setIsFocusedThread,
+  } = useFeedbackContext();
 
-  const {notify, contextHolder} = useNotification();
+  const { notify, contextHolder } = useNotification();
   const { authUser } = useAuth();
   const getComments = async () => {
     if (highlightedComment !== defaultHighlightedThread) {
@@ -84,7 +87,8 @@ const FeedbackExpanded: React.FC<Props> = ({
       await addDoc(
         collection(
           db,
-          `reviewImages/${imageId}/threads/${highlightedComment?.id as string
+          `reviewImages/${imageId}/threads/${
+            highlightedComment?.id as string
           }/comments`
         ),
         {
@@ -100,7 +104,10 @@ const FeedbackExpanded: React.FC<Props> = ({
       setNewComment("");
     } catch (e) {
       console.error("Error", error);
-      notify({type : "error", message : "Something went wring please try again." });
+      notify({
+        type: "error",
+        message: "Something went wring please try again.",
+      });
     }
   };
 
@@ -160,7 +167,7 @@ const FeedbackExpanded: React.FC<Props> = ({
             </Typography.Paragraph>
           </div>
         </div>
-        <Divider className="mt-1 mb-1" />
+        <Divider className="mb-1 mt-1" />
         <Divider className="mb-2 mt-1" />
         {isCommentsLoading ? (
           <div className=" flex flex-col gap-1.5">
@@ -181,7 +188,7 @@ const FeedbackExpanded: React.FC<Props> = ({
                         key={comment.timeStamp}
                       >
                         <div className="p-2">
-                          <div className=" flex items-center mb-1">
+                          <div className=" mb-1 flex items-center">
                             <Avatar
                               size="small"
                               className="mr-2"
