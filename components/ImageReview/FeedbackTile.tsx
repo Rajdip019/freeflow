@@ -10,10 +10,13 @@ interface Props {
   thread: IReview;
 }
 
-const FeedbackTile: React.FC<Props> = ({
-  thread,
-}) => {
-  const { setHighlightedComment, highlightedComment, setIsFocusedThread, version} = useFeedbackContext()
+const FeedbackTile: React.FC<Props> = ({ thread }) => {
+  const {
+    setHighlightedComment,
+    highlightedComment,
+    setIsFocusedThread,
+    version,
+  } = useFeedbackContext();
   const componentDecorator = (href: string, text: string, key: any) => (
     <Typography.Link
       className="linkify__text"
@@ -28,9 +31,14 @@ const FeedbackTile: React.FC<Props> = ({
   return (
     <>
       {version === thread.version && (
-        <div onClick={() => {
-          setHighlightedComment(thread);
-        }} className={`cursor-pointer transition-all ${highlightedComment?.id === thread.id ? 'bg-black' : ''}`}>
+        <div
+          onClick={() => {
+            setHighlightedComment(thread);
+          }}
+          className={`cursor-pointer transition-all ${
+            highlightedComment?.id === thread.id ? "bg-black" : ""
+          }`}
+        >
           <div className="py-2 pl-2.5">
             <div className=" flex items-center">
               <Avatar

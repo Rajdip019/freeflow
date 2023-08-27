@@ -23,7 +23,8 @@ export const useNotification = () => {
       description: description,
       duration: duration,
       placement: "bottomLeft",
-    })};
+    });
+  };
 
   return { notify, contextHolder };
 };

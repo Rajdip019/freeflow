@@ -63,12 +63,22 @@ const ReviewImage = () => {
               currentVersion={imageData?.currentVersion as number}
             />
           ) : (
-            <div className={`${open ? ' w-9/12' : 'w-full'}`}>
+            <div className={`${open ? " w-9/12" : "w-full"}`}>
               <div className="flex h-[calc(100vh-4rem)] items-center justify-center px-5 ">
                 <>
                   {highlightedComment?.imageURL ? (
                     <div className=" w-full">
-                      <FFButton onClick={() => {setHighlightedComment(defaultHighlightedThread), setIsFocusedThread(false)}} className=" mx-auto" type="primary" icon={<CloseCircleOutlined />}>Back to Feedback</FFButton>
+                      <FFButton
+                        onClick={() => {
+                          setHighlightedComment(defaultHighlightedThread),
+                            setIsFocusedThread(false);
+                        }}
+                        className=" mx-auto"
+                        type="primary"
+                        icon={<CloseCircleOutlined />}
+                      >
+                        Back to Feedback
+                      </FFButton>
                       <PreviewCanvas
                         imageSrc={
                           imageData?.currentVersion

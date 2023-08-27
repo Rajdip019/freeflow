@@ -12,6 +12,7 @@ interface Props {
   isText?: boolean;
   isIcon?: boolean;
   isTooltip?: boolean;
+  isMenuItem?: boolean;
 }
 
 const SendInvitesIconModal: React.FC<Props> = ({
@@ -19,6 +20,7 @@ const SendInvitesIconModal: React.FC<Props> = ({
   isText = false,
   isTooltip = true,
   isIcon = true,
+  isMenuItem = false,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -33,34 +35,51 @@ const SendInvitesIconModal: React.FC<Props> = ({
       await postJson(`/api/review-image/${image.id}/send-invites`, {
         emails: formatCommaSeparatedStringToArray(invitesInputText),
       });
-      message.success('Invites sent successfully');
+      message.success("Invites sent successfully");
       setIsModalOpen(false);
     } catch (err) {
-      message.error('There was an error sending invites. Please try again or contact us for support.');
+      message.error(
+        "There was an error sending invites. Please try again or contact us for support."
+      );
     }
   };
 
   return (
     <div>
-      {isTooltip ? (
-        <Tooltip title={"Send email invites"}>
-          <FFButton onClick={showModal} className=" flex w-full border-none shadow-none">
+      {!isMenuItem ? (
+        isTooltip ? (
+          <Tooltip title={"Send email invites"}>
+            <FFButton
+              onClick={showModal}
+              className=" flex w-full border-none shadow-none"
+            >
+              {isText && "Send Email Invites"}
+              {isIcon && <SendOutlined />}
+            </FFButton>
+          </Tooltip>
+        ) : (
+          <FFButton
+            onClick={showModal}
+            className=" flex w-full border-none shadow-none"
+          >
             {isText && "Send Email Invites"}
-            {isIcon && (
-              <SendOutlined />
-            )}
+            {isIcon && <SendOutlined />}
           </FFButton>
-        </Tooltip>
+        )
       ) : (
-        <FFButton onClick={showModal} className=" flex w-full border-none shadow-none">
-          {isText && "Send Email Invites"}
-          {isIcon && (
-            <SendOutlined />
-          )}
-        </FFButton>
+        <Typography.Text onClick={showModal} className="gap-2">
+          <SendOutlined size={10} className="mr-2" />
+          {"Send Email Invites"}
+        </Typography.Text>
       )}
 
-      <Modal title="Send email invites" open={isModalOpen} onCancel={() => setIsModalOpen(false)} onOk={handleSendInvites} okText="Send">
+      <Modal
+        title="Send email invites"
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        onOk={handleSendInvites}
+        okText="Send"
+      >
         <div className="my-4">
           <Input
             placeholder="email1@gmail.com, email2@gmail.com, etc."

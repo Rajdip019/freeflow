@@ -21,6 +21,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useImageContext } from "@/contexts/ImagesContext";
 import ImageUploadSuccess from "./ImageUploadSuccess";
 import { newReviewImageEvent } from "@/lib/events";
+import { Button } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 
 const ImageUploadModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -168,29 +170,17 @@ const ImageUploadModal = () => {
 
   return (
     <>
-      <button
+      <Button
         onClick={() => {
           onOpen();
           clearFile();
           setUploadingState("not-started");
         }}
-        className=" font-sec btn-p flex items-center gap-3 rounded px-1 py-1 font-semibold md:px-6 md:py-3"
+        size="large"
+        icon={<UploadOutlined />}
       >
-        <svg
-          fill="currentColor"
-          className="md-w-6 w-8 text-white"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            clipRule="evenodd"
-            fillRule="evenodd"
-            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z"
-          />
-        </svg>
-        <p className=" hidden md:block">Upload Photo </p>
-      </button>
+        Upload
+      </Button>
 
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
