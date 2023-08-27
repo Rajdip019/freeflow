@@ -1,17 +1,5 @@
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { storage, db } from "@/lib/firebaseConfig";
-import {
-  CircularProgress,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  useDisclosure,
-  useToast,
-} from "@chakra-ui/react";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import React, { useState } from "react";
@@ -21,11 +9,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useImageContext } from "@/contexts/ImagesContext";
 import ImageUploadSuccess from "./ImageUploadSuccess";
 import { newReviewImageEvent } from "@/lib/events";
-import { Button } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { Button, Input, Modal, Progress, Typography, message } from "antd";
+import { CloseOutlined, UploadOutlined } from "@ant-design/icons";
 
 const ImageUploadModal = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [imageName, setImageName] = useState<string>();
   const [password, setPassword] = useState<string>("");
   const [uploadedFile, setUploadedFile] = useState<File | null>();
@@ -36,7 +23,6 @@ const ImageUploadModal = () => {
   const [uploadedImageId, setUploadedImageId] = useState<string>("{imageId}");
   const [fileSize, setFileSize] = useState<number>(0);
 
-  const toast = useToast();
   const { user } = useUserContext();
   const { authUser } = useAuth();
   const { storage: storageUsed } = useImageContext();
@@ -56,7 +42,7 @@ const ImageUploadModal = () => {
   };
 
   const [uploadPercentage, setUploadPercentage] = useState<number>(0);
-
+  const [open, setOpen] = useState<boolean>(false);
   const uploadFile = () => {
     if (fileSize < 75) {
       if (user?.storage) {
@@ -78,7 +64,7 @@ const ImageUploadModal = () => {
                 bytes = snapshot.totalBytes;
                 const progress =
                   (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                setUploadPercentage(progress);
+                setUploadPercentage(Math.round(progress));
               },
               (error) => {
                 console.error(error);
@@ -115,64 +101,30 @@ const ImageUploadModal = () => {
                     password,
                   }
                 );
-
-                toast({
-                  title: "Image uploaded successfully",
-                  status: "success",
-                  duration: 5000,
-                  isClosable: true,
-                  position: "bottom-right",
-                });
+                message.success("Image uploaded successfully");
                 newReviewImageEvent(data);
                 setUploadingState("success");
                 setUploadedImageId(docRef.id);
               }
             );
           } catch (error) {
-            toast({
-              title: "Something went wrong",
-              description: "Please try again",
-              status: "error",
-              duration: 5000,
-              isClosable: true,
-              position: "bottom-right",
-            });
+            message.error("Some error occurred");
             setUploadingState("error");
           }
         } else {
-          toast({
-            title: "Your storage is full.",
-            description: "Delete some images and try uploading.",
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-            position: "bottom-right",
-          });
+          message.error("You have exceeded your storage limit");
         }
       }
     } else {
-      toast({
-        title: "File size is too large",
-        description: "Please upload a file less than 75 MB",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom-right",
-      });
+      message.error("File size should be less than 75MB");
     }
-  };
-
-  //generate random password
-  const generatePassword = () => {
-    const randomPassword = Math.random().toString(36).slice(-8);
-    setPassword(randomPassword);
   };
 
   return (
     <>
       <Button
         onClick={() => {
-          onOpen();
+          setOpen(true);
           clearFile();
           setUploadingState("not-started");
         }}
@@ -182,112 +134,106 @@ const ImageUploadModal = () => {
         Upload
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
-        <ModalOverlay />
-        <ModalContent bgColor={"gray.800"} color={"white"}>
-          <ModalHeader>Upload Image</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <div className="mx-auto rounded-2xl pb-10 text-white  md:mx-0 ">
-              {(uploadingState === "not-started" ||
-                uploadingState === "uploading") && (
+      <Modal
+        open={open}
+        onCancel={() => setOpen(false)}
+        footer={null}
+        title="Upload Design"
+      >
+        <div className="mx-auto rounded-2xl pb-4 text-white  md:mx-0 ">
+          {(uploadingState === "not-started" ||
+            uploadingState === "uploading") && (
+            <>
+              {image && (
+                <div className=" flex justify-end">
+                  <CloseOutlined
+                    onClick={() => {
+                      clearFile();
+                    }}
+                    className="cursor-pointer text-2xl"
+                  />
+                </div>
+              )}
+              <div className=" mt-6 cursor-pointer">
+                <ImageUploaderDropzone
+                  onFileUploaded={handleFileUploaded}
+                  image={image}
+                  setImage={setImage}
+                />
+              </div>
+              {image && (
                 <>
-                  {image && (
-                    <div className=" flex justify-end">
-                      <svg
-                        onClick={() => {
-                          clearFile();
-                        }}
-                        fill="currentColor"
-                        className="w-6 cursor-pointer"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                        aria-hidden="true"
-                      >
-                        <path
-                          clipRule="evenodd"
-                          fillRule="evenodd"
-                          d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
-                        />
-                      </svg>
-                    </div>
-                  )}
-                  <div className=" mt-2 cursor-pointer">
-                    <ImageUploaderDropzone
-                      onFileUploaded={handleFileUploaded}
-                      image={image}
-                      setImage={setImage}
+                  <div className="mt-5">
+                    <Typography.Text className=" mb-2 text-sm text-gray-500">
+                      Title
+                    </Typography.Text>
+                    <Input
+                      value={imageName?.substring(0, 24)}
+                      onChange={(e) => {
+                        setImageName(e.target.value);
+                      }}
+                      type="text"
+                      color="purple"
+                      placeholder="Enter photo title"
+                      maxLength={24}
+                      size="middle"
+                      allowClear
                     />
-                  </div>
-                  {image && (
-                    <>
-                      <div className="mt-5">
-                        <p className=" mb-2 text-sm text-gray-500">Title</p>
-                        <Input
-                          value={imageName}
-                          onChange={(e) => {
-                            setImageName(e.target.value);
-                          }}
-                          type="text"
-                          focusBorderColor="purple.500"
-                          borderColor={"purple.500"}
-                          className=" text-gray-200"
-                          placeholder="Enter photo title"
-                          maxLength={24}
-                        />
-                      </div>
-                      <div className="mt-5">
-                        <span className=" font-semibold">Image name: </span>
-                        <span>{imageName}</span>
-                      </div>
-                    </>
-                  )}
-                  <div>
-                    {uploadingState === "uploading" && (
-                      <div className="mt-5 flex w-full items-center justify-center">
-                        <CircularProgress
-                          value={uploadPercentage}
-                          color="purple.500"
-                        />
-                        <p className="ml-5 text-lg">Uploading file....</p>
-                      </div>
-                    )}
-                    {uploadingState === "not-started" && (
-                      <button
-                        disabled={!!!image || !!!imageName}
-                        className=" btn-p mt-5 w-full py-2"
-                        onClick={uploadFile}
-                      >
-                        Upload
-                      </button>
-                    )}
                   </div>
                 </>
               )}
-              {uploadingState === "success" && (
-                <ImageUploadSuccess
-                  imageId={uploadedImageId}
-                  setUploadingState={setUploadingState}
-                  clearFile={clearFile}
-                  mode="dark"
-                />
-              )}
-              {uploadingState === "error" && (
-                <div className=" flex w-full flex-col items-center justify-center">
-                  <p className=" text-center text-xl font-semibold text-red-500">
-                    Some error occurred
-                  </p>
-                  <button
-                    className=" btn-p mt-5"
-                    onClick={() => setUploadingState("not-started")}
+              <div>
+                {uploadingState === "uploading" && (
+                  <div className="mt-5 flex w-full items-center justify-center">
+                    <Progress
+                      type="circle"
+                      percent={uploadPercentage}
+                      width={50}
+                    />
+                    <Typography.Text className="ml-5 text-lg">
+                      Uploading file....
+                    </Typography.Text>
+                  </div>
+                )}
+                {uploadingState === "not-started" && (
+                  <Button
+                    disabled={!!!image || !!!imageName}
+                    type="primary"
+                    shape="round"
+                    className="mt-6 w-full"
+                    size="large"
+                    onClick={uploadFile}
                   >
-                    Try again
-                  </button>
-                </div>
-              )}
+                    Upload
+                  </Button>
+                )}
+              </div>
+            </>
+          )}
+          {uploadingState === "success" && (
+            <ImageUploadSuccess
+              imageId={uploadedImageId}
+              setUploadingState={setUploadingState}
+              clearFile={clearFile}
+              mode="dark"
+            />
+          )}
+          {uploadingState === "error" && (
+            <div className=" flex w-full flex-col items-center justify-center">
+              <Typography.Text className=" text-center text-xl font-semibold text-red-500">
+                Some error occurred
+              </Typography.Text>
+              <Button
+                type="primary"
+                className="mt-5"
+                color="purple"
+                onClick={() => setUploadingState("not-started")}
+              >
+                Try again
+              </Button>
             </div>
-          </ModalBody>
-        </ModalContent>
+          )}
+        </div>
       </Modal>
     </>
   );

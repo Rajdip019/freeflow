@@ -1,10 +1,9 @@
 import DashboardLayout from "@/components/Dashboard/DashboardLayout";
-import Header from "@/components/Dashboard/Header";
 import ImageUploadModal from "@/components/ImageUploadModal";
 import { useImageContext } from "@/contexts/ImagesContext";
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import { filter, orderBy } from "lodash-es";
+import { orderBy } from "lodash-es";
 import DesignsTableRow from "@/components/DesignsTableRow";
 import DesignsGridView from "@/components/DesignsGridView";
 import {
@@ -12,14 +11,12 @@ import {
   Avatar,
   Badge,
   Button,
-  Divider,
   Input,
   Space,
   Tooltip,
   Typography,
 } from "antd";
 import {
-  AppstoreAddOutlined,
   AppstoreOutlined,
   BellOutlined,
   SearchOutlined,
@@ -72,7 +69,13 @@ const Design = () => {
           onChange={(value) => setSearchQuery(value)}
         >
           <Input
-            suffix={<Button size="small">Ctrl+K</Button>}
+            suffix={
+              <Button size="small">
+                {navigator.platform.toUpperCase().indexOf("MAC") >= 0
+                  ? "⌘ + k"
+                  : "Ctrl + k"}
+              </Button>
+            }
             prefix={<SearchOutlined />}
             size="large"
             placeholder="Search by name, tag, color..."
@@ -82,13 +85,15 @@ const Design = () => {
         </AutoComplete>
         <div className="flex">
           <Space>
-            <Badge
-              count={images.length}
-              className="mr-4 cursor-not-allowed"
-              size="small"
-            >
-              <BellOutlined className="text-xl" />
-            </Badge>
+            <Tooltip title="Coming soon" aria-title="Coming soon">
+              <Badge
+                count={images.length}
+                className="mr-4 cursor-not-allowed"
+                size="small"
+              >
+                <BellOutlined className="text-xl" />
+              </Badge>
+            </Tooltip>
 
             <Typography.Text>{user?.name}</Typography.Text>
             <Avatar

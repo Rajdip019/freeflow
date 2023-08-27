@@ -7,7 +7,7 @@ import ImageUploaderDropzone from "../ImageDropZones/ImageUploaderDropzone";
 import { useUserContext } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useImageContext } from "@/contexts/ImagesContext";
-import { Modal, Typography, message } from "antd";
+import { Button, Modal, Typography, message } from "antd";
 import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 import { FFButton } from "@/theme/themeConfig";
 
@@ -15,12 +15,14 @@ interface Props {
   prevImage: IReviewImageData;
   pos: "start" | "mid" | "end";
   isText?: boolean;
+  isMenu?: boolean;
 }
 
 const VersionUploadModal: React.FC<Props> = ({
   prevImage,
   pos,
   isText = true,
+  isMenu = false,
 }) => {
   const [imageName, setImageName] = useState<string>();
   const [uploadedFile, setUploadedFile] = useState<File | null>();
@@ -128,21 +130,33 @@ const VersionUploadModal: React.FC<Props> = ({
 
   return (
     <>
-      <Typography.Text
-        onClick={() => {
-          showModal();
-          clearFile();
-          setUploadingState("not-started");
-        }}
-        className={`hidden w-full items-center gap-2 hover:text-white ${
-          pos === "start" && "md:flex"
-        } ${pos === "mid" && "md:block"} ${
-          pos === "end" && "md: justify-end"
-        } md:block`}
-      >
-        <PlusOutlined />
-        {isText && <Typography.Text>Upload new version</Typography.Text>}
-      </Typography.Text>
+      {!isMenu ? (
+        <Typography.Text
+          onClick={() => {
+            showModal();
+            clearFile();
+            setUploadingState("not-started");
+          }}
+          className={`hidden w-full items-center gap-2 hover:text-white ${
+            pos === "start" && "md:flex"
+          } ${pos === "mid" && "md:block"} ${
+            pos === "end" && "md: justify-end"
+          } md:block`}
+        >
+          <PlusOutlined />
+          {isText && <Typography.Text>Upload new version</Typography.Text>}
+        </Typography.Text>
+      ) : (
+        <Button
+          icon={<PlusOutlined />}
+          onClick={() => {
+            showModal();
+            clearFile();
+            setUploadingState("not-started");
+          }}
+          size="small"
+        />
+      )}
 
       <Modal
         title="Upload new Version"
@@ -152,7 +166,7 @@ const VersionUploadModal: React.FC<Props> = ({
         }}
         okText="Upload"
         onOk={uploadFile}
-        okButtonProps={{ loading: confirmLoading }}
+        okButtonProps={{ loading: confirmLoading, disabled: !uploadedFile }}
       >
         <div className="mx-auto my-6 rounded-2xl text-white  md:mx-0 ">
           {(uploadingState === "not-started" ||
