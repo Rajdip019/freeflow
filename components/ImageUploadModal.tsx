@@ -90,7 +90,7 @@ const ImageUploadModal = () => {
                   threads: 0,
                   lastUpdated: Date.now(),
                   newUpdate: "Uploaded",
-                  isPrivate: Boolean(password),
+                  isPrivate: false,
                   currentVersion: 1,
                 };
 
@@ -215,7 +215,6 @@ const ImageUploadModal = () => {
               imageId={uploadedImageId}
               setUploadingState={setUploadingState}
               clearFile={clearFile}
-              password={password}
               mode="dark"
             />
           )}

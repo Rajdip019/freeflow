@@ -11,7 +11,6 @@ interface Props {
   >;
   clearFile: () => any;
   mode: "dark" | "light";
-  password?: string;
 }
 
 const ImageUploadSuccess: React.FC<Props> = ({
@@ -19,7 +18,6 @@ const ImageUploadSuccess: React.FC<Props> = ({
   setUploadingState,
   clearFile,
   mode,
-  password = "",
 }) => {
   const reviewImageUrl = `${APP_URL}/review-image/${imageId}`;
 
