@@ -126,7 +126,6 @@ const VersionUploadModal: React.FC<Props> = ({
     }
   };
 
-
   return (
     <>
       <Typography.Text

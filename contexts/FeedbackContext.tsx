@@ -85,9 +85,7 @@ export function FeedbackContextProvider({ children }: any) {
       (docSnap: DocumentSnapshot<DocumentData>) => {
         if (docSnap.exists()) {
           setImageData(docSnap.data() as IReviewImageData);
-          if(version === 0){
-            setVersion(docSnap.data().currentVersion);
-          }
+          setVersion(docSnap.data().currentVersion);
         } else {
           setError(true);
           console.log("No such document!");

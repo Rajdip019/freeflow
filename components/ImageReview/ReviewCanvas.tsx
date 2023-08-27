@@ -37,9 +37,9 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
   const { user } = useUserContext();
   const { authUser } = useAuth();
 
-  const { uname, imageData, version } = useFeedbackContext();
+  const { uname, imageData, version, setVersion } = useFeedbackContext();
 
-  const addNewReviewToDatabase = async (blob: Blob) => {
+  const addNewReviewToDatabase = async (blob: Blob, editorRef : any) => {
     try {
       const storageRef = ref(
         storage,
@@ -61,7 +61,6 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
         },
         async () => {
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          console.log("File available at", downloadURL);
           await addDoc(collection(db, `reviewImages/${imageId}/threads`), {
             name: user?.name?.split("@")[0] || uname?.split("@")[0],
             initialComment: comment,
@@ -74,11 +73,18 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
             newUpdate: "New Thread",
           });
           message.success("Thread added successfully");
+          await editorRef?.current?.editor.loadImage(cachedImage);
+          setVersion(version);
+          setIsLoading(false);
         }
       );
     } catch (e) {
       console.error("Error", e);
       message.error("Something went wrong. Please try again");
+      await editorRef?.current?.editor.loadImage(cachedImage);
+      setVersion(version);
+      setComment("");
+      setIsLoading(false);
     }
   };
 
@@ -99,11 +105,7 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
     const dataURL = await fileToDataURL(imageWriterResult.dest);
     const base64Response = await fetch(dataURL as string);
     const blob = await base64Response.blob();
-    await addNewReviewToDatabase(blob);
-    //@ts-ignore
-    await editorRef?.current?.editor.loadImage(cachedImage);
-    setComment("");
-    setIsLoading(false);
+    await addNewReviewToDatabase(blob, editorRef);
   };
 
   const editorConfig = getEditorDefaults({});
@@ -151,7 +153,8 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
           }}
           type="text"
           className=" mb-4 text-white"
-          placeholder="Enter Comment"
+          placeholder="Enter Feedback"
+          disabled={isLoading}
         />
         <FFButton
           className="mb-4 rounded px-2 py-2 "

@@ -225,8 +225,14 @@ const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
             ) : (
               <div className="mt-20 flex flex-col justify-center">
                 <div className="p-4 text-center">
-                  <Image src="/empty-state-replies.png" alt="" preview={false} />
-                  <Typography.Text className=" font-sec text-gray-400">No Comments yet</Typography.Text>
+                  <Image
+                    src="/empty-state-replies.png"
+                    alt=""
+                    preview={false}
+                  />
+                  <Typography.Text className=" font-sec text-gray-400">
+                    No Comments yet
+                  </Typography.Text>
                   <br />
                   <Typography.Text className=" font-sec text-gray-400">
                     Click anywhere on the visual to add a comment
