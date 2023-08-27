@@ -37,7 +37,7 @@ interface Props {
 const DesignsTableRow: React.FC<Props> = ({ images }) => {
   return (
     <>
-      <Table dataSource={images}>
+      <Table dataSource={images} scroll={{ x: 300 }} pagination={false}>
         <Column
           title="Design"
           dataIndex="imageName"
