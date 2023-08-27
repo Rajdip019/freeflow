@@ -102,7 +102,11 @@ const FeedbackDrawer: React.FC<Props> = ({
                   ) : (
                     <div className="flex h-[calc(100vh-10rem)] flex-col items-center justify-center">
                       <div className="p-4 text-center">
-                        <Image src="/empty-state-replies.png" alt="" preview={false} />
+                        <Image
+                          src="/empty-state-replies.png"
+                          alt=""
+                          preview={false}
+                        />
                         <Typography.Text className=" font-sec">
                           No Feedback yet
                         </Typography.Text>{" "}

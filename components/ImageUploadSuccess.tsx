@@ -1,11 +1,8 @@
 import { APP_URL } from "@/utils/constants";
 import React from "react";
-import ClipboardCopiedIcon from "@/components/Icons/ClipboardCopiedIcon";
-import ClipboardIcon from "@/components/Icons/ClipboardIcon";
 import classNames from "classnames";
 import SendInvitesInput from "./ImageReview/SendInvitesInput";
 import { Button, Divider, Input, Space, Typography, message } from "antd";
-import { CopyOutlined } from "@ant-design/icons";
 
 interface Props {
   imageId: string;
@@ -63,23 +60,6 @@ const ImageUploadSuccess: React.FC<Props> = ({
           </Button>
         </Space.Compact>
       </div>
-      {password && (
-        <div className="mb-4 flex flex-col gap-2">
-          <p>Password:</p>
-          <Space.Compact>
-            <Input value={password} disabled />
-            <Button
-              type="primary"
-              onClick={() => {
-                navigator.clipboard.writeText(password);
-                message.success("Copied to clipboard");
-              }}
-            >
-              Copy
-            </Button>
-          </Space.Compact>
-        </div>
-      )}
       <div className="flex flex-col items-center">
         <Button
           color="purple"

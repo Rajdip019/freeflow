@@ -39,7 +39,7 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
 
   const { uname, imageData, version, setVersion } = useFeedbackContext();
 
-  const addNewReviewToDatabase = async (blob: Blob, editorRef : any) => {
+  const addNewReviewToDatabase = async (blob: Blob, editorRef: any) => {
     try {
       const storageRef = ref(
         storage,

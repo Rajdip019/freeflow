@@ -48,7 +48,7 @@ const DesignsGridView: React.FC<Props> = ({ image }) => {
     },
   ];
   return (
-    <div className="relative h-64 w-64 rounded-lg">
+    <div className="relative h-64 w-64 rounded-xl border border-[#181818]">
       <Image
         src={
           image.currentVersion
@@ -56,9 +56,9 @@ const DesignsGridView: React.FC<Props> = ({ image }) => {
             : (image.imageURL as any)
         }
         alt={image.imageName}
-        className="aspect-square w-full rounded object-cover "
+        className="aspect-square w-full rounded-xl object-cover"
         loading="lazy"
-        preview={false}
+        preview={true}
       />
       <div className="absolute left-0 top-0 flex h-64 w-64 flex-col justify-between p-2 text-white opacity-0 transition-all hover:bg-[#0000008d] hover:opacity-100">
         <div className="flex items-end justify-end">

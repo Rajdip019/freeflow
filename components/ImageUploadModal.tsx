@@ -9,16 +9,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useImageContext } from "@/contexts/ImagesContext";
 import ImageUploadSuccess from "./ImageUploadSuccess";
 import { newReviewImageEvent } from "@/lib/events";
-import {
-  Button,
-  Input,
-  Modal,
-  Progress,
-  Space,
-  Typography,
-  message,
-} from "antd";
-import { CloseOutlined, SyncOutlined, UploadOutlined } from "@ant-design/icons";
+import { Button, Input, Modal, Progress, Typography, message } from "antd";
+import { CloseOutlined, UploadOutlined } from "@ant-design/icons";
 
 const ImageUploadModal = () => {
   const [imageName, setImageName] = useState<string>();
@@ -128,12 +120,6 @@ const ImageUploadModal = () => {
     }
   };
 
-  //generate random password
-  const generatePassword = () => {
-    const randomPassword = Math.random().toString(36).slice(-8);
-    setPassword(randomPassword);
-  };
-
   return (
     <>
       <Button
@@ -193,33 +179,6 @@ const ImageUploadModal = () => {
                       size="middle"
                       allowClear
                     />
-                  </div>
-                  <div className="mt-5">
-                    <Typography.Text className="mb-2 text-sm text-gray-500">
-                      Password (optional)
-                    </Typography.Text>
-                    <Space.Compact style={{ width: "100%" }}>
-                      <Input
-                        value={password}
-                        onChange={(e) => {
-                          setPassword(e.target.value);
-                        }}
-                        type="text"
-                        color="purple"
-                        placeholder="Enter a password for image review"
-                        size="middle"
-                        allowClear
-                      />
-                      <Button
-                        type="primary"
-                        color="purple"
-                        onClick={generatePassword}
-                        icon={<SyncOutlined />}
-                        size="middle"
-                      >
-                        Generate
-                      </Button>
-                    </Space.Compact>
                   </div>
                 </>
               )}
