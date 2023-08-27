@@ -12,6 +12,7 @@ interface Props {
   isText?: boolean;
   isIcon?: boolean;
   isTooltip?: boolean;
+  isMenuItem?: boolean;
 }
 
 const SendInvitesIconModal: React.FC<Props> = ({
@@ -19,6 +20,7 @@ const SendInvitesIconModal: React.FC<Props> = ({
   isText = false,
   isTooltip = true,
   isIcon = true,
+  isMenuItem = false,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -44,8 +46,18 @@ const SendInvitesIconModal: React.FC<Props> = ({
 
   return (
     <div>
-      {isTooltip ? (
-        <Tooltip title={"Send email invites"}>
+      {!isMenuItem ? (
+        isTooltip ? (
+          <Tooltip title={"Send email invites"}>
+            <FFButton
+              onClick={showModal}
+              className=" flex w-full border-none shadow-none"
+            >
+              {isText && "Send Email Invites"}
+              {isIcon && <SendOutlined />}
+            </FFButton>
+          </Tooltip>
+        ) : (
           <FFButton
             onClick={showModal}
             className=" flex w-full border-none shadow-none"
@@ -53,15 +65,12 @@ const SendInvitesIconModal: React.FC<Props> = ({
             {isText && "Send Email Invites"}
             {isIcon && <SendOutlined />}
           </FFButton>
-        </Tooltip>
+        )
       ) : (
-        <FFButton
-          onClick={showModal}
-          className=" flex w-full border-none shadow-none"
-        >
-          {isText && "Send Email Invites"}
-          {isIcon && <SendOutlined />}
-        </FFButton>
+        <Typography.Text onClick={showModal} className="gap-2">
+          <SendOutlined size={10} className="mr-2" />
+          {"Send Email Invites"}
+        </Typography.Text>
       )}
 
       <Modal

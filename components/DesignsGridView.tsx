@@ -19,14 +19,7 @@ const DesignsGridView: React.FC<Props> = ({ image }) => {
     {
       key: "1",
 
-      label: (
-        <ChangeFileNameModal
-          image={image}
-          isText
-          isIcon={false}
-          isTooltip={false}
-        />
-      ),
+      label: <ChangeFileNameModal image={image} />,
     },
     {
       key: "2",
@@ -45,6 +38,7 @@ const DesignsGridView: React.FC<Props> = ({ image }) => {
           isText={true}
           isIcon={false}
           isTooltip={false}
+          isMenuItem={true}
         />
       ),
     },

@@ -14,9 +14,14 @@ import { FFButton } from "@/theme/themeConfig";
 interface Props {
   prevImage: IReviewImageData;
   pos: "start" | "mid" | "end";
+  isText?: boolean;
 }
 
-const VersionUploadModal: React.FC<Props> = ({ prevImage, pos }) => {
+const VersionUploadModal: React.FC<Props> = ({
+  prevImage,
+  pos,
+  isText = true,
+}) => {
   const [imageName, setImageName] = useState<string>();
   const [uploadedFile, setUploadedFile] = useState<File | null>();
   const [image, setImage] = useState<string | null>(null);
@@ -138,7 +143,7 @@ const VersionUploadModal: React.FC<Props> = ({ prevImage, pos }) => {
         } md:block`}
       >
         <PlusOutlined />
-        <Typography.Text>Upload new version</Typography.Text>
+        {isText && <Typography.Text>Upload new version</Typography.Text>}
       </Typography.Text>
 
       <Modal
