@@ -80,11 +80,7 @@ const ReviewImage = () => {
                         Back to Feedback
                       </FFButton>
                       <PreviewCanvas
-                        imageSrc={
-                          imageData?.currentVersion
-                            ? imageData?.imageURL[(version as number) - 1]
-                            : (imageData?.imageURL as any)
-                        }
+                        imageSrc={highlightedComment?.imageURL as string}
                         height="85vh"
                       />
                     </div>

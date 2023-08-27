@@ -128,8 +128,6 @@ const VersionUploadModal: React.FC<Props> = ({
     }
   };
 
-  console.log("confirmLoading", confirmLoading);
-
   return (
     <>
       {!isMenu ? (

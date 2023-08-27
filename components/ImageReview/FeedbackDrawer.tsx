@@ -19,6 +19,7 @@ const FeedbackDrawer: React.FC<Props> = ({
   imageId,
 }) => {
   const { threads, version, isFocusedThread } = useFeedbackContext();
+
   return (
     <>
       <div className="relative">
@@ -43,6 +44,7 @@ const FeedbackDrawer: React.FC<Props> = ({
             bodyStyle={{
               backgroundColor: "#141414",
               padding: "5px 0  5px 12px ",
+              borderTop: "1.5px solid #2D2D2D",
             }}
           >
             <button
@@ -75,7 +77,9 @@ const FeedbackDrawer: React.FC<Props> = ({
                     </div>
                     <Divider className="my-0 -ml-1.5" />
                   </div>
-                  {threads.length > 0 ? (
+                  {threads.filter(
+                    ({ version: versionDB }) => versionDB === version
+                  ).length > 0 ? (
                     <div>
                       {threads.map((thread, index) => {
                         return (
@@ -96,20 +100,15 @@ const FeedbackDrawer: React.FC<Props> = ({
                       })}
                     </div>
                   ) : (
-                    <div className="mt-32 flex flex-col justify-center">
+                    <div className="flex h-[calc(100vh-10rem)] flex-col items-center justify-center">
                       <div className="p-4 text-center">
-                        <Image src="/no-comments.png" alt="" />
+                        <Image src="/empty-state-replies.png" alt="" preview={false} />
                         <Typography.Text className=" font-sec">
-                          No Comments yet
-                        </Typography.Text>
-                        <div className="my-10 h-0.5 w-full bg-gray-700"></div>
-                        <Image
-                          src="/no-comments-left-arrow.png"
-                          alt=""
-                          className="p-10"
-                        />
+                          No Feedback yet
+                        </Typography.Text>{" "}
+                        <br />
                         <Typography.Text className=" font-sec text-gray-500">
-                          Click anywhere on the image to add a thread
+                          Add a feedback now
                         </Typography.Text>
                       </div>
                     </div>

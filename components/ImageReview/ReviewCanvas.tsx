@@ -11,11 +11,10 @@ import { addDoc, collection, updateDoc, doc } from "firebase/firestore";
 import { useUserContext } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { Input, notification } from "antd";
+import { Input, message, notification } from "antd";
 import { useFeedbackContext } from "@/contexts/FeedbackContext";
 import { FFButton } from "@/theme/themeConfig";
 import { ArrowRightOutlined } from "@ant-design/icons";
-import { useNotification } from "../shared/Notification";
 
 interface ReviewCanvasProps {
   imageSrc: string;
@@ -37,11 +36,10 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const { user } = useUserContext();
   const { authUser } = useAuth();
-  const { notify, contextHolder } = useNotification();
 
-  const { uname, imageData, version } = useFeedbackContext();
+  const { uname, imageData, version, setVersion } = useFeedbackContext();
 
-  const addNewReviewToDatabase = async (blob: Blob) => {
+  const addNewReviewToDatabase = async (blob: Blob, editorRef : any) => {
     try {
       const storageRef = ref(
         storage,
@@ -63,7 +61,6 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
         },
         async () => {
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          console.log("File available at", downloadURL);
           await addDoc(collection(db, `reviewImages/${imageId}/threads`), {
             name: user?.name?.split("@")[0] || uname?.split("@")[0],
             initialComment: comment,
@@ -75,15 +72,19 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
             lastUpdated: Date.now(),
             newUpdate: "New Thread",
           });
-          notify({ type: "success", message: "Thread added successfully" });
+          message.success("Thread added successfully");
+          await editorRef?.current?.editor.loadImage(cachedImage);
+          setVersion(version);
+          setIsLoading(false);
         }
       );
     } catch (e) {
       console.error("Error", e);
-      notify({
-        type: "error",
-        message: "Something went wring please try again.",
-      });
+      message.error("Something went wrong. Please try again");
+      await editorRef?.current?.editor.loadImage(cachedImage);
+      setVersion(version);
+      setComment("");
+      setIsLoading(false);
     }
   };
 
@@ -104,17 +105,12 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
     const dataURL = await fileToDataURL(imageWriterResult.dest);
     const base64Response = await fetch(dataURL as string);
     const blob = await base64Response.blob();
-    await addNewReviewToDatabase(blob);
-    //@ts-ignore
-    await editorRef?.current?.editor.loadImage(cachedImage);
-    setComment("");
-    setIsLoading(false);
+    await addNewReviewToDatabase(blob, editorRef);
   };
 
   const editorConfig = getEditorDefaults({});
   return (
     <div className=" flex flex-col items-center">
-      {contextHolder}
       <div className=" h-[80vh] w-full">
         <PinturaEditor
           {...editorConfig}
@@ -157,7 +153,8 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
           }}
           type="text"
           className=" mb-4 text-white"
-          placeholder="Enter Comment"
+          placeholder="Enter Feedback"
+          disabled={isLoading}
         />
         <FFButton
           className="mb-4 rounded px-2 py-2 "
