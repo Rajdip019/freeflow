@@ -18,7 +18,9 @@ const FeedbackDrawer: React.FC<Props> = ({
   open,
   imageId,
 }) => {
+
   const { threads, version, isFocusedThread } = useFeedbackContext();
+
   return (
     <>
       <div className="relative">
@@ -43,6 +45,7 @@ const FeedbackDrawer: React.FC<Props> = ({
             bodyStyle={{
               backgroundColor: "#141414",
               padding: "5px 0  5px 12px ",
+              borderTop : "1.5px solid #2D2D2D"
             }}
           >
             <button

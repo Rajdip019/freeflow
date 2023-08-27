@@ -26,7 +26,7 @@ const FeedbackTile: React.FC<Props> = ({ thread }) => {
     >
       {text}
     </Typography.Link>
-  );
+  );  
 
   return (
     <>

@@ -16,7 +16,7 @@ import Linkify from "react-linkify";
 import { useAuth } from "@/contexts/AuthContext";
 import { FFButton } from "@/theme/themeConfig";
 import { ArrowRightOutlined, LeftOutlined } from "@ant-design/icons";
-import { Divider, Typography, Avatar, Spin, Input } from "antd";
+import { Divider, Typography, Avatar, Spin, Input, Image } from "antd";
 import { randomColorGeneratorFromString } from "@/utils/randomColorGeneratorFromString";
 import { useFeedbackContext } from "@/contexts/FeedbackContext";
 import { useNotification } from "../shared/Notification";
@@ -225,17 +225,12 @@ const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
             ) : (
               <div className="mt-20 flex flex-col justify-center">
                 <div className="p-4 text-center">
-                  <img src="/no-comments.png" alt="" />
-                  <p className=" font-sec">No Comments yet</p>
-                  <div className="my-10 h-0.5 w-full bg-gray-700"></div>
-                  <img
-                    src="/no-comments-left-arrow.png"
-                    alt=""
-                    className="p-10"
-                  />
-                  <p className=" font-sec text-gray-500">
-                    Type anything on the box below to add a comment.
-                  </p>
+                  <Image src="/empty-state-replies.png" alt="" preview={false} />
+                  <Typography.Text className=" font-sec text-gray-400">No Comments yet</Typography.Text>
+                  <br />
+                  <Typography.Text className=" font-sec text-gray-400">
+                    Click anywhere on the visual to add a comment
+                  </Typography.Text>
                 </div>
               </div>
             )}
@@ -252,13 +247,14 @@ const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
         />
-        <button
+        <FFButton
           disabled={!!!newComment}
-          className="ml-2 rounded bg-purple-500 p-1  px-2 transition-all hover:bg-purple-600 disabled:cursor-not-allowed disabled:bg-gray-400"
+          type="primary"
+          className="px-2"
           onClick={addNewComment}
         >
           <ArrowRightOutlined />
-        </button>
+        </FFButton>
       </div>
     </div>
   );

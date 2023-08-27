@@ -11,11 +11,10 @@ import { addDoc, collection, updateDoc, doc } from "firebase/firestore";
 import { useUserContext } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { Input, notification } from "antd";
+import { Input, message, notification } from "antd";
 import { useFeedbackContext } from "@/contexts/FeedbackContext";
 import { FFButton } from "@/theme/themeConfig";
 import { ArrowRightOutlined } from "@ant-design/icons";
-import { useNotification } from "../shared/Notification";
 
 interface ReviewCanvasProps {
   imageSrc: string;
@@ -37,7 +36,6 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const { user } = useUserContext();
   const { authUser } = useAuth();
-  const { notify, contextHolder } = useNotification();
 
   const { uname, imageData, version } = useFeedbackContext();
 
@@ -75,15 +73,12 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
             lastUpdated: Date.now(),
             newUpdate: "New Thread",
           });
-          notify({ type: "success", message: "Thread added successfully" });
+          message.success("Thread added successfully");
         }
       );
     } catch (e) {
       console.error("Error", e);
-      notify({
-        type: "error",
-        message: "Something went wring please try again.",
-      });
+      message.error("Something went wrong. Please try again");
     }
   };
 
@@ -114,7 +109,6 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
   const editorConfig = getEditorDefaults({});
   return (
     <div className=" flex flex-col items-center">
-      {contextHolder}
       <div className=" h-[80vh] w-full">
         <PinturaEditor
           {...editorConfig}
