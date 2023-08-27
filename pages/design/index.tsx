@@ -2,7 +2,7 @@ import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import Header from "@/components/Dashboard/Header";
 import ImageUploadModal from "@/components/ImageUploadModal";
 import { useImageContext } from "@/contexts/ImagesContext";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { filter, orderBy } from "lodash-es";
 import DesignsTableRow from "@/components/DesignsTableRow";
@@ -42,15 +42,19 @@ const Design = () => {
       value: image.imageName,
     };
   });
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    // Check if the Ctrl (or Command on Mac) key and the 'k' key are pressed simultaneously
-    if ((event.ctrlKey || event.metaKey) && event.key === "k") {
-      event.preventDefault();
-      console.log("Ctrl + K pressed");
-      // Focus on the input field
+  const handleKeyDown = (e: any) => {
+    if (e.key === "k" && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault(); // Prevent default browser behavior
       inputRef.current?.focus();
     }
   };
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown, true);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown, true);
+    };
+  }, []);
 
   return (
     <DashboardLayout>
@@ -59,6 +63,7 @@ const Design = () => {
       </Head>
       <section className="flex w-full items-center justify-between border-b border-[#2c2b2b] bg-[#141414] px-8 py-4">
         <AutoComplete
+          ref={inputRef as any}
           className="w-1/3"
           options={options}
           filterOption={(inputValue, option) =>
@@ -67,10 +72,12 @@ const Design = () => {
           onChange={(value) => setSearchQuery(value)}
         >
           <Input
+            suffix={<Button size="small">Ctrl+K</Button>}
             prefix={<SearchOutlined />}
             size="large"
             placeholder="Search by name, tag, color..."
-            onKeyDown={handleKeyDown}
+            allowClear
+            value={searchQuery}
           />
         </AutoComplete>
         <div className="flex">
