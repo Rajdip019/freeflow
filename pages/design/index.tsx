@@ -2,24 +2,14 @@ import DashboardLayout from "@/components/Dashboard/DashboardLayout";
 import Header from "@/components/Dashboard/Header";
 import ImageUploadModal from "@/components/ImageUploadModal";
 import { useImageContext } from "@/contexts/ImagesContext";
-import {
-  GridItem,
-  ListIcon,
-  Switch,
-  Table,
-  TableContainer,
-  Tbody,
-  Th,
-  Thead,
-  Tooltip,
-  Tr,
-} from "@chakra-ui/react";
 import React, { useState } from "react";
 import Head from "next/head";
 import { orderBy } from "lodash-es";
 import DesignsTableRow from "@/components/DesignsTableRow";
 import DesignsGridView from "@/components/DesignsGridView";
 import { HamburgerIcon } from "@chakra-ui/icons";
+import DesignsTableRow2 from "@/components/DesignsTableRow";
+import { Space, Tooltip } from "antd";
 
 const Design = () => {
   const { images } = useImageContext();
@@ -29,7 +19,7 @@ const Design = () => {
     image.imageName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const [isGridView, setIsGridView] = useState<boolean>(true);
+  const [isGridView, setIsGridView] = useState<boolean>(false);
   return (
     <DashboardLayout>
       <Head>
@@ -49,7 +39,7 @@ const Design = () => {
             />
           </div>
           <div className="flex items-center gap-2">
-            <Tooltip label="List View" aria-label="List View">
+            <Tooltip title="List View" aria-title="List View">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -70,7 +60,7 @@ const Design = () => {
                 />
               </svg>
             </Tooltip>
-            <Tooltip label="Grid View" aria-label="Grid View">
+            <Tooltip title="Grid View" aria-title="Grid View">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -104,31 +94,9 @@ const Design = () => {
             </div>
           </div>
         ) : (
-          <TableContainer className="mt-5">
-            <Table size="sm" colorScheme="purple">
-              <Thead>
-                <Tr>
-                  <Th w={"full"}>Name</Th>
-                  {/* <Th textAlign="right" isNumeric>
-                    Password
-                  </Th> */}
-                  <Th textAlign="right" isNumeric>
-                    Versions
-                  </Th>
-                  <Th isNumeric>Views</Th>
-                  <Th isNumeric>Created at</Th>
-                  <Th isNumeric>Actions</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {orderBy(filteredImages, ["timeStamp"], ["desc"]).map(
-                  (image) => {
-                    return <DesignsTableRow image={image} key={image.id} />;
-                  }
-                )}
-              </Tbody>
-            </Table>
-          </TableContainer>
+          <div className="my-4">
+            <DesignsTableRow images={images} />
+          </div>
         )}
 
         {images.length === 0 && (
