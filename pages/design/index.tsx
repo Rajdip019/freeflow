@@ -1,99 +1,132 @@
 import DashboardLayout from "@/components/Dashboard/DashboardLayout";
-import Header from "@/components/Dashboard/Header";
 import ImageUploadModal from "@/components/ImageUploadModal";
 import { useImageContext } from "@/contexts/ImagesContext";
-import {
-  GridItem,
-  ListIcon,
-  Switch,
-  Table,
-  TableContainer,
-  Tbody,
-  Th,
-  Thead,
-  Tooltip,
-  Tr,
-} from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { orderBy } from "lodash-es";
 import DesignsTableRow from "@/components/DesignsTableRow";
 import DesignsGridView from "@/components/DesignsGridView";
-import { HamburgerIcon } from "@chakra-ui/icons";
+import {
+  AutoComplete,
+  Avatar,
+  Badge,
+  Button,
+  Input,
+  Space,
+  Tooltip,
+  Typography,
+} from "antd";
+import {
+  AppstoreOutlined,
+  BellOutlined,
+  SearchOutlined,
+  UnorderedListOutlined,
+} from "@ant-design/icons";
+import { useUserContext } from "@/contexts/UserContext";
 
 const Design = () => {
+  const { user } = useUserContext();
   const { images } = useImageContext();
-
+  const inputRef = React.useRef<HTMLInputElement>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const filteredImages = images.filter((image) =>
     image.imageName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const [isGridView, setIsGridView] = useState<boolean>(true);
+  const [isGridView, setIsGridView] = useState<boolean>(false);
+  const options = images.map((image) => {
+    return {
+      value: image.imageName,
+    };
+  });
+  const handleKeyDown = (e: any) => {
+    if (e.key === "k" && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault(); // Prevent default browser behavior
+      inputRef.current?.focus();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown, true);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown, true);
+    };
+  }, []);
+
   return (
     <DashboardLayout>
       <Head>
         <title>FreeFlow | Design</title>
       </Head>
-      <Header title="Designs" />
-      <section className="flex w-full items-center justify-between px-5 md:px-10">
-        <div className="flex w-full items-center gap-5">
-          <p className="text-xl text-[#94A3B8] ">Sort</p>
-          <div className="relative w-full">
-            <input
-              type="text"
-              placeholder="Search Designs"
-              className="w-full rounded-md bg-[#20232A] px-3 py-2 text-white placeholder-gray-400 focus:outline-none"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+      <section className="flex w-full items-center justify-between border-b border-[#2c2b2b] bg-[#141414] px-8 py-4">
+        <AutoComplete
+          ref={inputRef as any}
+          className="w-1/3"
+          options={options}
+          filterOption={(inputValue, option) =>
+            option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+          }
+          onChange={(value) => setSearchQuery(value)}
+        >
+          <Input
+            suffix={
+              <Button size="small">
+                {navigator.platform.toUpperCase().indexOf("MAC") >= 0
+                  ? "⌘ + k"
+                  : "Ctrl + k"}
+              </Button>
+            }
+            prefix={<SearchOutlined />}
+            size="large"
+            placeholder="Search by name, tag, color..."
+            allowClear
+            value={searchQuery}
+          />
+        </AutoComplete>
+        <div className="flex">
+          <Space>
+            <Tooltip title="Coming soon" aria-title="Coming soon">
+              <Badge
+                count={images.length}
+                className="mr-4 cursor-not-allowed"
+                size="small"
+              >
+                <BellOutlined className="text-xl" />
+              </Badge>
+            </Tooltip>
+
+            <Typography.Text>{user?.name}</Typography.Text>
+            <Avatar
+              src={user?.imageURL}
+              alt={user?.name}
+              className="cursor-pointer"
             />
-          </div>
-          <div className="flex items-center gap-2">
-            <Tooltip label="List View" aria-label="List View">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                className={`h-6 w-6 cursor-pointer transition-all ${
-                  !isGridView
-                    ? "h-7 w-7 text-purple-500 "
-                    : "h-5 w-5 text-gray-500 "
-                }`}
-                onClick={() => setIsGridView(false)}
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z"
-                />
-              </svg>
-            </Tooltip>
-            <Tooltip label="Grid View" aria-label="Grid View">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.7"
-                stroke="currentColor"
-                className={`cursor-pointer transition-all  ${
-                  isGridView
-                    ? "h-7 w-7 text-purple-500 "
-                    : "h-5 w-5 text-gray-500 "
-                }`}
-                onClick={() => setIsGridView(true)}
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"
-                />
-              </svg>
-            </Tooltip>
-          </div>
+          </Space>
         </div>
       </section>
+      <div className="flex items-center justify-between bg-[#141414] px-8 py-3">
+        <Typography.Title>Designs</Typography.Title>
+        <div className="flex items-center gap-2">
+          <Space>
+            <Tooltip title="List View" aria-title="List View">
+              <Button
+                type={isGridView ? "default" : "primary"}
+                icon={<UnorderedListOutlined />}
+                onClick={() => setIsGridView(false)}
+              />
+            </Tooltip>
+            <Tooltip title="Grid View" aria-title="Grid View">
+              <Button
+                type={isGridView ? "primary" : "default"}
+                icon={<AppstoreOutlined />}
+                onClick={() => setIsGridView(true)}
+              />
+            </Tooltip>
+            <ImageUploadModal />
+          </Space>
+        </div>
+      </div>
+
       <div className="min-h-[88.1vh] px-5 md:min-h-min md:px-10">
         {isGridView ? (
           <div className="container mx-auto py-8">
@@ -104,31 +137,9 @@ const Design = () => {
             </div>
           </div>
         ) : (
-          <TableContainer className="mt-5">
-            <Table size="sm" colorScheme="purple">
-              <Thead>
-                <Tr>
-                  <Th w={"full"}>Name</Th>
-                  {/* <Th textAlign="right" isNumeric>
-                    Password
-                  </Th> */}
-                  <Th textAlign="right" isNumeric>
-                    Versions
-                  </Th>
-                  <Th isNumeric>Views</Th>
-                  <Th isNumeric>Created at</Th>
-                  <Th isNumeric>Actions</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {orderBy(filteredImages, ["timeStamp"], ["desc"]).map(
-                  (image) => {
-                    return <DesignsTableRow image={image} key={image.id} />;
-                  }
-                )}
-              </Tbody>
-            </Table>
-          </TableContainer>
+          <div className="my-4">
+            <DesignsTableRow images={filteredImages} />
+          </div>
         )}
 
         {images.length === 0 && (

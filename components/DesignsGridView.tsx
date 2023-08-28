@@ -2,113 +2,112 @@ import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import Moment from "react-moment";
 import React from "react";
 import Copy from "./shared/Copy";
-import { APP_URL } from "@/helpers/constants";
-import PublicAndPrivate from "./ImageReview/PublicAndPrivate";
-import ImageDeleteModalConfirmation from "./Modal/ImageDeleteModalConfirmation";
-import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  useClipboard,
-} from "@chakra-ui/react";
-import ChangeFileNameModal from "./Modal/ChangeFileNameModal";
-import VersionUploadModal from "./VersionControl/VersionUploadModal";
-import SendInvitesIconModal from "./Modal/SendInvitesIconModal";
+import { APP_URL } from "@/utils/constants";
 import Link from "next/link";
+import { Dropdown, Image, MenuProps, Tag, Typography } from "antd";
+import VersionUploadModal from "./VersionControl/VersionUploadModal";
+import ChangeFileNameModal from "./Modal/ChangeFileNameModal";
+import ImageDeleteModalConfirmation from "./Modal/ImageDeleteModalConfirmation";
+import SendInvitesIconModal from "./Modal/SendInvitesIconModal";
 
 interface Props {
   image: IReviewImageData;
 }
 
 const DesignsGridView: React.FC<Props> = ({ image }) => {
-  const { onCopy } = useClipboard(
-    image.isPrivate ? (image.private?.password as string) : ""
-  );
-  return (
-    <div className="w-60 rounded-md bg-[#20232A] transition-all hover:shadow-lg hover:shadow-[#3c3f477a]">
-      <Link target="_blank" rel="noreferrer" href={`/review-image/${image.id}`}>
-        <img
-          src={
-            image.currentVersion
-              ? image.imageURL[image.currentVersion - 1]
-              : (image.imageURL as any)
-          }
-          alt=""
-          className="aspect-gridImage w-full rounded object-cover "
-          loading="lazy"
+  const items: MenuProps["items"] = [
+    {
+      key: "1",
+
+      label: <ChangeFileNameModal image={image} />,
+    },
+    {
+      key: "2",
+      label: (
+        <VersionUploadModal
+          prevImage={image as IReviewImageData}
+          pos={"start"}
         />
-      </Link>
-      <div className="flex items-center justify-between p-2 pr-0">
-        <div>
-          <p className="w-[14ch] truncate text-sm text-white">
-            {image.imageName}
-          </p>
-          <Moment className="text-[12px] text-[#94A3B8]" format="MMM Do">
-            {image.timeStamp}
-          </Moment>
+      ),
+    },
+    {
+      key: "3",
+      label: (
+        <SendInvitesIconModal
+          image={image}
+          isText={true}
+          isIcon={false}
+          isTooltip={false}
+          isMenuItem={true}
+        />
+      ),
+    },
+    {
+      key: "4",
+      label: <ImageDeleteModalConfirmation image={image} onlyIcon />,
+    },
+  ];
+  return (
+    <div className="relative h-64 w-64 rounded-xl border border-[#181818]">
+      <Image
+        src={
+          image.currentVersion
+            ? image.imageURL[image.currentVersion - 1]
+            : (image.imageURL as any)
+        }
+        alt={image.imageName}
+        className="aspect-square w-full rounded-xl object-cover"
+        loading="lazy"
+        preview={true}
+      />
+      <div className="absolute left-0 top-0 flex h-64 w-64 flex-col justify-between p-2 text-white opacity-0 transition-all hover:bg-[#0000008d] hover:opacity-100">
+        <div className="flex items-end justify-end">
+          <Tag color="red">{image.newUpdate}</Tag>
         </div>
-        <div className="flex gap-1">
-          <Copy value={`${APP_URL}/review-image/${image.id}`} />
-          <PublicAndPrivate image={image} isText={false} />
-          <ImageDeleteModalConfirmation image={image} />
-          {/* <SendInvitesIconModal image={image} /> */}
-          <Menu>
-            <MenuButton>
-              <svg
-                className="w-6 text-gray-400 hover:text-white"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  clipRule="evenodd"
-                  fillRule="evenodd"
-                  d="M10.5 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm0 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm0 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z"
-                />
-              </svg>
-            </MenuButton>
-            <MenuList bgColor={"#475569"} border={0}>
-              <p className=" px-3 py-1.5 transition-all hover:bg-purple-500">
-                <ChangeFileNameModal
-                  image={image}
-                  isText
-                  isIcon={false}
-                  isTooltip={false}
-                />
-              </p>
-              {image?.currentVersion && (
-                <MenuItem
-                  className=" flex w-full justify-start p-2 py-1 text-sm text-white hover:bg-purple-500"
-                  bgColor={"#475569"}
+
+        <div className="flex items-center justify-between">
+          <Link
+            target="_blank"
+            rel="noreferrer"
+            href={`/review-image/${image.id}`}
+          >
+            <div>
+              <Typography className="w-[15ch] truncate text-[1.1rem]">
+                {image.imageName.includes(".")
+                  ? image.imageName.split(".")[0]
+                  : image.imageName}
+              </Typography>
+              <Typography className="text-[0.7rem]">
+                {image?.size && `${Math.round(image.size * 1024)} KB`} {" • "}
+                <Moment className="text-gray-400" format="MMM Do">
+                  {image.timeStamp}
+                </Moment>
+              </Typography>
+            </div>
+          </Link>
+          <div className="flex">
+            <div className="scale-75 cursor-pointer rounded-full bg-black p-2">
+              <Copy value={`${APP_URL}/review-image/${image.id}`} />
+            </div>
+            <div className="scale-75 cursor-pointer rounded-full bg-black p-2">
+              <Dropdown menu={{ items }}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  className="h-6 w-6"
                 >
-                  <VersionUploadModal
-                    prevImage={image as IReviewImageData}
-                    pos={"start"}
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
                   />
-                </MenuItem>
-              )}
-              <p className=" px-3 py-1.5 transition-all hover:bg-purple-500">
-                <SendInvitesIconModal
-                  image={image}
-                  isText={true}
-                  isIcon={false}
-                  isTooltip={false}
-                />
-              </p>
-              {image?.isPrivate ? (
-                <MenuItem
-                  onClick={onCopy}
-                  bgColor={"#475569"}
-                  className=" transition-all hover:bg-purple-500"
-                >
-                  Copy Password
-                </MenuItem>
-              ) : null}
-              {/* <MenuItem disabled={true} bgColor={"#475569"} className=" hover:bg-purple-500 transition-all disabled:hover:bg-[#475569]">Edit Versions</MenuItem> */}
-            </MenuList>
-          </Menu>
+                </svg>
+              </Dropdown>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -1,12 +1,10 @@
-import DesignReviewInvite from "@/emails/DesignReviewInvite";
-import { APP_URL } from "@/helpers/constants";
+import { APP_URL } from "@/utils/constants";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
-import { resend } from "@/lib/api/mailer";
 import { db } from "@/lib/firebaseConfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { uniq } from "lodash-es";
 import { NextApiRequest, NextApiResponse } from "next";
-
+import sgMail from "@sendgrid/mail";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -25,7 +23,7 @@ export default async function handler(
       const data = docSnap.data() as IReviewImageData;
 
       let designReviewPassword: string = "";
-      if (data.isPrivate) {
+      if (data && data.isPrivate) {
         const passwordDocRef = doc(
           db,
           "reviewImages",
@@ -40,24 +38,24 @@ export default async function handler(
 
       const designReviewUrl = `${APP_URL}/review-image/${imageId}`;
 
+      const { templateData } = req.body;
+      sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
       const sendPromises = emails.map(async (email: string) => {
-        await resend.sendEmail({
-          from: "FreeFlow <noreply@freeflow.to>",
+        const msg = {
           to: email,
-          subject: `[FreeFlow] ${data.uploadedBy} requested your feedback on a design`,
-          // @ts-expect-error
-          react: DesignReviewInvite({
-            designReviewUrl,
-            designReviewPassword,
-            inviter: data.uploadedBy,
-          }),
-        });
+          from: "unsnarl.secure@gmail.com",
+          templateId: "d-c1725864e64849639149782c58502a40",
+          dynamic_template_data: { templateData },
+        };
+        await sgMail.send(msg);
       });
 
       await Promise.all(sendPromises);
 
       // Update sentEmailInvites field in db
-      const existingEmailInvites = data.sentEmailInvites ?? [];
+      const existingEmailInvites = data.sentEmailInvites
+        ? data.sentEmailInvites ?? []
+        : [];
       const updatedEmailInvites = uniq([...existingEmailInvites, ...emails]);
       await updateDoc(docRef, {
         sentEmailInvites: updatedEmailInvites,

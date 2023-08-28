@@ -1,15 +1,8 @@
-import { APP_URL } from "@/helpers/constants";
+import { APP_URL } from "@/utils/constants";
 import React from "react";
-import {
-  Input,
-  InputGroup,
-  InputRightElement,
-  useClipboard,
-} from "@chakra-ui/react";
-import ClipboardCopiedIcon from "@/components/Icons/ClipboardCopiedIcon";
-import ClipboardIcon from "@/components/Icons/ClipboardIcon";
 import classNames from "classnames";
 import SendInvitesInput from "./ImageReview/SendInvitesInput";
+import { Button, Divider, Input, Space, Typography, message } from "antd";
 
 interface Props {
   imageId: string;
@@ -18,7 +11,6 @@ interface Props {
   >;
   clearFile: () => any;
   mode: "dark" | "light";
-  password?: string;
 }
 
 const ImageUploadSuccess: React.FC<Props> = ({
@@ -26,13 +18,8 @@ const ImageUploadSuccess: React.FC<Props> = ({
   setUploadingState,
   clearFile,
   mode,
-  password = "",
 }) => {
   const reviewImageUrl = `${APP_URL}/review-image/${imageId}`;
-  const { onCopy: onCopyImageUrl, hasCopied: hasCopiedImageUrl } =
-    useClipboard(reviewImageUrl);
-  const { onCopy: onCopyPassword, hasCopied: hasCopiedPassword } =
-    useClipboard(password);
 
   return (
     <div>
@@ -41,9 +28,9 @@ const ImageUploadSuccess: React.FC<Props> = ({
           mode === "dark" ? "text-white" : "text-black"
         } `}
       >
-        <p className="text-2xl font-semibold">
+        <Typography.Text className="mt-4 text-xl font-semibold">
           Done! Share the link to let anyone leave feedback
-        </p>
+        </Typography.Text>
       </div>
 
       <SendInvitesInput
@@ -55,78 +42,35 @@ const ImageUploadSuccess: React.FC<Props> = ({
         wrapperClassName="mb-4"
       />
 
-      <div className="my-4 flex flex-col gap-2">
-        <p
-          className={classNames("text-center text-2xl", {
-            "text-gray-400": mode === "dark",
-            "text-gray-500": mode === "light",
-          })}
-        >
-          OR
-        </p>
-      </div>
+      <Divider>OR</Divider>
       <div className="mb-4 flex flex-col gap-2">
         <p>Share the link:</p>
-        <InputGroup size="md">
-          <Input
-            value={reviewImageUrl}
-            disabled
-            name="url"
-            focusBorderColor={"purple.500"}
-            borderColor={"purple.500"}
-            className={classNames("mb-4 pr-4", {
-              "text-white": mode === "dark",
-              "text-black": mode === "light",
-            })}
-          />
-          <InputRightElement>
-            <button onClick={() => onCopyImageUrl()}>
-              {hasCopiedImageUrl ? (
-                <ClipboardCopiedIcon className="h-5 w-5 text-gray-500" />
-              ) : (
-                <ClipboardIcon className="h-5 w-5 cursor-pointer text-purple-500 hover:text-gray-500" />
-              )}
-            </button>
-          </InputRightElement>
-        </InputGroup>
+        <Space.Compact>
+          <Input value={reviewImageUrl} disabled />
+          <Button
+            type="primary"
+            onClick={() => {
+              navigator.clipboard.writeText(reviewImageUrl);
+              message.success("Copied to clipboard");
+            }}
+          >
+            Copy
+          </Button>
+        </Space.Compact>
       </div>
-      {password && (
-        <div className="mb-4 flex flex-col gap-2">
-          <p>Password:</p>
-          <InputGroup size="md">
-            <Input
-              value={password}
-              disabled
-              name="password"
-              focusBorderColor={"purple.500"}
-              borderColor={"purple.500"}
-              className={classNames("mb-4 pr-4", {
-                "text-white": mode === "dark",
-                "text-black": mode === "light",
-              })}
-              resize={"none"}
-            />
-            <InputRightElement>
-              <button onClick={() => onCopyPassword()}>
-                {hasCopiedPassword ? (
-                  <ClipboardCopiedIcon className="h-5 w-5 text-gray-500" />
-                ) : (
-                  <ClipboardIcon className="h-5 w-5 cursor-pointer text-purple-500 hover:text-gray-500" />
-                )}
-              </button>
-            </InputRightElement>
-          </InputGroup>
-        </div>
-      )}
       <div className="flex flex-col items-center">
-        <button
-          className="btn-p py-2"
+        <Button
+          color="purple"
+          size="large"
+          type="primary"
+          shape="round"
+          className="mt-2 w-full"
           onClick={() => {
             setUploadingState("not-started"), clearFile();
           }}
         >
           Upload Another Design
-        </button>
+        </Button>
       </div>
     </div>
   );
