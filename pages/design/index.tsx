@@ -29,16 +29,22 @@ const Design = () => {
   const { images } = useImageContext();
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [options, setOptions] = useState<{ value: string }[]>([]);
   const filteredImages = images.filter((image) =>
     image.imageName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const [isGridView, setIsGridView] = useState<boolean>(false);
-  const options = images.map((image) => {
-    return {
-      value: image.imageName,
-    };
-  });
+  useEffect(() => {
+    setOptions(
+      images.map((image) => {
+        return {
+          value: image.imageName,
+        };
+      })
+    );
+  }, [images]);
+
   const handleKeyDown = (e: any) => {
     if (e.key === "k" && (e.ctrlKey || e.metaKey)) {
       e.preventDefault(); // Prevent default browser behavior

@@ -2,7 +2,7 @@ import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { storage, db } from "@/lib/firebaseConfig";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ImageUploaderDropzone from "./ImageDropZones/ImageUploaderDropzone";
 import { useUserContext } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -12,7 +12,19 @@ import { newReviewImageEvent } from "@/lib/events";
 import { Button, Input, Modal, Progress, Typography, message } from "antd";
 import { CloseOutlined, UploadOutlined } from "@ant-design/icons";
 
-const ImageUploadModal = () => {
+interface Props {
+  visible?: boolean;
+  propFile?: File;
+  setShowModal?: React.Dispatch<React.SetStateAction<boolean>>;
+  propImage?: string;
+}
+
+const ImageUploadModal = ({
+  visible = false,
+  propFile,
+  setShowModal,
+  propImage,
+}: Props) => {
   const [imageName, setImageName] = useState<string>();
   const [password, setPassword] = useState<string>("");
   const [uploadedFile, setUploadedFile] = useState<File | null>();
@@ -27,10 +39,17 @@ const ImageUploadModal = () => {
   const { authUser } = useAuth();
   const { storage: storageUsed } = useImageContext();
 
+  useEffect(() => {
+    if (visible && propFile && propImage) {
+      handleFileUploaded(propFile);
+      setImage(propImage);
+    }
+  }, []);
+
   const handleFileUploaded = (file: File) => {
     setUploadedFile(file);
     setFileSize(Math.round(file.size / (1024 * 1024)));
-    setImageName(file.name);
+    setImageName(file.name.split(".")[file.name.split(".").length - 2]);
     console.log("File uploaded:", file);
   };
 
@@ -42,7 +61,7 @@ const ImageUploadModal = () => {
   };
 
   const [uploadPercentage, setUploadPercentage] = useState<number>(0);
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(visible);
   const uploadFile = () => {
     if (fileSize < 75) {
       if (user?.storage) {
@@ -122,21 +141,25 @@ const ImageUploadModal = () => {
 
   return (
     <>
-      <Button
-        onClick={() => {
-          setOpen(true);
-          clearFile();
-          setUploadingState("not-started");
-        }}
-        size="large"
-        icon={<UploadOutlined />}
-      >
-        Upload
-      </Button>
-
+      {!visible && (
+        <Button
+          onClick={() => {
+            setOpen(true);
+            clearFile();
+            setUploadingState("not-started");
+          }}
+          size="large"
+          icon={<UploadOutlined />}
+        >
+          Upload
+        </Button>
+      )}
       <Modal
         open={open}
-        onCancel={() => setOpen(false)}
+        onCancel={() => {
+          setOpen(false);
+          setShowModal && setShowModal(false);
+        }}
         footer={null}
         title="Upload Design"
       >

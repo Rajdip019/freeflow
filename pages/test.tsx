@@ -1,45 +1,47 @@
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
-import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { Button, Drawer } from "antd";
-import React, { useState } from "react";
+import ImageUploadModal from "@/components/ImageUploadModal";
+import { UploadOutlined } from "@ant-design/icons";
+import React from "react";
+import { useDropzone } from "react-dropzone";
 
-const Test = () => {
-  const [open, setOpen] = useState(false);
+type Props = {};
 
-  const showDrawer = () => {
-    setOpen(true);
+const Test = (props: Props) => {
+  const [image, setImage] = React.useState<string>();
+  const [showModal, setShowModal] = React.useState<boolean>(false);
+  const onDrop = (acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      const dataUrl = reader.result;
+      setImage(dataUrl as string);
+      setShowModal(true);
+    };
   };
 
-  const onClose = () => {
-    setOpen(false);
-  };
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
-    <div className=" relative h-screen w-screen overflow-hidden">
-      <Button
-        className=" absolute right-0 top-[10vh] h-[90vh] rounded-r-none"
-        type="primary"
-        onClick={showDrawer}
-        icon={<LeftOutlined size={26} />}
-      ></Button>
-      <div className="absolute right-0 top-[10vh] h-[90vh] bg-white ">
-        <Drawer
-          placement="right"
-          onClose={onClose}
-          open={open}
-          maskClosable={false}
-          mask={false}
-          closeIcon={null}
-          getContainer={false}
-        >
-          <Button
-            className=" absolute left-0 top-0 h-[90vh] rounded-r-none"
-            type="primary"
-            onClick={onClose}
-            icon={<RightOutlined size={26} />}
-          ></Button>
-        </Drawer>
-      </div>
+    <div
+      {...getRootProps()}
+      onClick={(e) => e.stopPropagation()}
+      className="flex h-screen w-screen items-center justify-center bg-purple-300"
+    >
+      <input {...getInputProps()} accept="image/*" />
+      {showModal && (
+        <ImageUploadModal
+          visible
+          setShowModal={setShowModal}
+          propImage={image}
+        />
+      )}
+      {/* Mask */}
+      {isDragActive && (
+        <div className="flex h-screen w-screen items-center justify-center bg-[#ffffff7f] transition-all">
+          <UploadOutlined className="text-6xl text-gray-500" />
+          <p>Drop anywhere to upload</p>
+        </div>
+      )}
     </div>
   );
 };
