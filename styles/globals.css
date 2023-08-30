@@ -98,3 +98,13 @@ body {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+::-webkit-scrollbar {
+  width: 10px;
+  background: rgb(0, 0, 0);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(162, 0, 255);
+  border-radius: 10px;
+}

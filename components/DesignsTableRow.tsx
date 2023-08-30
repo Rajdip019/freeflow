@@ -22,6 +22,9 @@ interface Props {
 }
 
 const DesignsTableRow: React.FC<Props> = ({ images }) => {
+  images = images.sort((a, b) => {
+    return new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime();
+  });
   return (
     <>
       <Table dataSource={images} scroll={{ x: 300 }} pagination={false}>
@@ -100,7 +103,7 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
         />
         <Column
           title="Size"
-          dataIndex="timestamp"
+          dataIndex="size"
           key="size"
           render={(text, record: IReviewImageData) => (
             <Typography.Text>
@@ -135,6 +138,9 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
               )}
             </Typography.Text>
           )}
+          sorter={(a: IReviewImageData, b: IReviewImageData) =>
+            new Date(a.timeStamp).getTime() - new Date(b.timeStamp).getTime()
+          }
           className="cursor-pointer"
           onCell={(record, rowIndex) => {
             return {
