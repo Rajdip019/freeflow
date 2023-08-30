@@ -14,6 +14,7 @@ import FeedbackDrawer from "./FeedbackDrawer";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import { FFButton } from "@/theme/themeConfig";
 import { defaultHighlightedThread } from "@/utils/constants";
+import { Typography } from "antd";
 
 const ReviewImage = () => {
   const router = useRouter();

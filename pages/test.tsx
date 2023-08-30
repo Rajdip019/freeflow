@@ -1,49 +1,68 @@
-import ImageUploadModal from "@/components/ImageUploadModal";
-import { UploadOutlined } from "@ant-design/icons";
-import React from "react";
-import { useDropzone } from "react-dropzone";
+import React, { useState } from "react";
+import axios from "axios";
 
-type Props = {};
+const GoogleAPIKey = "YOUR_GOOGLE_API_KEY";
+const AutoMLModelID = "YOUR_AUTOML_MODEL_ID";
 
-const Test = (props: Props) => {
-  const [image, setImage] = React.useState<string>();
-  const [showModal, setShowModal] = React.useState<boolean>(false);
-  const onDrop = (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      const dataUrl = reader.result;
-      setImage(dataUrl as string);
-      setShowModal(true);
-    };
+function ImageAutoTagging() {
+  const [tags, setTags] = useState<string[]>([]);
+  const [image, setImage] = useState<File | null>(null);
+
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (!event.target.files) return;
+
+    const uploadedImage = event.target.files[0];
+    setImage(uploadedImage);
+
+    const formData = new FormData();
+    formData.append("file", uploadedImage);
+
+    try {
+      const response = await axios.post(
+        `https://automl.googleapis.com/v1/projects/YOUR_PROJECT_ID/locations/us-central1/models/${AutoMLModelID}:predict`,
+        {
+          payload: {
+            image: {
+              imageBytes: formData.get("file"),
+            },
+          },
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${GoogleAPIKey}`,
+          },
+        }
+      );
+
+      // Parse the response and extract tags from the result
+      const predictedTags: string[] = response.data.payload.map(
+        (prediction: { displayName: string }) => prediction.displayName
+      );
+      setTags(predictedTags);
+    } catch (error) {
+      console.error("Error analyzing image:", error);
+    }
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-
   return (
-    <div
-      {...getRootProps()}
-      onClick={(e) => e.stopPropagation()}
-      className="flex h-screen w-screen items-center justify-center bg-purple-300"
-    >
-      <input {...getInputProps()} accept="image/*" />
-      {showModal && (
-        <ImageUploadModal
-          visible
-          setShowModal={setShowModal}
-          propImage={image}
-        />
-      )}
-      {/* Mask */}
-      {isDragActive && (
-        <div className="flex h-screen w-screen items-center justify-center bg-[#ffffff7f] transition-all">
-          <UploadOutlined className="text-6xl text-gray-500" />
-          <p>Drop anywhere to upload</p>
+    <div>
+      <input type="file" accept="image/*" onChange={handleImageUpload} />
+      {image && <img src={URL.createObjectURL(image)} alt="Uploaded" />}
+      {tags.length > 0 && (
+        <div>
+          <h3>Generated Tags:</h3>
+          <ul>
+            {tags.map((tag, index) => (
+              <li key={index}>{tag}</li>
+            ))}
+          </ul>
         </div>
       )}
     </div>
   );
-};
+}
 
-export default Test;
+export default ImageAutoTagging;

@@ -1,6 +1,7 @@
 export interface IReviewImageData {
   id: string;
   imageName: string;
+  imageDescription?: string;
   imageURL: string[];
   timeStamp: number;
   uploadedBy: string;
