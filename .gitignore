@@ -4,7 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
-.next
+/.next
 
 # testing
 /coverage
@@ -37,6 +37,9 @@ next-env.d.ts
 
 # File used for testing and debugging
 /pages/api/test.ts
+
+# File use to test and debug frontend
+/pages/test.tsx
 
 # Generated directory for developing email templates
 .react-email
