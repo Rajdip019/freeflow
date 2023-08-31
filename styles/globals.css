@@ -66,6 +66,13 @@ body {
 .bg-sec {
   background-color: rgb(20, 20, 20);
 }
+@media print {
+  html,
+  body {
+    /* Hide the whole page */
+    display: none;
+  }
+}
 
 @layer components {
   .text-gradient-p {
