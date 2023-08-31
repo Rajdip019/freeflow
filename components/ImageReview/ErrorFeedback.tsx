@@ -12,7 +12,7 @@ const ErrorFeedback = () => {
     <>
       <div className="flex h-screen flex-col bg-black items-center justify-center ">
         <div className=" flex flex-col items-center">
-          <Image src="/freeflow.png" width={150} />
+          <Image src="/freeflow.png" width={150} preview={false} />
           <Typography.Title level={2} className="mt-5">The URL seems invalid 😢, Check the URL and try again</Typography.Title>
           <FFButton
             onClick={() => {

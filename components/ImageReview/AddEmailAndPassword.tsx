@@ -40,7 +40,7 @@ const AddEmailAndPassword: React.FC<Props> = ({
   return (
     <div className="flex h-screen items-center justify-center bg-black ">
       <div className="w-96 rounded-2xl p-8 bg-sec ">
-          <Image src="/freeflow.png" width={150} />
+          <Image src="/freeflow.png" width={150} preview={false} />
         <div className="mb-6 mt-5">
           <Typography.Title level={4}> You are invited to review <span className=" text-p">{imageData?.imageName}</span> </Typography.Title>
         </div>
