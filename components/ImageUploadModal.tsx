@@ -204,7 +204,11 @@ const ImageUploadModal = ({
                       maxLength={24}
                       size="middle"
                       allowClear
+                      className="mb-4"
                     />
+                    <Typography.Text className=" mb-2 text-sm text-gray-500">
+                      Description (optional)
+                    </Typography.Text>
                     <TextArea
                       value={description}
                       onChange={(e) => {
@@ -215,7 +219,6 @@ const ImageUploadModal = ({
                       maxLength={100}
                       size="middle"
                       allowClear
-                      className="mt-4"
                     />
                   </div>
                 </>
