@@ -1,6 +1,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserContext } from "@/contexts/UserContext";
-import { Spinner } from "@chakra-ui/react";
+import { Spin } from "antd";
 import { useRouter } from "next/router";
 import React, { ReactElement, useEffect, useState } from "react";
 
@@ -16,7 +16,7 @@ const FFPage: React.FC<Props> = ({ children, isAuthRequired }) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (authUser) {
+    if (authUser && authUser.emailVerified) {
       if (user) {
         setIsLoading(false);
       }
@@ -34,7 +34,7 @@ const FFPage: React.FC<Props> = ({ children, isAuthRequired }) => {
     <div>
       {isLoading ? (
         <div className=" flex h-screen items-center justify-center bg-black">
-          <Spinner color="purple" size="lg" />
+          <Spin size="large" />
         </div>
       ) : (
         <>{children}</>

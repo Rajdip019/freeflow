@@ -3,7 +3,7 @@ import ImageUploadModal from "@/components/ImageUploadModal";
 import { useImageContext } from "@/contexts/ImagesContext";
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import { orderBy } from "lodash-es";
+import { filter, orderBy } from "lodash-es";
 import DesignsTableRow from "@/components/DesignsTableRow";
 import DesignsGridView from "@/components/DesignsGridView";
 import {
@@ -11,6 +11,8 @@ import {
   Avatar,
   Badge,
   Button,
+  Empty,
+  Image,
   Input,
   Space,
   Tooltip,
@@ -19,8 +21,10 @@ import {
 import {
   AppstoreOutlined,
   BellOutlined,
+  CloseOutlined,
   SearchOutlined,
   UnorderedListOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import { useUserContext } from "@/contexts/UserContext";
 
@@ -69,6 +73,7 @@ const Design = () => {
           ref={inputRef as any}
           className="w-1/3"
           options={options}
+          value={searchQuery}
           filterOption={(inputValue, option) =>
             option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
           }
@@ -134,24 +139,59 @@ const Design = () => {
       </div>
 
       <div className="min-h-[88.1vh] px-5 md:min-h-min md:px-10">
-        {isGridView ? (
-          <div className="container mx-auto py-8">
-            <div className="flex flex-wrap gap-4">
-              {orderBy(filteredImages, ["timeStamp"], ["desc"]).map((image) => {
-                return <DesignsGridView image={image} key={image.id} />;
-              })}
-            </div>
-          </div>
+        {filteredImages.length !== 0 ? (
+          <>
+            {isGridView ? (
+              <div className="container mx-auto py-8">
+                <div className="flex flex-wrap gap-4">
+                  {orderBy(filteredImages, ["timeStamp"], ["desc"]).map(
+                    (image) => {
+                      return <DesignsGridView image={image} key={image.id} />;
+                    }
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="my-4">
+                <DesignsTableRow images={filteredImages} />
+              </div>
+            )}
+          </>
         ) : (
-          <div className="my-4">
-            <DesignsTableRow images={filteredImages} />
-          </div>
-        )}
-
-        {images.length === 0 && (
-          <div className="mt-24 flex flex-col items-center justify-center gap-5 font-semibold text-white">
-            <span className="text-2xl">Upload a image to start 🚀</span>
-            <ImageUploadModal />
+          <div className="mt-16 flex flex-col items-center justify-center">
+            <Empty
+              className="w-fit"
+              image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+              description={
+                <span className="text-gray-500">
+                  No designs found{" "}
+                  {searchQuery && (
+                    <>
+                      for <br />{" "}
+                      <Space>
+                        <Button
+                          type="dashed"
+                          size="small"
+                          className="mt-2"
+                          color="purple.100"
+                        >
+                          {searchQuery}
+                        </Button>
+                        <Button
+                          type="dashed"
+                          size="small"
+                          className="mt-2"
+                          icon={<CloseOutlined />}
+                          onClick={() => setSearchQuery("")}
+                        />
+                      </Space>
+                    </>
+                  )}
+                </span>
+              }
+            >
+              <ImageUploadModal />
+            </Empty>
           </div>
         )}
       </div>
