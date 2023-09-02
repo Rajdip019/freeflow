@@ -1,13 +1,10 @@
 import {
-  Button,
   Drawer,
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
-  Input,
-  DrawerFooter,
   useDisclosure,
   Avatar,
 } from "@chakra-ui/react";
@@ -78,7 +75,6 @@ const SidebarDrawer = () => {
                         }`}
                         key={index}
                       >
-                        <img src={route.img} alt="" className=" w-6" />
                         <p className=" font-sec">{route.title}</p>
                       </div>
                     );
