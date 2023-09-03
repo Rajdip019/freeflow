@@ -1,8 +1,8 @@
-import { Head } from "next/document";
 import { useRouter } from "next/router";
 import React from "react";
-import Navbar from "../LandingPage/Navbar";
 import { useUserContext } from "@/contexts/UserContext";
+import { Image, Typography } from "antd";
+import { FFButton } from "@/theme/themeConfig";
 
 const ErrorFeedback = () => {
   const router = useRouter();
@@ -10,14 +10,11 @@ const ErrorFeedback = () => {
 
   return (
     <>
-      <Head>
-        <title>FreeFlow | Invalid Link</title>
-      </Head>
-      <div className="flex h-screen flex-col bg-gray-900 ">
-        <Navbar />
-        <div className="flex flex-col items-center justify-center">
-          <p className=" mt-40 text-4xl text-white">Invalid URL</p>
-          <button
+      <div className="flex h-screen flex-col bg-black items-center justify-center ">
+        <div className=" flex flex-col items-center">
+          <Image src="/freeflow.png" width={150} preview={false} />
+          <Typography.Title level={2} className="mt-5">The URL seems invalid 😢, Check the URL and try again</Typography.Title>
+          <FFButton
             onClick={() => {
               if (user) {
                 router.push("/dashboard");
@@ -25,10 +22,10 @@ const ErrorFeedback = () => {
                 router.push("/");
               }
             }}
-            className=" btn-p mt-5 w-fit py-2 text-xl"
+            type="primary"
           >
             Go back
-          </button>
+          </FFButton>
         </div>
       </div>
     </>

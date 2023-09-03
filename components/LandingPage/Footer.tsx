@@ -12,30 +12,12 @@ const Footer = () => {
             <p className="mb-2 font-bold">Contact</p>
             <a
               className="m-0 mb-1 flex gap-2"
-              href="https://twitter.com/ReallyMad0"
+              href="https://twitter.com/useFreeFlow"
               target="_blank"
               rel="noreferrer"
             >
               <img src="/twitter.png" className=" w-5" alt="" />
-              Ahmed Geaissa
-            </a>
-            <a
-              className="m-0 flex gap-2"
-              href="https://twitter.com/RajdeepS019"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img src="/twitter.png" className=" w-5" alt="" />
-              Rajdeep Sengupta
-            </a>
-            <a
-              className="m-0 flex gap-2"
-              href="https://twitter.com/imMichaelYoung"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img src="/twitter.png" className=" w-5" alt="" />
-              Michael Young
+              @useFreeflow
             </a>
           </div>
         </div>

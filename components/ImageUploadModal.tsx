@@ -11,6 +11,7 @@ import ImageUploadSuccess from "./ImageUploadSuccess";
 import { newReviewImageEvent } from "@/lib/events";
 import { Button, Input, Modal, Progress, Typography, message } from "antd";
 import { CloseOutlined, UploadOutlined } from "@ant-design/icons";
+const { TextArea } = Input;
 
 interface Props {
   visible?: boolean;
@@ -26,6 +27,7 @@ const ImageUploadModal = ({
   propImage,
 }: Props) => {
   const [imageName, setImageName] = useState<string>();
+  const [description, setDescription] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [uploadedFile, setUploadedFile] = useState<File | null>();
   const [image, setImage] = useState<string | null>(null);
@@ -104,6 +106,7 @@ const ImageUploadModal = ({
                   uploadedById: authUser?.uid,
                   timeStamp: Date.now(),
                   imageName: imageName as string,
+                  imageDescription: description,
                   size: bytes / (1024 * 1024),
                   views: 0,
                   threads: 0,
@@ -197,8 +200,23 @@ const ImageUploadModal = ({
                       }}
                       type="text"
                       color="purple"
-                      placeholder="Enter photo title"
+                      placeholder="Enter design title"
                       maxLength={24}
+                      size="middle"
+                      allowClear
+                      className="mb-4"
+                    />
+                    <Typography.Text className=" mb-2 text-sm text-gray-500">
+                      Description (optional)
+                    </Typography.Text>
+                    <TextArea
+                      value={description}
+                      onChange={(e) => {
+                        setDescription(e.target.value);
+                      }}
+                      color="purple"
+                      placeholder="Enter design description"
+                      maxLength={100}
                       size="middle"
                       allowClear
                     />

@@ -4,6 +4,7 @@ import React from "react";
 import FeedbackTile from "./FeedbackTile";
 import FeedbackExpanded from "./FeedbackExpanded";
 import { useFeedbackContext } from "@/contexts/FeedbackContext";
+import Moment from "react-moment";
 
 interface Props {
   showDrawer: () => void;
@@ -18,7 +19,7 @@ const FeedbackDrawer: React.FC<Props> = ({
   open,
   imageId,
 }) => {
-  const { threads, version, isFocusedThread } = useFeedbackContext();
+  const { threads, version, isFocusedThread, imageData } = useFeedbackContext();
 
   return (
     <>
@@ -60,6 +61,25 @@ const FeedbackDrawer: React.FC<Props> = ({
               ) : (
                 <>
                   <div className=" bg-sec sticky -top-[0.3rem] z-50 ml-4 flex flex-col py-2">
+                    <div className="flex flex-col gap-2">
+                      <Typography.Text className="text-base">
+                        {imageData?.uploadedBy}{" "}
+                        <span className="text-sm text-gray-400">
+                          uploaded{" "}
+                          <Moment fromNow>{imageData?.timeStamp}</Moment>
+                        </span>
+                        <br />
+                      </Typography.Text>
+                      {imageData?.imageDescription && (
+                        <Typography.Text>
+                          <span className="text-base">Description</span> <br />
+                          <span className="text-sm text-gray-400">
+                            {imageData?.imageDescription}
+                          </span>
+                        </Typography.Text>
+                      )}
+                      <Divider className="my-0 -ml-1.5" />
+                    </div>
                     <div className=" flex gap-3">
                       <Typography.Title
                         level={5}
