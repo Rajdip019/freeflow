@@ -52,28 +52,6 @@ const CompareView: React.FC<Props> = ({ imageData, currentVersion }) => {
                   {`Version ${version1}`} <DownOutlined />
                 </Button>
               </Dropdown>
-
-              {/* <Menu>
-                <MenuButton className="rounded bg-purple-500 px-4 py-2 text-xs font-semibold text-white focus:outline-none">
-                  {`Version ${version1}`} <ChevronDownIcon />
-                </MenuButton>
-                <MenuList bgColor={"#475569"} border={0}>
-                  {imageData?.imageURL.map((_, index) => {
-                    return (
-                      <MenuItem
-                        className="font-sec flex justify-center p-2 py-1 text-sm text-white hover:bg-purple-500"
-                        bgColor={"#475569"}
-                        key={index}
-                        onClick={() => {
-                          setVersion1(imageData.imageURL.length - index);
-                        }}
-                      >
-                        {`Version ${imageData.imageURL.length - index}`}
-                      </MenuItem>
-                    );
-                  })}
-                </MenuList>
-              </Menu> */}
               <br />
               {version1 === currentVersion && (
                 <Typography.Text className="absolute mt-2 text-xs text-gray-400">
