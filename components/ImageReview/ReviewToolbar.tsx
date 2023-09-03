@@ -4,7 +4,15 @@ import SendInvitesIconModal from "../Modal/SendInvitesIconModal";
 import Copy from "../shared/Copy";
 import { APP_URL } from "@/utils/constants";
 import PublicAndPrivate from "./PublicAndPrivate";
-import { Popconfirm, message, Tooltip, Button, Dropdown, MenuProps, Typography } from "antd";
+import {
+  Popconfirm,
+  message,
+  Tooltip,
+  Button,
+  Dropdown,
+  MenuProps,
+  Typography,
+} from "antd";
 import { FFButton } from "@/theme/themeConfig";
 import {
   DeleteOutlined,
@@ -30,16 +38,31 @@ const ReviewImageToolbarAdmin: React.FC = () => {
     {
       key: "1",
       label: (
-        <div onClick={() => setIsCompareView(!isCompareView)} className=" flex gap-2"><EyeOutlined />Compare View</div>
+        <div
+          onClick={() => setIsCompareView(!isCompareView)}
+          className=" flex gap-2"
+        >
+          <EyeOutlined />
+          Compare View
+        </div>
       ),
     },
     {
       key: "2",
-      label: <Copy value={`${APP_URL}/review-image/${imageData?.id}`} type="both" />,
+      label: (
+        <Copy value={`${APP_URL}/review-image/${imageData?.id}`} type="both" />
+      ),
     },
     {
       key: "3",
-      label: <SendInvitesIconModal image={imageData as IReviewImageData} type="text" isTooltip={false} isMenuItem={true} />,
+      label: (
+        <SendInvitesIconModal
+          image={imageData as IReviewImageData}
+          type="text"
+          isTooltip={false}
+          isMenuItem={true}
+        />
+      ),
     },
     {
       key: "4",
@@ -54,18 +77,19 @@ const ReviewImageToolbarAdmin: React.FC = () => {
           cancelText="No"
           icon={<QuestionCircleOutlined style={{ color: "red" }} />}
         >
-          <Typography.Text className=" flex gap-2"
-          ><DeleteOutlined />Delete
+          <Typography.Text className=" flex gap-2">
+            <DeleteOutlined />
+            Delete
           </Typography.Text>
         </Popconfirm>
       ),
     },
-  ]
+  ];
 
   return (
     <>
       {/* ////////////// Laptop Screen View /////////////////*/}
-      <div className="md:flex items-center gap-5 hidden">
+      <div className="hidden items-center gap-5 md:flex">
         {imageData?.imageURL[1] && (
           <Tooltip title="Toggle Comparison View">
             <FFButton
@@ -102,7 +126,7 @@ const ReviewImageToolbarAdmin: React.FC = () => {
       {/* ////////////// Mobile Screen View /////////////////*/}
       <div className="md:hidden">
         <Dropdown menu={{ items }}>
-          <FFButton className=" border-none shadow-none px-0">
+          <FFButton className=" border-none px-0 shadow-none">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

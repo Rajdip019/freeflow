@@ -14,7 +14,14 @@ interface Props {
 
 const FeedbackDrawerMobile: React.FC<Props> = ({ imageId }) => {
   const [open, setOpen] = useState(false);
-  const { isFocusedThread, imageData, threads, version, setIsFocusedThread, setHighlightedComment } = useFeedbackContext();
+  const {
+    isFocusedThread,
+    imageData,
+    threads,
+    version,
+    setIsFocusedThread,
+    setHighlightedComment,
+  } = useFeedbackContext();
 
   const showDrawer = () => {
     setOpen(true);
@@ -93,7 +100,12 @@ const FeedbackDrawerMobile: React.FC<Props> = ({ imageId }) => {
                     return (
                       <div className=" ml-2">
                         {thread.imageURL ? (
-                          <FeedbackTile key={index} thread={thread} onClose={onClose} setOpen={setOpen} />
+                          <FeedbackTile
+                            key={index}
+                            thread={thread}
+                            onClose={onClose}
+                            setOpen={setOpen}
+                          />
                         ) : (
                           <div className=" mt-5 px-2 text-center font-semibold">
                             <Typography.Paragraph>

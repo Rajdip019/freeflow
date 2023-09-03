@@ -1,9 +1,8 @@
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
-import { ChevronDownIcon } from "@chakra-ui/icons";
-import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import React from "react";
 import PreviewCanvas from "./PreviewCanvas";
-import { Typography } from "antd";
+import { Button, Dropdown, Typography } from "antd";
+import { DownOutlined } from "@ant-design/icons";
 
 interface Props {
   imageData: IReviewImageData;
@@ -15,12 +14,10 @@ const CompareView: React.FC<Props> = ({ imageData, currentVersion }) => {
   const [version2, setVersion2] = React.useState<number>(currentVersion - 1);
 
   return (
-    <div className="flex w-full items-center justify-center h-full md:h-auto bg-black">
+    <div className="flex h-full w-full items-center justify-center bg-black md:h-auto">
       <div className="">
-        <div className=" flex justify-around gap-5 flex-col md:flex-row ">
-          <div
-            className="flex w-full flex-col items-center justify-center"
-          >
+        <div className=" flex flex-col justify-around gap-5 md:flex-row ">
+          <div className="flex w-full flex-col items-center justify-center">
             <Typography.Text className=" mb-5 text-sm  font-semibold">
               {imageData.imageName}
             </Typography.Text>
@@ -30,7 +27,33 @@ const CompareView: React.FC<Props> = ({ imageData, currentVersion }) => {
               />
             </div>
             <div className=" mt-5">
-              <Menu>
+              <Dropdown
+                overlay={
+                  <div className="rounded bg-gray-800 p-2">
+                    {imageData?.imageURL.map((_, index) => {
+                      return (
+                        <div
+                          className="font-sec flex justify-center p-2 py-1 text-sm text-white hover:bg-purple-500"
+                          key={index}
+                          onClick={() => {
+                            setVersion1(imageData.imageURL.length - index);
+                          }}
+                        >
+                          {`Version ${imageData.imageURL.length - index}`}
+                        </div>
+                      );
+                    })}
+                  </div>
+                }
+                placement="bottomCenter"
+                trigger={["click"]}
+              >
+                <Button type="primary">
+                  {`Version ${version1}`} <DownOutlined />
+                </Button>
+              </Dropdown>
+
+              {/* <Menu>
                 <MenuButton className="rounded bg-purple-500 px-4 py-2 text-xs font-semibold text-white focus:outline-none">
                   {`Version ${version1}`} <ChevronDownIcon />
                 </MenuButton>
@@ -50,15 +73,16 @@ const CompareView: React.FC<Props> = ({ imageData, currentVersion }) => {
                     );
                   })}
                 </MenuList>
-              </Menu>
+              </Menu> */}
+              <br />
               {version1 === currentVersion && (
-                <p className="absolute mt-2 text-xs text-gray-400">
+                <Typography.Text className="absolute mt-2 text-xs text-gray-400">
                   Latest Version
-                </p>
+                </Typography.Text>
               )}
             </div>
           </div>
-          <div className=" w-screen h-0.5 md:h-[calc(100vh-4rem)] md:w-0.5 bg-gray-400 my-5 md:my-0"></div>
+          <div className=" my-5 h-0.5 w-screen bg-gray-400 md:my-0 md:h-[calc(100vh-4rem)] md:w-0.5"></div>
           <div
             // style={{ width: imageDimension.width, height: imageDimension.height }}
             className="flex w-full flex-col items-center justify-center   "
@@ -71,32 +95,37 @@ const CompareView: React.FC<Props> = ({ imageData, currentVersion }) => {
                 imageSrc={imageData?.imageURL[(version2 as number) - 1]}
               />
             </div>
-            <div className=" mt-5 mb-10 md:mb-0">
-              <Menu>
-                <MenuButton className="rounded bg-purple-500 px-4 py-2 text-xs font-semibold text-white focus:outline-none">
-                  {`Version ${version2}`} <ChevronDownIcon />
-                </MenuButton>
-                <MenuList bgColor={"#475569"} border={0}>
-                  {imageData?.imageURL.map((_, index) => {
-                    return (
-                      <MenuItem
-                        className="font-sec flex justify-center p-2 py-1 text-sm text-white hover:bg-purple-500"
-                        bgColor={"#475569"}
-                        key={index}
-                        onClick={() => {
-                          setVersion2(imageData.imageURL.length - index);
-                        }}
-                      >
-                        {`Version ${imageData.imageURL.length - index}`}
-                      </MenuItem>
-                    );
-                  })}
-                </MenuList>
-              </Menu>
+            <div className=" mb-10 mt-5 md:mb-0">
+              <Dropdown
+                overlay={
+                  <div className="rounded bg-gray-800 p-2">
+                    {imageData?.imageURL.map((_, index) => {
+                      return (
+                        <div
+                          className="font-sec flex justify-center p-2 py-1 text-sm text-white hover:bg-purple-500"
+                          key={index}
+                          onClick={() => {
+                            setVersion2(imageData.imageURL.length - index);
+                          }}
+                        >
+                          {`Version ${imageData.imageURL.length - index}`}
+                        </div>
+                      );
+                    })}
+                  </div>
+                }
+                placement="bottomCenter"
+                trigger={["click"]}
+              >
+                <Button type="primary">
+                  {`Version ${version2}`} <DownOutlined />
+                </Button>
+              </Dropdown>
+              <br />
               {version2 === currentVersion && (
-                <p className=" absolute mt-2 text-xs text-gray-400">
+                <Typography.Text className=" absolute mt-2 text-xs text-gray-400">
                   Latest Version
-                </p>
+                </Typography.Text>
               )}
             </div>
           </div>

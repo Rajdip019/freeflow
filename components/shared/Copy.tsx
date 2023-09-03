@@ -8,7 +8,7 @@ interface Props {
   type?: "text" | "icon" | "both";
 }
 
-const Copy: React.FC<Props> = ({ align, value, type = "icon"}) => {
+const Copy: React.FC<Props> = ({ align, value, type = "icon" }) => {
   return (
     <>
       {type === "icon" && (

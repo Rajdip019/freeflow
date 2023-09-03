@@ -26,101 +26,101 @@ const FeedbackNavbar = () => {
 
   const items: MenuProps["items"] = isAdmin
     ? [
-      {
-        key: "1",
-        label: (
-          <VersionUploadModal
-            prevImage={imageData as IReviewImageData}
-            pos="start"
-          />
-        ),
-      },
-      {
-        key: "2",
-        label: <Typography.Text>Versions</Typography.Text>,
-        children: imageData?.imageURL.map((_, index) => {
-          return {
-            key: index,
-            label: (
-              <Typography.Text
-                key={index}
-                onClick={() => {
-                  setHighlightedComment(defaultHighlightedThread);
-                  setVersion(imageData.imageURL.length - index);
-                }}
-              >
-                {`Version ${imageData.imageURL.length - index}`}
-              </Typography.Text>
-            ),
-          };
-        }),
-      },
-      {
-        key: "3",
-        label: (
-          <Typography.Text
-            onClick={() => {
-              setIsCompareView(true);
-            }}
-          >
-            Compare Versions
-          </Typography.Text>
-        ),
-      },
-    ]
+        {
+          key: "1",
+          label: (
+            <VersionUploadModal
+              prevImage={imageData as IReviewImageData}
+              pos="start"
+            />
+          ),
+        },
+        {
+          key: "2",
+          label: <Typography.Text>Versions</Typography.Text>,
+          children: imageData?.imageURL.map((_, index) => {
+            return {
+              key: index,
+              label: (
+                <Typography.Text
+                  key={index}
+                  onClick={() => {
+                    setHighlightedComment(defaultHighlightedThread);
+                    setVersion(imageData.imageURL.length - index);
+                  }}
+                >
+                  {`Version ${imageData.imageURL.length - index}`}
+                </Typography.Text>
+              ),
+            };
+          }),
+        },
+        {
+          key: "3",
+          label: (
+            <Typography.Text
+              onClick={() => {
+                setIsCompareView(true);
+              }}
+            >
+              Compare Versions
+            </Typography.Text>
+          ),
+        },
+      ]
     : [
-      {
-        key: "1",
-        label: (
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://www.aliyun.com"
-          >
-            2nd menu item (disabled)
-          </a>
-        ),
-        icon: <SmileOutlined />,
-        disabled: true,
-      },
-      {
-        key: "2",
-        label: <Typography.Text>Versions</Typography.Text>,
-        children: imageData?.imageURL.map((_, index) => {
-          return {
-            key: index,
-            label: (
-              <div
-                key={index}
-                onClick={() => {
-                  setHighlightedComment(defaultHighlightedThread);
-                  setVersion(imageData.imageURL.length - index);
-                }}
-              >
-                {`Version ${imageData.imageURL.length - index}`}
-              </div>
-            ),
-          };
-        }),
-      },
-      {
-        key: "3",
-        label: (
-          <Typography.Text
-            onClick={() => {
-              setIsCompareView(true);
-            }}
-          >
-            Compare Versions
-          </Typography.Text>
-        ),
-      },
-    ];
+        {
+          key: "1",
+          label: (
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://www.aliyun.com"
+            >
+              2nd menu item (disabled)
+            </a>
+          ),
+          icon: <SmileOutlined />,
+          disabled: true,
+        },
+        {
+          key: "2",
+          label: <Typography.Text>Versions</Typography.Text>,
+          children: imageData?.imageURL.map((_, index) => {
+            return {
+              key: index,
+              label: (
+                <div
+                  key={index}
+                  onClick={() => {
+                    setHighlightedComment(defaultHighlightedThread);
+                    setVersion(imageData.imageURL.length - index);
+                  }}
+                >
+                  {`Version ${imageData.imageURL.length - index}`}
+                </div>
+              ),
+            };
+          }),
+        },
+        {
+          key: "3",
+          label: (
+            <Typography.Text
+              onClick={() => {
+                setIsCompareView(true);
+              }}
+            >
+              Compare Versions
+            </Typography.Text>
+          ),
+        },
+      ];
 
   return (
     <div className="bg-sec flex h-16 items-center justify-between px-5">
       <div
-        className="md:flex cursor-pointer gap-2 hidden"
+        className="hidden cursor-pointer gap-2 md:flex"
         onClick={() => router.push("/")}
       >
         <img src="/freeflow.png" alt="" className=" w-32" />

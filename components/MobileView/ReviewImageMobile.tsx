@@ -21,12 +21,16 @@ interface Props {
 const ReviewImageMobile: React.FC<Props> = ({ imageData }) => {
   const router = useRouter();
   const { imageId } = router.query;
-  const { version, isCompareView, highlightedComment, setIsFocusedThread, setHighlightedComment } = useFeedbackContext();
-
-
+  const {
+    version,
+    isCompareView,
+    highlightedComment,
+    setIsFocusedThread,
+    setHighlightedComment,
+  } = useFeedbackContext();
 
   return (
-    <div className=" bg-black h-screen">
+    <div className=" h-screen bg-black">
       <FeedbackNavbar />
       <div className=" md:flex md:h-[calc(100vh-4rem)]">
         {isCompareView ? (
@@ -74,7 +78,8 @@ const ReviewImageMobile: React.FC<Props> = ({ imageData }) => {
         )}
       </div>
       {isCompareView ? null : (
-      <FeedbackDrawerMobile imageId={imageId as string} />)}
+        <FeedbackDrawerMobile imageId={imageId as string} />
+      )}
     </div>
   );
 };

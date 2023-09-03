@@ -145,7 +145,11 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
           cropEnableImageSelection={false}
         ></PinturaEditor>
       </div>
-      <div className={`flex w-11/12 ${open ? "md:w-8/12" : "md:w-6/12"} items-center gap-3`}>
+      <div
+        className={`flex w-11/12 ${
+          open ? "md:w-8/12" : "md:w-6/12"
+        } items-center gap-3`}
+      >
         <Input
           value={comment}
           onChange={(e) => {
@@ -163,7 +167,7 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
           type="primary"
           loading={isLoading}
         >
-          Add Feedback <ArrowRightOutlined/>
+          Add Feedback <ArrowRightOutlined />
         </FFButton>
       </div>
     </div>

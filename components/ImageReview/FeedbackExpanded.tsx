@@ -121,7 +121,7 @@ const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
     <div className=" flex h-[91vh] flex-col justify-between">
       {contextHolder}
       <div>
-        <div className=" sticky -top-[0.3rem] flex w-full items-center py-2 md:pl-4 text-lg font-semibold bg-sec">
+        <div className=" bg-sec sticky -top-[0.3rem] flex w-full items-center py-2 text-lg font-semibold md:pl-4">
           <FFButton
             size="small"
             onClick={() => {
@@ -145,7 +145,7 @@ const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
             <div className=" flex items-center">
               <Avatar
                 size="small"
-                className="mr-2 relative -z-10"
+                className="relative -z-10 mr-2"
                 style={{
                   backgroundColor: randomColorGeneratorFromString(
                     highlightedComment?.name as string

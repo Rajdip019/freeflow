@@ -53,8 +53,8 @@ const SendInvitesIconModal: React.FC<Props> = ({
               onClick={showModal}
               className=" flex w-full border-none shadow-none"
             >
-            {type === "text" && "Send Invites"}
-            {type === "icon" && <SendOutlined />}
+              {type === "text" && "Send Invites"}
+              {type === "icon" && <SendOutlined />}
             </FFButton>
           </Tooltip>
         ) : (

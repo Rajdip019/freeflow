@@ -8,7 +8,7 @@ import { FFButton } from "@/theme/themeConfig";
 import { useFeedbackContext } from "@/contexts/FeedbackContext";
 interface Props {
   thread: IReview;
-  onClose? : () => void;
+  onClose?: () => void;
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -18,7 +18,7 @@ const FeedbackTile: React.FC<Props> = ({ thread, onClose, setOpen }) => {
     highlightedComment,
     setIsFocusedThread,
     version,
-    isFocusedThread
+    isFocusedThread,
   } = useFeedbackContext();
   const componentDecorator = (href: string, text: string, key: any) => (
     <Typography.Link
