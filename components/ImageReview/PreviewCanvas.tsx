@@ -9,7 +9,7 @@ interface PreviewCanvasProps {
 
 const PreviewCanvas: React.FC<PreviewCanvasProps> = ({
   imageSrc,
-  height = "65vh",
+  height = window.innerWidth > 768 ? "65vh" : "40vh",
 }) => {
   const editorRef = React.useRef(null);
   const editorConfig = getEditorDefaults({});

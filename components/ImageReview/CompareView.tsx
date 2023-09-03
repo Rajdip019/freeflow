@@ -3,6 +3,7 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import React from "react";
 import PreviewCanvas from "./PreviewCanvas";
+import { Typography } from "antd";
 
 interface Props {
   imageData: IReviewImageData;
@@ -13,20 +14,17 @@ const CompareView: React.FC<Props> = ({ imageData, currentVersion }) => {
   const [version1, setVersion1] = React.useState<number>(currentVersion);
   const [version2, setVersion2] = React.useState<number>(currentVersion - 1);
 
-  console.log("version2", version2);
-
   return (
-    <div className="flex w-full items-center justify-center">
+    <div className="flex w-full items-center justify-center h-full md:h-auto bg-black">
       <div className="">
-        <div className=" flex justify-around gap-5 ">
+        <div className=" flex justify-around gap-5 flex-col md:flex-row ">
           <div
-            // style={{ width: imageDimension.width, height: imageDimension.height }}
             className="flex w-full flex-col items-center justify-center"
           >
-            <p className=" mb-5 text-sm  font-semibold">
+            <Typography.Text className=" mb-5 text-sm  font-semibold">
               {imageData.imageName}
-            </p>
-            <div className=" w-[45vw]">
+            </Typography.Text>
+            <div className="w-[90vw] md:w-[45vw]">
               <PreviewCanvas
                 imageSrc={imageData?.imageURL[(version1 as number) - 1]}
               />
@@ -60,20 +58,20 @@ const CompareView: React.FC<Props> = ({ imageData, currentVersion }) => {
               )}
             </div>
           </div>
-          <div className=" h-[calc(100vh-4rem)] w-0.5 bg-gray-400"></div>
+          <div className=" w-screen h-0.5 md:h-[calc(100vh-4rem)] md:w-0.5 bg-gray-400 my-5 md:my-0"></div>
           <div
             // style={{ width: imageDimension.width, height: imageDimension.height }}
             className="flex w-full flex-col items-center justify-center   "
           >
-            <p className=" mb-5 text-sm  font-semibold">
+            <Typography.Text className=" mb-5 text-sm  font-semibold">
               {imageData.imageName}
-            </p>
-            <div className="w-[45vw]">
+            </Typography.Text>
+            <div className="w-[90vw] md:w-[45vw]">
               <PreviewCanvas
                 imageSrc={imageData?.imageURL[(version2 as number) - 1]}
               />
             </div>
-            <div className=" mt-5">
+            <div className=" mt-5 mb-10 md:mb-0">
               <Menu>
                 <MenuButton className="rounded bg-purple-500 px-4 py-2 text-xs font-semibold text-white focus:outline-none">
                   {`Version ${version2}`} <ChevronDownIcon />

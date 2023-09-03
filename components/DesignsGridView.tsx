@@ -35,8 +35,7 @@ const DesignsGridView: React.FC<Props> = ({ image }) => {
       label: (
         <SendInvitesIconModal
           image={image}
-          isText={true}
-          isIcon={false}
+          type="text"
           isTooltip={false}
           isMenuItem={true}
         />

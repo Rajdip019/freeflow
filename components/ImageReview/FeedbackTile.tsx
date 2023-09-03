@@ -8,14 +8,17 @@ import { FFButton } from "@/theme/themeConfig";
 import { useFeedbackContext } from "@/contexts/FeedbackContext";
 interface Props {
   thread: IReview;
+  onClose? : () => void;
+  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const FeedbackTile: React.FC<Props> = ({ thread }) => {
+const FeedbackTile: React.FC<Props> = ({ thread, onClose, setOpen }) => {
   const {
     setHighlightedComment,
     highlightedComment,
     setIsFocusedThread,
     version,
+    isFocusedThread
   } = useFeedbackContext();
   const componentDecorator = (href: string, text: string, key: any) => (
     <Typography.Link
@@ -32,8 +35,9 @@ const FeedbackTile: React.FC<Props> = ({ thread }) => {
     <>
       {version === thread.version && (
         <div
-          onClick={() => {
+          onClickCapture={() => {
             setHighlightedComment(thread);
+            onClose && !isFocusedThread && onClose();
           }}
           className={`cursor-pointer transition-all ${
             highlightedComment?.id === thread.id ? "bg-black" : ""
@@ -66,6 +70,7 @@ const FeedbackTile: React.FC<Props> = ({ thread }) => {
               <Typography.Text
                 className=" text-sm"
                 onClick={() => {
+                  setOpen && setOpen(true);
                   setHighlightedComment(thread);
                   setIsFocusedThread(true);
                 }}
