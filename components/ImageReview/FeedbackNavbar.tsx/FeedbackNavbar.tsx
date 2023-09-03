@@ -120,7 +120,7 @@ const FeedbackNavbar = () => {
   return (
     <div className="bg-sec flex h-16 items-center justify-between px-5">
       <div
-        className="flex cursor-pointer gap-2"
+        className="hidden cursor-pointer gap-2 md:flex"
         onClick={() => router.push("/")}
       >
         <img src="/freeflow.png" alt="" className=" w-32" />

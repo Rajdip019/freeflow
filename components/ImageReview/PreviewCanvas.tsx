@@ -9,7 +9,7 @@ interface PreviewCanvasProps {
 
 const PreviewCanvas: React.FC<PreviewCanvasProps> = ({
   imageSrc,
-  height = "65vh",
+  height = window.innerWidth > 768 ? "65vh" : "40vh",
 }) => {
   const editorRef = React.useRef(null);
   const editorConfig = getEditorDefaults({});
@@ -19,7 +19,7 @@ const PreviewCanvas: React.FC<PreviewCanvasProps> = ({
         {...editorConfig}
         previewUpscale={true}
         ref={editorRef}
-        src={imageSrc.replace(
+        src={imageSrc?.replace(
           "https://firebasestorage.googleapis.com",
           "https://ik.imagekit.io/freeflow"
         )}
