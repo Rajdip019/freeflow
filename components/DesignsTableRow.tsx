@@ -173,8 +173,6 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
                       label: (
                         <SendInvitesIconModal
                           image={record}
-                          isText={true}
-                          isIcon={false}
                           isTooltip={false}
                           isMenuItem={true}
                         />
