@@ -12,7 +12,6 @@ import {
 } from "react";
 import { IUser } from "../interfaces/User";
 import { useAuth } from "./AuthContext";
-import { useToast } from "@chakra-ui/react";
 import { newUserEvent } from "@/lib/events";
 
 interface Props {
@@ -42,7 +41,6 @@ export function useUserContext() {
 export const UserContextProvider = ({ children }: Props) => {
   const [user, setUser] = useState<Partial<IUser> | null>(defaultValues.user);
   const { authUser } = useAuth();
-  const toast = useToast();
 
   const createUser = async (uid: string, data: Partial<IUser>) => {
     await setDoc(doc(db, "users", uid), data);
@@ -59,44 +57,23 @@ export const UserContextProvider = ({ children }: Props) => {
           setUser(docSnap.data());
         } else {
           await createUser(authUser.uid, {
-            name: authUser.displayName as string,
             email: authUser.email as string,
             imageURL: authUser.photoURL as string,
             createTime: Date.now(),
             storage: 1024,
           });
           setUser({
-            name: authUser.displayName as string,
             email: authUser.email as string,
             imageURL: authUser.photoURL as string,
             createTime: Date.now(),
             storage: 1024,
           });
-          toast({
-            title: "Freeflow Account created.",
-            description: "We've created your account for you.",
-            status: "success",
-            position: "bottom-right",
-            duration: 5000,
-            isClosable: true,
-          });
-          console.log("New user created!");
         }
       }
     } catch (e) {
-      toast({
-        title: "Something went wrong.",
-        description: "Please try agin later.",
-        status: "success",
-        position: "bottom-right",
-        duration: 5000,
-        isClosable: true,
-      });
       console.error(e);
     }
   }, [authUser]);
-
-  console.log("user :", user);
 
   useEffect(() => {
     getUserData();

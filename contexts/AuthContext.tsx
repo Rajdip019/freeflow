@@ -54,8 +54,8 @@ export function AuthContextProvider({ children }: any) {
         setAuthUser(user);
         return user;
       }
-    } catch (error: any) {
-      console.log(error.message);
+    } catch {
+      message.error("Failed to authenticate with Google");
     }
   };
 
@@ -66,10 +66,14 @@ export function AuthContextProvider({ children }: any) {
         email,
         password
       );
-
-      await sendEmailVerification(result.user);
-    } catch (error: any) {
-      console.log(error.message);
+      const user = result.user;
+      if (user) {
+        await sendEmailVerificationToUser();
+        setAuthUser(user);
+        return user;
+      }
+    } catch {
+      message.error("Failed to create account: check your email and password");
     }
   };
 
@@ -77,30 +81,31 @@ export function AuthContextProvider({ children }: any) {
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
       const user = result.user;
-      if (user.emailVerified === false) {
-        message.error("Please verify your email");
-        return;
-      }
+
       if (user) {
         setAuthUser(user);
+        if (user.emailVerified === false) {
+          message.error("Please verify your email");
+        }
         return user;
       }
-    } catch (error: any) {
-      console.log(error.message);
+    } catch {
+      message.error("Failed to authenticate: check your email and password");
     }
   };
 
   const sendEmailVerificationToUser = async () => {
     try {
       auth.currentUser && (await sendEmailVerification(auth.currentUser));
-    } catch (error: any) {
-      console.log(error.message);
+      message.success("Verification email sent successfully");
+    } catch {
+      message.error("Failed to send verification email, Wrong mail");
     }
   };
 
   const logout = async () => {
     await signOut(auth);
-    window.location.href = "/auth/signup";
+    setAuthUser(null);
   };
 
   useEffect(() => {
