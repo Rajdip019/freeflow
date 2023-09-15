@@ -19,8 +19,7 @@ const SocialCard = ({ setCurrentTab }: Props) => {
   const [linkedIn, setLinkedIn] = useState<string>("");
   const [twitter, setTwitter] = useState<string>("");
   const [name, setName] = useState<string>("");
-  const { createUser } = useUserContext();
-  const { authUser } = useAuth();
+  const { updateUser } = useUserContext();
   const router = useRouter();
 
   const handleContinue = async () => {
@@ -29,7 +28,7 @@ const SocialCard = ({ setCurrentTab }: Props) => {
       linkedIn,
       twitter,
     };
-    await createUser(authUser?.uid as string, data);
+    await updateUser(data);
     message.success(`Welcome ${name} to Freeflow!`);
     router.push("/dashboard");
   };
