@@ -42,10 +42,10 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <Link href="/auth/signup">
+            <Link href="/auth">
               <button className="font-sec btn-p hidden md:block">LogIn</button>
             </Link>
-            <Link href="/auth/signup">
+            <Link href="/auth">
               <button className="font-sec btn-p hidden md:block">
                 Join for Free
               </button>

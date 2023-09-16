@@ -47,12 +47,12 @@ const Hero = () => {
             </>
           ) : (
             <>
-              <Link href="/auth/signup">
+              <Link href="/auth">
                 <button className="font-sec btn-p mb-5 w-fit cursor-not-allowed text-lg md:hidden">
                   Login
                 </button>
               </Link>
-              <Link href="/auth/signup">
+              <Link href="/auth">
                 <button className="font-sec btn-p mb-10 w-fit cursor-not-allowed text-lg md:hidden">
                   Join for Free
                 </button>
