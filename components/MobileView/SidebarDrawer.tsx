@@ -50,7 +50,7 @@ const SidebarDrawer = () => {
             <div className="flex flex-col justify-between">
               <div>
                 <div className="">
-                  <img src="/freeflow.png" alt="" className="w-40" />
+                  <img src="/logo/freeflow.png" alt="" className="w-40" />
                 </div>
                 <div className=" mt-8  flex items-center gap-3 text-lg text-white">
                   <div>

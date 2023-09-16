@@ -8,7 +8,7 @@ const Navbar = () => {
 
   return (
     <div className=" flex items-center justify-between px-10 pt-5 md:px-40">
-      <img src="/freeflow.png" alt="" className=" w-40" />
+      <img src="/logo/freeflow.png" alt="" className=" w-40" />
       <div className=" flex gap-5">
         {authUser ? (
           <>

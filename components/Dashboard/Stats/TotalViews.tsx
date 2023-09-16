@@ -1,5 +1,5 @@
 import { useImageContext } from "@/contexts/ImagesContext";
-import { Tooltip } from "@chakra-ui/react";
+import { Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 
 const TotalViews = () => {
@@ -19,7 +19,7 @@ const TotalViews = () => {
     <div className=" font-sec min-w-max rounded bg-[#047857]  p-4 text-white md:w-full">
       <div className=" mb-3 flex items-center justify-between">
         <p>Total Views</p>
-        <Tooltip label="Total unique views on all your designs.">
+        <Tooltip title="Total unique views on all your designs.">
           <img src="/stats/eye.png" className=" w-7" alt="" />
         </Tooltip>
       </div>

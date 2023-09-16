@@ -1,6 +1,5 @@
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { storage, db } from "@/lib/firebaseConfig";
-import { useToast, Input, CircularProgress } from "@chakra-ui/react";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import React, { useState } from "react";
@@ -11,6 +10,7 @@ import ImageUploadSuccess from "./ImageUploadSuccess";
 import { validateEmail } from "@/utils/validators";
 import { newReviewImageEvent } from "@/lib/events";
 import ImageUploadDropZoneLandingPage from "./ImageDropZones/ImageUploadDropZoneLandingPage";
+import { Progress, Input, message } from "antd";
 
 const ImageUploader = () => {
   const [imageName, setImageName] = useState<string>();
@@ -24,7 +24,6 @@ const ImageUploader = () => {
   const [emailValidation, setEmailValidation] = useState<boolean>(true);
   const [fileSize, setFileSize] = useState<number>(0);
 
-  const toast = useToast();
   const { authUser } = useAuth();
   const { user } = useUserContext();
   const { storage: storageUsed } = useImageContext();
@@ -98,38 +97,20 @@ const ImageUploader = () => {
 
                 await setDoc(docRef, data);
 
-                toast({
-                  title: "Image uploaded successfully",
-                  status: "success",
-                  duration: 5000,
-                  isClosable: true,
-                  position: "bottom-right",
-                });
+                message.success("Image uploaded successfully");
                 newReviewImageEvent(data);
                 setUploadingState("success");
                 setUploadedImageId(docRef.id);
               }
             );
           } catch (error) {
-            toast({
-              title: "Something went wrong",
-              description: "Please try again",
-              status: "error",
-              duration: 5000,
-              isClosable: true,
-              position: "bottom-right",
-            });
+            message.error("Something went wrong. Please try again");
             setUploadingState("error");
           }
         } else {
-          toast({
-            title: "Your storage is full.",
-            description: "Delete some images and try uploading.",
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-            position: "bottom-right",
-          });
+          message.error(
+            "You have exceeded your storage limit. Please upgrade your plan"
+          );
         }
       } else {
         const isValidEmail = validateEmail(email);
@@ -181,27 +162,14 @@ const ImageUploader = () => {
 
                 await setDoc(docRef, data);
 
-                toast({
-                  title: "Image uploaded successfully",
-                  status: "success",
-                  duration: 5000,
-                  isClosable: true,
-                  position: "bottom-right",
-                });
+                message.success("Image uploaded successfully");
                 newReviewImageEvent(data);
                 setUploadingState("success");
                 setUploadedImageId(docRef.id);
               }
             );
           } catch (error) {
-            toast({
-              title: "Something went wrong",
-              description: "Please try again",
-              status: "error",
-              duration: 5000,
-              isClosable: true,
-              position: "bottom-right",
-            });
+            message.error("Something went wrong. Please try again");
             setUploadingState("error");
           }
         } else {
@@ -209,14 +177,7 @@ const ImageUploader = () => {
         }
       }
     } else {
-      toast({
-        title: "File size is too large",
-        description: "Please upload a file less than 75MB",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom-right",
-      });
+      message.error("File size should be less than 75MB");
     }
   };
 
@@ -260,21 +221,15 @@ const ImageUploader = () => {
             </div>
             <>
               <div className="mt-5 border-y border-gray-400 py-2">
-                {imageName && (
-                  <p className=" mb-2 text-sm text-gray-500">Image name</p>
-                )}
+                <p className=" mb-2 text-sm text-gray-500">Image name</p>
+
                 <Input
                   value={imageName}
                   onChange={(e) => {
                     setImageName(e.target.value);
                   }}
-                  variant={"unstyled"}
-                  type="text"
-                  focusBorderColor="purple.500"
-                  borderColor={"purple.500"}
-                  className=" text-black"
+                  className="bg-white text-black"
                   placeholder="Enter image name"
-                  maxLength={24}
                 />
               </div>
               {/* <div className="mt-5 text-black">
@@ -293,9 +248,7 @@ const ImageUploader = () => {
                   //   setEmail(e.target.value);
                   // }}
                   disabled
-                  variant={"unstyled"}
                   type="text"
-                  focusBorderColor={"purple.500"}
                   // borderColor={`${emailValidation ? "purple.500" : "red.500"} `}
                   className=" mb-4 text-black"
                   placeholder="Enter your email"
@@ -312,11 +265,8 @@ const ImageUploader = () => {
                     setEmail(e.target.value);
                   }}
                   type="text"
-                  focusBorderColor={"purple.500"}
-                  borderColor={`${emailValidation ? "purple.500" : "red.500"} `}
                   className=" mb-4 text-black"
                   placeholder="Enter your email"
-                  variant={"unstyled"}
                 />
                 {!emailValidation ? (
                   <p className=" text-xs text-red-500">
@@ -328,10 +278,7 @@ const ImageUploader = () => {
             <div>
               {uploadingState === "uploading" && (
                 <div className="mt-5 flex w-full items-center justify-center">
-                  <CircularProgress
-                    value={uploadPercentage}
-                    color="purple.500"
-                  />
+                  <Progress percent={uploadPercentage} type="circle" />
                   <p className="ml-5 text-lg">Generating link....</p>
                 </div>
               )}
