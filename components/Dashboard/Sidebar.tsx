@@ -14,7 +14,7 @@ const Sidebar = () => {
       <div className="w-56">
         <div className="">
           <div className="ml-4 mt-5">
-            <Image src="/freeflow.png" width={120} preview={false} />
+            <Image src="/logo/freeflow.png" width={120} preview={false} />
           </div>
           <div className=" mt-10 text-white">
             {sidebarData.map((route, index) => {

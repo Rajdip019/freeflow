@@ -226,7 +226,7 @@ const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
               <div className="mt-20 flex flex-col justify-center">
                 <div className="p-4 text-center">
                   <Image
-                    src="/empty-state-replies.png"
+                    src="/feedbackDrawer/empty-state-replies.png"
                     alt=""
                     preview={false}
                   />

@@ -1,12 +1,10 @@
 import { useFeedbackContext } from "@/contexts/FeedbackContext";
-import { ChevronUpIcon } from "@chakra-ui/icons";
 import { Divider, Drawer, Typography } from "antd";
 import React, { useState, version } from "react";
 import FeedbackExpanded from "../ImageReview/FeedbackExpanded";
 import FeedbackTile from "../ImageReview/FeedbackTile";
 import Moment from "react-moment";
-import Image from "antd";
-import { defaultHighlightedThread } from "@/utils/constants";
+import { UpOutlined } from "@ant-design/icons";
 
 interface Props {
   imageId: string;
@@ -14,18 +12,11 @@ interface Props {
 
 const FeedbackDrawerMobile: React.FC<Props> = ({ imageId }) => {
   const [open, setOpen] = useState(false);
-  const {
-    isFocusedThread,
-    imageData,
-    threads,
-    version,
-    setIsFocusedThread,
-    setHighlightedComment,
-  } = useFeedbackContext();
+  const { isFocusedThread, imageData, threads, version } = useFeedbackContext();
 
-  const showDrawer = () => {
-    setOpen(true);
-  };
+  // const showDrawer = () => {
+  //   setOpen(true);
+  // };
 
   const onClose = () => {
     setOpen(false);
@@ -37,7 +28,7 @@ const FeedbackDrawerMobile: React.FC<Props> = ({ imageId }) => {
         className="bg-p fixed bottom-0 w-screen text-white"
         onClick={() => setOpen(true)}
       >
-        <ChevronUpIcon />
+        <UpOutlined />
       </button>
       <Drawer
         title={`${imageData?.imageName}'s Feedbacks`}
@@ -123,7 +114,7 @@ const FeedbackDrawerMobile: React.FC<Props> = ({ imageId }) => {
                 <div className="flex h-[calc(100vh-10rem)] flex-col items-center justify-center">
                   <div className="p-4 text-center">
                     {/* <Image
-                          src="/empty-state-replies.png"
+                          src="/feedbackDrawer/empty-state-replies.png"
                           alt=""
                           preview={false}
                         /> */}
