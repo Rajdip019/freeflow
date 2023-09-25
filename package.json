@@ -31,6 +31,7 @@
     "@types/react-dom": "18.0.11",
     "@vercel/analytics": "^1.0.0",
     "antd": "^5.8.4",
+    "antd-img-crop": "^4.13.0",
     "classnames": "^2.3.2",
     "copy-to-clipboard": "^3.3.3",
     "eslint": "8.38.0",

@@ -10,7 +10,7 @@ const Sidebar = () => {
   const { logout } = useAuth();
   const router = useRouter();
   return (
-    <div className="bg-sec sticky top-0 hidden md:flex ">
+    <div className="bg-sec sticky top-0 hidden h-screen md:flex">
       <div className="w-56">
         <div className="">
           <div className="ml-4 mt-5">

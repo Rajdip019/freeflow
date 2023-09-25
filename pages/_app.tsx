@@ -10,6 +10,7 @@ import Script from "next/script";
 import { IS_PRODUCTION } from "@/utils/constants";
 import { ConfigProvider } from "antd";
 import customTheme from "@/theme/themeConfig";
+import { TaskContextProvider } from "@/contexts/TaskContext";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -56,8 +57,10 @@ function MyApp({ Component, pageProps }: AppProps) {
           <AuthContextProvider>
             <UserContextProvider>
               <ImageContextProvider>
-                <Component {...pageProps} />
-                <Analytics />
+                <TaskContextProvider>
+                  <Component {...pageProps} />
+                  <Analytics />
+                </TaskContextProvider>
               </ImageContextProvider>
             </UserContextProvider>
           </AuthContextProvider>
