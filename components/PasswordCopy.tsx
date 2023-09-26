@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
-
+import { Box } from "@chakra-ui/react";
 interface Props {
   align?: "right" | "left";
   image: IReviewImageData;
