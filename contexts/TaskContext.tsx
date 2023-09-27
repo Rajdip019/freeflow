@@ -46,7 +46,7 @@ export function TaskContextProvider({ children }: any) {
   };
 
   useEffect(() => {
-    getUserTasks(authUser?.uid as string);
+    authUser && getUserTasks(authUser?.uid as string);
   }, [authUser?.uid]);
 
   const value: ITaskContext = {

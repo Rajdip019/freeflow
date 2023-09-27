@@ -4,6 +4,7 @@ import CreateTaskModal from "@/components/Modal/CreateTaskModal";
 import TaskList from "@/components/TaskList";
 import { useTaskContext } from "@/contexts/TaskContext";
 import { ITaskData } from "@/interfaces/Task";
+import Head from "next/head";
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
@@ -47,6 +48,9 @@ const Tasks = () => {
 
   return (
     <DashboardLayout>
+      <Head>
+        <title>FreeFlow | Tasks</title>
+      </Head>
       <Space direction="vertical" className="w-full">
         <Space className="m-8 flex items-center justify-between">
           <Typography.Text className="text-5xl font-semibold">

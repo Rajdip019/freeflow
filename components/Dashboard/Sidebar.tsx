@@ -2,15 +2,18 @@ import React, { useEffect, useState } from "react";
 import { sidebarData } from "@/utils/constants";
 import { useRouter } from "next/router";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button, Divider, Image, Space, Typography } from "antd";
+import { Button, Divider, Image, Popconfirm, Space, Typography } from "antd";
 import {
   DesktopOutlined,
   DoubleLeftOutlined,
   DoubleRightOutlined,
   EditOutlined,
   HomeOutlined,
+  LogoutOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 import { FFButton } from "@/theme/themeConfig";
+import Link from "next/link";
 
 const Sidebar = () => {
   const sidebarData = [
@@ -25,8 +28,8 @@ const Sidebar = () => {
       icon: <DesktopOutlined />,
     },
     {
-      title: "Task",
-      url: "/task",
+      title: "Tasks",
+      url: "/tasks",
       icon: <EditOutlined />,
     },
   ];
@@ -47,75 +50,96 @@ const Sidebar = () => {
     localStorage.setItem("sidebarWidth", width.toString());
   }, [width]);
 
+  const [active, setActive] = useState<string>("");
+
+  useEffect(() => {
+    setActive(router.asPath);
+  }, [router]);
+
   return (
-    // <div className="bg-sec sticky top-0 hidden h-screen md:flex">
-    //   <div className="w-56">
-    //     <div className="">
-    //       <div className="ml-4 mt-5">
-    //         <Image src="/logo/freeflow.png" width={120} preview={false} />
-    //       </div>
-    //       <div className=" mt-10 text-white">
-    //         {sidebarData.map((route, index) => {
-    //           return (
-    //             <div
-    //               onClick={() => router.push(route.url)}
-    //               className={`flex cursor-pointer gap-3 px-5 py-2 ${
-    //                 route.url === router.pathname ? " bg-p" : ""
-    //               }`}
-    //               key={index}
-    //             >
-    //               {route.url === "/dashboard" && <HomeOutlined />}
-    //               {route.url === "/design" && <DesktopOutlined />}
-    //               <Typography.Text>{route.title}</Typography.Text>
-    //             </div>
-    //           );
-    //         })}
-    //       </div>
-    //     </div>
-    //     <div className=" absolute bottom-0 w-full">
-    //       <FFButton
-    //         onClick={logout}
-    //         className=" my-5 w-full rounded-none border-x-0"
-    //       >
-    //         Logout
-    //       </FFButton>
-    //     </div>
-    //   </div>
-    //   <Divider type="vertical" className=" mx-0 h-screen" />
-    // </div>
     <Space
       direction="vertical"
-      className="bg-sec sticky top-0 hidden h-screen md:flex"
+      className="bg-sec sticky top-0 hidden h-screen border-r border-r-[#ffffff1e] md:flex"
     >
       <Space direction="vertical" className={`w-${width} transition-all`}>
         <Space className="w-full items-center justify-between">
           <Image
             src="/logo/freeflow.png"
             width={120}
-            hidden={width === 12}
+            hidden={width === 14}
             className="m-4 mt-6 transition-all"
             preview={false}
           />
           <Button
-            className="m-2 ml-0 mt-6 transition-all"
+            className="m-3 -ml-1 mt-6 transition-all"
             icon={
               width === 56 ? <DoubleLeftOutlined /> : <DoubleRightOutlined />
             }
-            onClick={() => setWidth(width === 56 ? 12 : 56)}
+            onClick={() => setWidth(width === 56 ? 14 : 56)}
           />
         </Space>
-        <Space direction="vertical" className="w-full">
+        <Divider />
+        <Space
+          direction="vertical"
+          className={`${
+            width === 56 ? "ml-2 w-52" : "w-full items-center justify-center"
+          } space-y-2`}
+        >
           {sidebarData.map((route, index) => {
             return (
-              <Button
+              <Space
+                className={`flex w-full cursor-pointer rounded-xl p-3 ${
+                  width !== 56 && "items-center justify-center"
+                }  ${
+                  active === route.url
+                    ? "bg-purple-600 text-white"
+                    : "bg-[#000000b5] text-[#ffffff96] transition-all hover:bg-[#3e287ba7]"
+                } `}
+                onClick={() => router.push(route.url)}
                 key={index}
-                icon={route.icon}
-                className="my-4 ml-2 mr-2 w-48 rounded-none border-r-2 bg-[#041b06]"
               >
-                {width === 56 && route.title}
-              </Button>
+                {route.icon}
+                {width === 56 && (
+                  <Typography.Text
+                    className={`${
+                      active === route.url ? " text-white" : " text-[#ffffff96]"
+                    }`}
+                  >
+                    {route.title}
+                  </Typography.Text>
+                )}
+              </Space>
             );
           })}
+          <Divider className="mt-[340px]" />
+          {/* <Space
+            className={`w-full p-3 cursor-pointer rounded-xl text-white bg-purple-600 transition-all`}
+          >
+            <SettingOutlined className="rotate-180" />
+            {""}
+            {width === 56 && (
+              <Typography.Text className="text-white">Setting</Typography.Text>
+            )}
+          </Space> */}
+          <Popconfirm
+            title="Logout"
+            description="Are you sure to Logout?"
+            onConfirm={() => {
+              logout();
+            }}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Space
+              className={`w-full cursor-pointer rounded-xl bg-[#cc0d33ac] p-3 text-white transition-all`}
+            >
+              <LogoutOutlined className="rotate-180" />
+              {""}
+              {width === 56 && (
+                <Typography.Text className="text-white">Logout</Typography.Text>
+              )}
+            </Space>
+          </Popconfirm>
         </Space>
       </Space>
     </Space>
