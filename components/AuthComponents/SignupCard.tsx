@@ -35,7 +35,7 @@ const SignupCard = ({ setCurrentTab }: Props) => {
     <div className="rounded-2xl bg-[#141414] p-5 px-7 text-white md:w-[47%]">
       <Form layout="vertical" className="space-y-4" onFinish={handleContinue}>
         <Image
-          src={"/freeflow.png"}
+          src={"/logo/freeflow.png"}
           alt={"Logo image"}
           preview={false}
           width={100}
