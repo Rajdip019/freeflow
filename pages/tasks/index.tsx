@@ -26,7 +26,6 @@ const Tasks = () => {
   const [cancelledTask, setCancelledTask] = useState<ITaskData[]>([]);
 
   useEffect(() => {
-    console.log("Changed");
     let _inProgressTask: ITaskData[] = tasks?.filter(
       (task) => task.status === "In Progress"
     );
