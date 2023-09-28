@@ -24,6 +24,8 @@ import React, { useState } from "react";
 import { ITaskData } from "@/interfaces/Task";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTaskContext } from "@/contexts/TaskContext";
+import { storage } from "@/lib/firebaseConfig";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 type Props = {
   teamName: string;
@@ -34,6 +36,7 @@ type Props = {
 const CreateTaskModal = ({ teamName, openModal, setOpenModal }: Props) => {
   const { authUser } = useAuth();
   const { createTask } = useTaskContext();
+  const [fileList, setFileList] = useState<any>([]);
   const statusItem = [
     {
       label: (
@@ -97,6 +100,7 @@ const CreateTaskModal = ({ teamName, openModal, setOpenModal }: Props) => {
       assignee: data.assignee || "",
       dueDate: data.dueDate || "",
     };
+    message.loading("Creating task...");
     await createTask(newData);
     setOpenModal(false);
     setData({
@@ -109,13 +113,29 @@ const CreateTaskModal = ({ teamName, openModal, setOpenModal }: Props) => {
       attachment: "",
       createdAt: Date.now(),
     });
+    setFileList([]);
   };
 
-  const uploadImage = (file: any) => {
-    setData({
-      ...data,
-      attachment: file.name,
-    });
+  const uploadImage = async (file: any) => {
+    message.loading("Uploading file...");
+    try {
+      const storageRef = ref(
+        storage,
+        `taskAttachment/${authUser?.uid}/public/${file.name}-${Date.now()}`
+      );
+      const uploadTask = await uploadBytesResumable(
+        storageRef,
+        file.originFileObj as File
+      );
+      const downloadURL = await getDownloadURL(uploadTask.task.snapshot.ref);
+      setData({
+        ...data,
+        attachment: downloadURL,
+      });
+      message.success("File uploaded successfully");
+    } catch (error) {
+      message.error("Something went wrong");
+    }
   };
 
   return (
@@ -128,7 +148,6 @@ const CreateTaskModal = ({ teamName, openModal, setOpenModal }: Props) => {
       open={openModal}
       width={800}
       cancelButtonProps={{ className: "hidden" }}
-      confirmLoading={true}
       onCancel={() => {
         setOpenModal(false);
       }}
@@ -186,21 +205,28 @@ const CreateTaskModal = ({ teamName, openModal, setOpenModal }: Props) => {
           }
         />
         <Space>
-          <ImgCrop showReset zoomSlider aspectSlider rotationSlider showGrid>
+          <ImgCrop
+            showReset
+            zoomSlider
+            aspectSlider
+            aspect={1.5}
+            rotationSlider
+            showGrid
+          >
             <Upload
               maxCount={1}
               accept="image/png, image/jpg, image/jpeg"
               listType="picture"
               // showUploadList={false}
+              showUploadList={{
+                showPreviewIcon: true,
+                showRemoveIcon: true,
+                showDownloadIcon: true,
+              }}
+              fileList={fileList}
               onChange={(info) => {
-                if (info.file.status === "done") {
-                  uploadImage(info.file);
-                  message.success(
-                    `${info.file.name} file uploaded successfully`
-                  );
-                } else if (info.file.status === "error") {
-                  message.error(`${info.file.name} file upload failed.`);
-                }
+                info.file.status === "done" && uploadImage(info.file);
+                setFileList(info.fileList);
               }}
               onRemove={() => {
                 setData({
