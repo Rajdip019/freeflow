@@ -24,7 +24,7 @@ const Hero = () => {
         <div className=" flex flex-col items-center">
           {authUser ? (
             <>
-              <Link href="/dashboard">
+              <Link href="/tasks">
                 <button className="font-sec btn-p mb-10 flex items-center md:hidden">
                   Dashboard{" "}
                   <svg

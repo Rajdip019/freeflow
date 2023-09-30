@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { sidebarData } from "@/utils/constants";
 import { useRouter } from "next/router";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button, Divider, Image, Popconfirm, Space, Typography } from "antd";
@@ -12,25 +11,18 @@ import {
   LogoutOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
-import { FFButton } from "@/theme/themeConfig";
-import Link from "next/link";
 
 const Sidebar = () => {
   const sidebarData = [
     {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: <HomeOutlined />,
+      title: "Tasks",
+      url: "/tasks",
+      icon: <EditOutlined />,
     },
     {
       title: "Design",
       url: "/design",
       icon: <DesktopOutlined />,
-    },
-    {
-      title: "Tasks",
-      url: "/tasks",
-      icon: <EditOutlined />,
     },
   ];
   const { logout } = useAuth();
@@ -112,15 +104,6 @@ const Sidebar = () => {
             );
           })}
           <Divider className="mt-[340px]" />
-          {/* <Space
-            className={`w-full p-3 cursor-pointer rounded-xl text-white bg-purple-600 transition-all`}
-          >
-            <SettingOutlined className="rotate-180" />
-            {""}
-            {width === 56 && (
-              <Typography.Text className="text-white">Setting</Typography.Text>
-            )}
-          </Space> */}
           <Popconfirm
             title="Logout"
             description="Are you sure to Logout?"

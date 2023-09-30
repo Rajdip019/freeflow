@@ -19,7 +19,7 @@ const Signup = () => {
   console.log("AuthUser", authUser);
   useEffect(() => {
     if (authUser && user && user.name) {
-      router.push("/dashboard");
+      router.push("/tasks");
     }
     if (authUser) {
       setCurrentTab(1);
