@@ -19,7 +19,7 @@ const ErrorFeedback = () => {
           <FFButton
             onClick={() => {
               if (user) {
-                router.push("/dashboard");
+                router.push("/tasks");
               } else {
                 router.push("/");
               }

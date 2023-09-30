@@ -12,7 +12,7 @@ const Navbar = () => {
       <div className=" flex gap-5">
         {authUser ? (
           <>
-            <Link href="/dashboard">
+            <Link href="/tasks">
               <button className="font-sec btn-p hidden items-center md:flex">
                 Dashboard{" "}
                 <svg

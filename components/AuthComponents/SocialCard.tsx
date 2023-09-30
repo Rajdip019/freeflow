@@ -30,7 +30,7 @@ const SocialCard = ({ setCurrentTab }: Props) => {
     };
     await updateUser(data);
     message.success(`Welcome ${name} to Freeflow!`);
-    router.push("/dashboard");
+    router.push("/tasks");
   };
 
   return (

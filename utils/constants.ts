@@ -25,8 +25,8 @@ export const defaultNewThread: INewComment = {
 
 export const sidebarData = [
   {
-    title: "Dashboard",
-    url: "/dashboard",
+    title: "Tasks",
+    url: "/tasks",
   },
   {
     title: "Design",
