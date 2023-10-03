@@ -36,17 +36,25 @@ const DragBox = ({
   const [dateTask, setdateTask] = useState<ITaskData>();
   const changeStatus = async (status: string) => {
     message.loading("Updating task status...", 1.5);
-    await updateTask(task_id as string, {
-      ...task,
-      status: status as "In Progress" | "To Do" | "Done" | "Cancelled",
-    });
+    await updateTask(
+      task_id as string,
+      {
+        ...task,
+        status: status as "In Progress" | "To Do" | "Done" | "Cancelled",
+      },
+      true
+    );
   };
   const changeDueDate = async (dueDate: string) => {
     message.loading("Updating task status...", 1.5);
-    await updateTask(task_id as string, {
-      ...task,
-      dueDate: dueDate as string,
-    });
+    await updateTask(
+      task_id as string,
+      {
+        ...task,
+        dueDate: dueDate as string,
+      },
+      true
+    );
   };
 
   const statusItems = [
@@ -203,14 +211,18 @@ const DragBox = ({
         }
         if (currentStatus !== status) {
           message.loading("Updating task status...", 1.5);
-          await updateTask(task_id as string, {
-            ...task,
-            status: currentStatus as
-              | "In Progress"
-              | "To Do"
-              | "Done"
-              | "Cancelled",
-          });
+          await updateTask(
+            task_id as string,
+            {
+              ...task,
+              status: currentStatus as
+                | "In Progress"
+                | "To Do"
+                | "Done"
+                | "Cancelled",
+            },
+            true
+          );
         }
       }
     },

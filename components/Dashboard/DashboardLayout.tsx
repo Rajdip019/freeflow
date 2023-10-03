@@ -25,7 +25,7 @@ const DashboardLayout = ({ children }: any) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   return (
     <FFPage isAuthRequired={true}>
-      <div className=" flex">
+      <div className=" flex overflow-hidden">
         <Sidebar />
         <div
           {...getRootProps()}
@@ -65,7 +65,6 @@ const DashboardLayout = ({ children }: any) => {
             </div>
           )}
           <div>{children}</div>
-          <div className="h-10 w-full bg-gradient-to-t from-[#8248bd] to-black "></div>
         </div>
       </div>
     </FFPage>

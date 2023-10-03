@@ -8,4 +8,19 @@ export interface ITaskData {
   dueDate?: string;
   attachment?: string;
   createdAt: number;
+  activity: IActivity[];
+}
+
+export interface IActivity {
+  type:
+    | "comment"
+    | "description"
+    | "title"
+    | "attachment"
+    | "status"
+    | "Due Date";
+  user: string;
+  userImageUrl: string;
+  createdAt: string;
+  message: string;
 }

@@ -103,6 +103,7 @@ const CreateTaskModal = ({
     dueDate: undefined,
     attachment: "",
     createdAt: Date.now(),
+    activity: [],
   });
 
   const handleCreateTask = async () => {
@@ -125,6 +126,7 @@ const CreateTaskModal = ({
       dueDate: undefined,
       attachment: "",
       createdAt: Date.now(),
+      activity: [],
     });
     setFileList([]);
     setConfirmLoading(false);
