@@ -17,7 +17,7 @@ import { useAuth } from "./AuthContext";
 export interface ITaskContext {
   tasks: ITaskData[];
   createTask: (task: ITaskData) => any;
-  updateTask: (uid: string, task: ITaskData) => any;
+  updateTask: (uid: string, task: ITaskData, notify: boolean) => any;
   deleteTask: (uid: string) => any;
 }
 
@@ -58,14 +58,18 @@ export function TaskContextProvider({ children }: any) {
     setTasks(tasks);
   };
 
-  const updateTask = async (uid: string, task: ITaskData) => {
+  const updateTask = async (
+    uid: string,
+    task: ITaskData,
+    notify: boolean = true
+  ) => {
     try {
       const updateTaskRef = doc(db, "tasks", uid);
       await updateDoc(updateTaskRef, {
         ...task,
       });
       await getUserTasks(authUser?.uid as string);
-      message.success("Task updated successfully", 1);
+      notify && message.success("Task updated successfully", 1);
     } catch (error) {
       console.log(error);
       message.error("Failed to update task");

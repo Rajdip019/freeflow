@@ -21,10 +21,14 @@ const ChangeDueDateModal = ({ openModal, setOpenModal, task }: Props) => {
       okText="Update"
       onOk={async () => {
         setConfirmLoading(true);
-        await updateTask(task.task_id as string, {
-          ...task,
-          dueDate: newDate?.toDateString(),
-        });
+        await updateTask(
+          task.task_id as string,
+          {
+            ...task,
+            dueDate: newDate?.toDateString(),
+          },
+          true
+        );
         setConfirmLoading(false);
         setOpenModal(false);
         setNewDate(undefined);
