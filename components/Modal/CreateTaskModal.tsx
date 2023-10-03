@@ -31,12 +31,25 @@ type Props = {
   teamName: string;
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  defaultStatus: string | undefined;
+  setDefaultStatus: React.Dispatch<
+    React.SetStateAction<
+      undefined | "In Progress" | "To Do" | "Done" | "Cancelled"
+    >
+  >;
 };
 
-const CreateTaskModal = ({ teamName, openModal, setOpenModal }: Props) => {
+const CreateTaskModal = ({
+  teamName,
+  openModal,
+  setOpenModal,
+  defaultStatus,
+  setDefaultStatus,
+}: Props) => {
   const { authUser } = useAuth();
   const { createTask } = useTaskContext();
   const [fileList, setFileList] = useState<any>([]);
+  const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
   const statusItem = [
     {
       label: (
@@ -100,7 +113,7 @@ const CreateTaskModal = ({ teamName, openModal, setOpenModal }: Props) => {
       assignee: data.assignee || "",
       dueDate: data.dueDate || "",
     };
-    message.loading("Creating task...");
+    setConfirmLoading(true);
     await createTask(newData);
     setOpenModal(false);
     setData({
@@ -114,10 +127,11 @@ const CreateTaskModal = ({ teamName, openModal, setOpenModal }: Props) => {
       createdAt: Date.now(),
     });
     setFileList([]);
+    setConfirmLoading(false);
   };
 
   const uploadImage = async (file: any) => {
-    message.loading("Uploading file...");
+    message.loading("Uploading file...", 2);
     try {
       const storageRef = ref(
         storage,
@@ -168,6 +182,7 @@ const CreateTaskModal = ({ teamName, openModal, setOpenModal }: Props) => {
             ></Segmented>
           </Tooltip>
           <Button
+            loading={confirmLoading}
             key="submit"
             className="w-32"
             type="primary"
@@ -259,8 +274,12 @@ const CreateTaskModal = ({ teamName, openModal, setOpenModal }: Props) => {
             options={statusItem}
             placeholder="Status"
             className="w-36"
-            value={data.status}
-            onChange={(value) =>
+            defaultValue={defaultStatus}
+            value={defaultStatus}
+            onChange={(value) => {
+              setDefaultStatus(
+                value as "To Do" | "In Progress" | "Done" | "Cancelled"
+              );
               setData({
                 ...data,
                 status: value.toString() as
@@ -268,8 +287,8 @@ const CreateTaskModal = ({ teamName, openModal, setOpenModal }: Props) => {
                   | "In Progress"
                   | "Done"
                   | "Cancelled",
-              })
-            }
+              });
+            }}
           />
           {/* Assignee */}
           <Tooltip

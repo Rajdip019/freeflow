@@ -147,8 +147,6 @@ export const ImageContextProvider = ({ children }: Props) => {
     getImages();
   }, [authUser]);
 
-  console.log("🚀 > images:", images);
-
   const value = {
     images,
     setImages,
