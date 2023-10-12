@@ -18,11 +18,7 @@ const ErrorFeedback = () => {
           </Typography.Title>
           <FFButton
             onClick={() => {
-              if (user) {
-                router.push("/tasks");
-              } else {
                 router.push("/");
-              }
             }}
             type="primary"
           >

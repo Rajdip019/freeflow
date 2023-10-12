@@ -108,9 +108,9 @@ export const ImageContextProvider = ({ children }: Props) => {
       isClosable: true,
       position: "bottom-right",
     });
-    if (user && router.pathname !== "/design") {
-      router.push("/design");
-    } else if (router.pathname === "/design") {
+    if (user && router.pathname !== "/") {
+      router.push("/");
+    } else if (router.pathname === "/") {
       console.log("🚀 > deleteImage > router.pathname", router.pathname);
     } else {
       router.push("/");

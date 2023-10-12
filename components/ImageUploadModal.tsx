@@ -10,7 +10,7 @@ import { useImageContext } from "@/contexts/ImagesContext";
 import ImageUploadSuccess from "./ImageUploadSuccess";
 import { newReviewImageEvent } from "@/lib/events";
 import { Button, Input, Modal, Progress, Typography, message } from "antd";
-import { CloseOutlined, UploadOutlined } from "@ant-design/icons";
+import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 const { TextArea } = Input;
 
 interface Props {
@@ -151,8 +151,9 @@ const ImageUploadModal = ({
             clearFile();
             setUploadingState("not-started");
           }}
+          type="primary"
           size="large"
-          icon={<UploadOutlined />}
+          icon={<PlusOutlined />}
         >
           Upload
         </Button>
@@ -240,7 +241,6 @@ const ImageUploadModal = ({
                   <Button
                     disabled={!!!image || !!!imageName}
                     type="primary"
-                    shape="round"
                     className="mt-6 w-full"
                     size="large"
                     onClick={uploadFile}

@@ -44,7 +44,7 @@ const ImageDeleteModalConfirmation: React.FC<Props> = ({ image, onlyIcon }) => {
               <Typography.Text className="text-lg font-bold text-red-700">
                 Warning
               </Typography.Text>
-              <Typography.Paragraph className=" text-black">
+              <Typography.Paragraph className=" text-black whitespace-nowrap">
                 By deleting this file you will also delete any feedback on it{" "}
               </Typography.Paragraph>
             </div>

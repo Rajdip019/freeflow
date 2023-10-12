@@ -54,7 +54,7 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
             </Typography.Text>
           )}
           className="cursor-pointer"
-          onCell={(record, rowIndex) => {
+          onCell={(record) => {
             return {
               onClick: (event) => {
                 window.open(`/review-image/${record.id}`, "_blank");
@@ -71,7 +71,7 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
             <Tag color="green">{record.newUpdate}</Tag>
           )}
           className="cursor-pointer"
-          onCell={(record, rowIndex) => {
+          onCell={(record) => {
             return {
               onClick: (event) => {
                 window.open(`/review-image/${record.id}`, "_blank");
@@ -93,7 +93,7 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
             </Typography.Text>
           )}
           className="cursor-pointer"
-          onCell={(record, rowIndex) => {
+          onCell={(record) => {
             return {
               onClick: (event) => {
                 window.open(`/review-image/${record.id}`, "_blank");
@@ -115,9 +115,9 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
             </Typography.Text>
           )}
           className="cursor-pointer"
-          onCell={(record, rowIndex) => {
+          onCell={(record) => {
             return {
-              onClick: (event) => {
+              onClick: () => {
                 window.open(`/review-image/${record.id}`, "_blank");
               },
             };
