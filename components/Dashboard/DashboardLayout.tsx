@@ -1,9 +1,9 @@
 import React from "react";
-import Sidebar from "./Sidebar";
+// import Sidebar from "./Sidebar";
 import FFPage from "../FFComponents/FFPage";
 import { useDropzone } from "react-dropzone";
 import ImageUploadModal from "../ImageUploadModal";
-import { UploadOutlined } from "@ant-design/icons";
+// import { UploadOutlined } from "@ant-design/icons";
 import { Typography } from "antd";
 
 const DashboardLayout = ({ children }: any) => {
@@ -25,8 +25,8 @@ const DashboardLayout = ({ children }: any) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   return (
     <FFPage isAuthRequired={true}>
-      <div className=" flex overflow-hidden">
-        <Sidebar />
+      <div className=" flex overflow-hidden min-h-screen">
+        {/* <Sidebar /> */}
         <div
           {...getRootProps()}
           onClick={(e) => e.stopPropagation()}

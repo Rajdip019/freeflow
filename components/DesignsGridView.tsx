@@ -63,7 +63,6 @@ const DesignsGridView: React.FC<Props> = ({ image }) => {
         <div className="flex items-end justify-end">
           <Tag color="red">{image.newUpdate}</Tag>
         </div>
-
         <div className="flex items-center justify-between">
           <Link
             target="_blank"
