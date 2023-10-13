@@ -91,7 +91,7 @@ const Design = () => {
         <title>FreeFlow</title>
       </Head>
       <section className="flex w-full items-center justify-between border-b border-[#2c2b2b] bg-[#141414] px-8 py-4">
-        <Image src="/logo/freeflow.png" width={120} />
+        <Image src="/logo/freeflow.png" width={120} preview={false} />
         <div className=" flex gap-3 justify-center items-center">
           <AutoComplete
             ref={inputRef as any}
