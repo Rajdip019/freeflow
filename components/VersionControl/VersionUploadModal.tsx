@@ -64,10 +64,12 @@ const VersionUploadModal: React.FC<Props> = ({
       if (user?.storage) {
         if (storageUsed <= user.storage) {
           setUploadingState("uploading");
+          const docRef = doc(db, "reviewImages", prevImage.id);
+          const imagePath = `reviewImages/${authUser?.uid}/${docRef.id}/${imageName}_${Date.now()}_v${prevImage.currentVersion + 1}`;
           try {
             const storageRef = ref(
               storage,
-              `reviewImages/${authUser?.uid}/public/${imageName}_${Date.now()}`
+              imagePath
             );
             let bytes: number = 0;
             const uploadTask = uploadBytesResumable(
@@ -91,14 +93,13 @@ const VersionUploadModal: React.FC<Props> = ({
                 );
                 console.log("File available at", downloadURL);
 
-                const docRef = doc(db, "reviewImages", prevImage.id);
-
                 const data: Partial<IReviewImageData> = {
                   imageURL: [...prevImage.imageURL, downloadURL],
                   size: (prevImage.size as number) + bytes / (1024 * 1024),
                   lastUpdated: Date.now(),
                   newUpdate: "New Version Uploaded",
                   currentVersion: prevImage.currentVersion + 1,
+                  imagePath : [...prevImage.imagePath, imagePath]
                 };
 
                 await updateDoc(docRef, data);
