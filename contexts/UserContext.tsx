@@ -12,7 +12,6 @@ import {
 } from "react";
 import { IUser } from "../interfaces/User";
 import { useAuth } from "./AuthContext";
-import { newUserEvent } from "@/lib/events";
 
 interface Props {
   children: JSX.Element[] | JSX.Element;
@@ -46,7 +45,6 @@ export const UserContextProvider = ({ children }: Props) => {
 
   const createUser = async (uid: string, data: Partial<IUser>) => {
     await setDoc(doc(db, "users", uid), data);
-    newUserEvent(data);
   };
 
   const getUserData = useCallback(async () => {
