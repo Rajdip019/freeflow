@@ -27,7 +27,12 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
   });
   return (
     <>
-      <Table dataSource={images} scroll={{ x: 300 }} pagination={false} bordered={false}>
+      <Table
+        dataSource={images}
+        scroll={{ x: 300 }}
+        pagination={false}
+        bordered={false}
+      >
         <Column
           title="Design"
           dataIndex="imageName"

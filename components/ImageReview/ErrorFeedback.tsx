@@ -18,7 +18,7 @@ const ErrorFeedback = () => {
           </Typography.Title>
           <FFButton
             onClick={() => {
-                router.push("/");
+              router.push("/");
             }}
             type="primary"
           >

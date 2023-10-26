@@ -7,16 +7,18 @@ import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/router";
 import { useUserContext } from "@/contexts/UserContext";
-import { Button, Result } from "antd";
+import { Button, Result, Skeleton, message } from "antd";
+import ForgotPasswordCard from "@/components/AuthComponents/ForgotPasswordCard";
 
 const Signup = () => {
-  const [currentTab, setCurrentTab] = useState(0);
+  const [currentTab, setCurrentTab] = useState<number>(0);
+  const [animatedTab, setAnimatedTab] = useState<number>(1);
   const [isVerificationWindow, setIsVerificationWindow] =
     useState<boolean>(false);
   const router = useRouter();
   const { authUser, sendEmailVerificationToUser, logout } = useAuth();
   const { user } = useUserContext();
-  console.log("AuthUser", authUser);
+
   useEffect(() => {
     if (authUser && user && user.name) {
       router.push("/");
@@ -36,7 +38,14 @@ const Signup = () => {
     }
   }, [authUser]);
 
-  const TabList = [SignupCard, SocialCard];
+  useEffect(() => {
+    setAnimatedTab(1);
+    setTimeout(() => {
+      setAnimatedTab(0);
+    }, 1000);
+  }, [currentTab]);
+
+  const TabList = [SignupCard, SocialCard, ForgotPasswordCard];
 
   return (
     <>
@@ -68,10 +77,16 @@ const Signup = () => {
         </div>
       ) : (
         <div className="flex min-h-screen items-center justify-center bg-black">
-          <div className="flex w-full items-center justify-center">
-            {React.createElement(TabList[currentTab], {
-              setCurrentTab,
-            })}
+          <div className={`flex w-full items-center justify-center`}>
+            <Skeleton
+              loading={animatedTab === 1}
+              className="h-full w-1/2"
+              active
+            >
+              {React.createElement(TabList[currentTab], {
+                setCurrentTab,
+              })}
+            </Skeleton>
           </div>
           <div className="hidden w-full items-end justify-end lg:flex">
             <Image
@@ -79,7 +94,7 @@ const Signup = () => {
               alt={"Login image"}
               width={1000}
               height={1000}
-              className="h-screen w-auto"
+              className={`h-screen w-auto`}
             />
           </div>
         </div>

@@ -6,6 +6,7 @@ import FirebaseAuth, {
   signOut,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
 } from "@firebase/auth";
 
 import { sendEmailVerification } from "@firebase/auth";
@@ -18,6 +19,7 @@ export interface IAuthContext {
   signupWithEmail: (email: string, password: string) => any;
   signinWithEmail: (email: string, password: string) => any;
   sendEmailVerificationToUser: () => any;
+  forgotPassword: (email: string) => any;
   logout: () => any;
 }
 
@@ -27,6 +29,7 @@ const defaultValues: IAuthContext = {
   signupWithEmail: () => {},
   signinWithEmail: () => {},
   sendEmailVerificationToUser: () => {},
+  forgotPassword: () => {},
   logout: () => {},
 };
 
@@ -47,8 +50,8 @@ export function AuthContextProvider({ children }: any) {
   const googleAuthProvider = new GoogleAuthProvider();
 
   const signUpWithGoogle = async () => {
-    const result = await signInWithPopup(auth, googleAuthProvider);
     try {
+      const result = await signInWithPopup(auth, googleAuthProvider);
       const user = result.user;
       if (user) {
         setAuthUser(user);
@@ -103,6 +106,15 @@ export function AuthContextProvider({ children }: any) {
     }
   };
 
+  const forgotPassword = async (email: string) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   const logout = async () => {
     await signOut(auth);
     setAuthUser(null);
@@ -121,6 +133,7 @@ export function AuthContextProvider({ children }: any) {
     signupWithEmail,
     signinWithEmail,
     sendEmailVerificationToUser,
+    forgotPassword,
     logout,
   };
 

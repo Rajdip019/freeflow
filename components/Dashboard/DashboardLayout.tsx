@@ -25,7 +25,7 @@ const DashboardLayout = ({ children }: any) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   return (
     <FFPage isAuthRequired={true}>
-      <div className=" flex overflow-hidden min-h-screen">
+      <div className=" flex min-h-screen overflow-hidden">
         {/* <Sidebar /> */}
         <div
           {...getRootProps()}
