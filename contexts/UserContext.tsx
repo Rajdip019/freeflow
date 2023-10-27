@@ -49,7 +49,6 @@ export const UserContextProvider = ({ children }: Props) => {
 
   const createUser = async (uid: string, data: Partial<IUser>) => {
     await setDoc(doc(db, "users", uid), data);
-    newUserEvent(data);
   };
 
   const getUserData = useCallback(async () => {

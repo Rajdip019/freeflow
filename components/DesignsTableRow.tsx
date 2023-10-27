@@ -39,17 +39,27 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
           key="imageName"
           width={50}
           render={(text, record: IReviewImageData) => (
-            <Image
-              src={
-                record.currentVersion
-                  ? record.imageURL[record.currentVersion - 1]
-                  : (record.imageURL as any)
-              }
-              width={50}
-              height={50}
-              preview={true}
-              className="rounded"
-            />
+            <>
+              {record.currentVersion && record.imageURL ? (
+                <Image
+                  src={
+                    record.currentVersion
+                      ? record.imageURL[record.currentVersion - 1]
+                      : (record.imageURL as any)
+                  }
+                  width={50}
+                  height={50}
+                  preview={true}
+                  className="rounded"
+                />
+              ) : (
+                <div>
+                  <Typography.Text className="text-center text-sm text-white">
+                    Waiting for image...
+                  </Typography.Text>
+                </div>
+              )}
+            </>
           )}
         />
         <Column
