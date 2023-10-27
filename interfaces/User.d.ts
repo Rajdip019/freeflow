@@ -3,7 +3,12 @@ export interface IUser {
   email: string;
   imageURL?: string;
   createTime: number;
-  storage: number;
   linkedIn?: string;
   twitter?: string;
+  workspaces: IUserWorkspace[];
+}
+
+export interface IUserWorkspace {
+  id: string;
+  role: "owner" | "admin" | "editor" | "viewer";
 }

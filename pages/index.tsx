@@ -15,7 +15,7 @@ import {
   Space,
   Tooltip,
   Dropdown,
-  Typography
+  Typography,
 } from "antd";
 import type { MenuProps } from "antd";
 import {
@@ -23,7 +23,7 @@ import {
   CloseOutlined,
   SearchOutlined,
   UnorderedListOutlined,
-  QuestionCircleOutlined
+  QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { useUserContext } from "@/contexts/UserContext";
 import { FFButton } from "@/theme/themeConfig";
@@ -36,7 +36,8 @@ const Design = () => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [options, setOptions] = useState<{ value: string }[]>([]);
-  const [contactUsButtonState, setContactUsButtonState] = useState<boolean>(false);
+  const [contactUsButtonState, setContactUsButtonState] =
+    useState<boolean>(false);
   const filteredImages = images.filter((image) =>
     image.imageName.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -67,22 +68,28 @@ const Design = () => {
     };
   }, []);
 
-  const items: MenuProps['items'] = [
+  const items: MenuProps["items"] = [
     {
-      key: '1',
+      key: "1",
       label: (
         <div className=" flex flex-col">
-          <Typography.Text className="text-gray-500">Signed in as</Typography.Text>
-          <Typography.Text className="text-gray-400">{user?.email}</Typography.Text>
+          <Typography.Text className="text-gray-500">
+            Signed in as
+          </Typography.Text>
+          <Typography.Text className="text-gray-400">
+            {user?.email}
+          </Typography.Text>
         </div>
       ),
     },
     {
-      key: '2',
+      key: "2",
       label: (
-        <Typography.Text className="text-red-500" onClick={logout}>Sign out</Typography.Text>
+        <Typography.Text className="text-red-500" onClick={logout}>
+          Sign out
+        </Typography.Text>
       ),
-    }
+    },
   ];
 
   return (
@@ -92,13 +99,14 @@ const Design = () => {
       </Head>
       <section className="flex w-full items-center justify-between border-b border-[#2c2b2b] bg-[#141414] px-8 py-4">
         <Image src="/logo/freeflow.png" width={120} preview={false} />
-        <div className=" flex gap-3 justify-center items-center">
+        <div className=" flex items-center justify-center gap-3">
           <AutoComplete
             ref={inputRef as any}
             options={options}
             value={searchQuery}
             filterOption={(inputValue, option) =>
-              option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+              option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
+              -1
             }
             onChange={(value) => setSearchQuery(value)}
           >
@@ -212,8 +220,25 @@ const Design = () => {
             </Empty>
           </div>
         )}
-        <a href="https://linktr.ee/freeflowapp" target="_blank" rel="noreferrer">
-        <FFButton className="fixed bottom-5 rounded-full transition-all w-6 hover:w-auto z-50" onMouseEnter={() => { setContactUsButtonState(true) }} onMouseLeave={() => setContactUsButtonState(false)}> {contactUsButtonState ? 'Contact Us' : <QuestionCircleOutlined />} </FFButton>
+        <a
+          href="https://linktr.ee/freeflowapp"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <FFButton
+            className="fixed bottom-5 z-50 w-6 rounded-full transition-all hover:w-auto"
+            onMouseEnter={() => {
+              setContactUsButtonState(true);
+            }}
+            onMouseLeave={() => setContactUsButtonState(false)}
+          >
+            {" "}
+            {contactUsButtonState ? (
+              "Contact Us"
+            ) : (
+              <QuestionCircleOutlined />
+            )}{" "}
+          </FFButton>
         </a>
       </div>
     </DashboardLayout>

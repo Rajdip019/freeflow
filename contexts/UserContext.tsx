@@ -12,6 +12,7 @@ import {
 } from "react";
 import { IUser } from "../interfaces/User";
 import { useAuth } from "./AuthContext";
+import { useWorkspaceContext } from "./WorkspaceContext";
 
 interface Props {
   children: JSX.Element[] | JSX.Element;
@@ -42,6 +43,7 @@ export function useUserContext() {
 export const UserContextProvider = ({ children }: Props) => {
   const [user, setUser] = useState<Partial<IUser> | null>(defaultValues.user);
   const { authUser } = useAuth();
+  const { createWorkspace } = useWorkspaceContext();
 
   const createUser = async (uid: string, data: Partial<IUser>) => {
     await setDoc(doc(db, "users", uid), data);
@@ -60,13 +62,11 @@ export const UserContextProvider = ({ children }: Props) => {
             email: authUser.email as string,
             imageURL: authUser.photoURL as string,
             createTime: Date.now(),
-            storage: 1024,
           });
           setUser({
             email: authUser.email as string,
             imageURL: authUser.photoURL as string,
             createTime: Date.now(),
-            storage: 1024,
           });
         }
       }

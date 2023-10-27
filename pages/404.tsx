@@ -4,7 +4,7 @@ import React from "react";
 
 const Error = () => {
   return (
-    <div className="overflow-hidden bg-gray-900 h-screen">
+    <div className="h-screen overflow-hidden bg-gray-900">
       {/* <Navbar /> */}
       <div className="relative flex h-screen w-screen flex-col items-center justify-center bg-gray-900 ">
         <div className=" flex items-center justify-center">

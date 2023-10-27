@@ -1,6 +1,8 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserContext } from "@/contexts/UserContext";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import { IUser } from "@/interfaces/User";
+import { IWorkspace } from "@/interfaces/Workspace";
 import {
   LinkedinFilled,
   RocketOutlined,
@@ -20,17 +22,42 @@ const SocialCard = ({ setCurrentTab }: Props) => {
   const [twitter, setTwitter] = useState<string>("");
   const [name, setName] = useState<string>("");
   const { updateUser } = useUserContext();
+  const { authUser } = useAuth();
+  const { createWorkspace, workspaceId } = useWorkspaceContext();
   const router = useRouter();
 
   const handleContinue = async () => {
-    const data: Partial<IUser> = {
-      name,
-      linkedIn,
-      twitter,
-    };
-    await updateUser(data);
-    message.success(`Welcome ${name} to Freeflow!`);
-    router.push("/tasks");
+    if (authUser) {
+      const workspaceData: IWorkspace = {
+        name: name + "'s workspace",
+        description: "",
+        avatarUrl: "",
+        collaborators: [
+          {
+            id: authUser?.uid,
+            role: "owner",
+          },
+        ],
+        subscription: "free",
+        storageUsed: 0,
+        createdAt: Date.now(),
+        isCompleted: false,
+      };
+      const id = await createWorkspace(workspaceData);
+      const data: Partial<IUser> = {
+        name,
+        linkedIn,
+        twitter,
+        workspaces: [
+          {
+            id: id,
+            role: "owner",
+          },
+        ],
+      };
+      await updateUser(data);
+      setCurrentTab(3);
+    }
   };
 
   return (

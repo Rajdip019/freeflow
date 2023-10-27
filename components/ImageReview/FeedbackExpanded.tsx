@@ -88,7 +88,8 @@ const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
       await addDoc(
         collection(
           db,
-          `reviewImages/${imageId}/threads/${highlightedComment?.id as string
+          `reviewImages/${imageId}/threads/${
+            highlightedComment?.id as string
           }/comments`
         ),
         {

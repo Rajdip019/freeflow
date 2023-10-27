@@ -27,7 +27,12 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
   });
   return (
     <>
-      <Table dataSource={images} scroll={{ x: 300 }} pagination={false} bordered={false}>
+      <Table
+        dataSource={images}
+        scroll={{ x: 300 }}
+        pagination={false}
+        bordered={false}
+      >
         <Column
           title="Design"
           dataIndex="imageName"
@@ -35,7 +40,7 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
           width={50}
           render={(text, record: IReviewImageData) => (
             <>
-              {(record.currentVersion && record.imageURL) ? (
+              {record.currentVersion && record.imageURL ? (
                 <Image
                   src={
                     record.currentVersion
@@ -49,7 +54,7 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
                 />
               ) : (
                 <div>
-                  <Typography.Text className="text-white text-center text-sm">
+                  <Typography.Text className="text-center text-sm text-white">
                     Waiting for image...
                   </Typography.Text>
                 </div>
