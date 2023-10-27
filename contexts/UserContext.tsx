@@ -12,9 +12,7 @@ import {
 } from "react";
 import { IUser } from "../interfaces/User";
 import { useAuth } from "./AuthContext";
-import { newUserEvent } from "@/lib/events";
 import { useWorkspaceContext } from "./WorkspaceContext";
-import { IWorkspace } from "@/interfaces/Workspace";
 
 interface Props {
   children: JSX.Element[] | JSX.Element;

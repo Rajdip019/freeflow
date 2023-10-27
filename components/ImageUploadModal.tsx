@@ -111,14 +111,9 @@ const ImageUploadModal = ({
             };
 
             await setDoc(docRef, data);
-            await setDoc(
-              doc(db, "reviewImages", docRef.id, "private/password"),
-              {
-                password,
-              }
-            );
+
             message.success("Image uploaded successfully");
-            newReviewImageEvent(data);
+
             setUploadingState("success");
             setUploadedImageId(docRef.id);
           }
