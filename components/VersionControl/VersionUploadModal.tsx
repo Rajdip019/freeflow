@@ -61,64 +61,53 @@ const VersionUploadModal: React.FC<Props> = ({
   const uploadFile = async () => {
     setConfirmLoading(true);
     if (fileSize < 75) {
-      if (user?.storage) {
-        if (storageUsed <= user.storage) {
-          setUploadingState("uploading");
-          try {
-            const storageRef = ref(
-              storage,
-              `reviewImages/${authUser?.uid}/public/${imageName}_${Date.now()}`
-            );
-            let bytes: number = 0;
-            const uploadTask = uploadBytesResumable(
-              storageRef,
-              uploadedFile as File
-            );
-            uploadTask.on(
-              "state_changed",
-              (snapshot: { bytesTransferred: number; totalBytes: number }) => {
-                bytes = snapshot.totalBytes;
-                const progress =
-                  (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                setUploadPercentage(progress);
-              },
-              (error) => {
-                console.error(error);
-              },
-              async () => {
-                const downloadURL = await getDownloadURL(
-                  uploadTask.snapshot.ref
-                );
-                console.log("File available at", downloadURL);
+      setUploadingState("uploading");
+      try {
+        const storageRef = ref(
+          storage,
+          `reviewImages/${authUser?.uid}/public/${imageName}_${Date.now()}`
+        );
+        let bytes: number = 0;
+        const uploadTask = uploadBytesResumable(
+          storageRef,
+          uploadedFile as File
+        );
+        uploadTask.on(
+          "state_changed",
+          (snapshot: { bytesTransferred: number; totalBytes: number }) => {
+            bytes = snapshot.totalBytes;
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setUploadPercentage(progress);
+          },
+          (error) => {
+            console.error(error);
+          },
+          async () => {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            console.log("File available at", downloadURL);
 
-                const docRef = doc(db, "reviewImages", prevImage.id);
+            const docRef = doc(db, "reviewImages", prevImage.id);
 
-                const data: Partial<IReviewImageData> = {
-                  imageURL: [...prevImage.imageURL, downloadURL],
-                  size: (prevImage.size as number) + bytes / (1024 * 1024),
-                  lastUpdated: Date.now(),
-                  newUpdate: "New Version Uploaded",
-                  currentVersion: prevImage.currentVersion + 1,
-                };
+            const data: Partial<IReviewImageData> = {
+              imageURL: [...prevImage.imageURL, downloadURL],
+              size: (prevImage.size as number) + bytes / (1024 * 1024),
+              lastUpdated: Date.now(),
+              newUpdate: "New Version Uploaded",
+              currentVersion: prevImage.currentVersion + 1,
+            };
 
-                await updateDoc(docRef, data);
-                message.success("Version updated successfully");
-                setOpen(false);
-                setUploadedImageId(docRef.id);
-                setConfirmLoading(false);
-              }
-            );
-          } catch (error) {
-            message.error("Something went wrong. Please try again");
-            setUploadingState("error");
+            await updateDoc(docRef, data);
+            message.success("Version updated successfully");
+            setOpen(false);
+            setUploadedImageId(docRef.id);
             setConfirmLoading(false);
           }
-        } else {
-          message.error(
-            "Your storage is full. Delete some images and try uploading."
-          );
-          setConfirmLoading(false);
-        }
+        );
+      } catch (error) {
+        message.error("Something went wrong. Please try again");
+        setUploadingState("error");
+        setConfirmLoading(false);
       }
     } else {
       message.error(

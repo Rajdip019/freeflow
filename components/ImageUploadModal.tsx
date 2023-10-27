@@ -66,76 +66,68 @@ const ImageUploadModal = ({
   const [open, setOpen] = useState<boolean>(visible);
   const uploadFile = () => {
     if (fileSize < 75) {
-      if (user?.storage) {
-        if (storageUsed <= user.storage) {
-          setUploadingState("uploading");
-          try {
-            const storageRef = ref(
-              storage,
-              `reviewImages/${authUser?.uid}/public/${imageName}_${Date.now()}`
-            );
-            let bytes: number = 0;
-            const uploadTask = uploadBytesResumable(
-              storageRef,
-              uploadedFile as File
-            );
-            uploadTask.on(
-              "state_changed",
-              (snapshot: { bytesTransferred: number; totalBytes: number }) => {
-                bytes = snapshot.totalBytes;
-                const progress =
-                  (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                setUploadPercentage(Math.round(progress));
-              },
-              (error) => {
-                console.error(error);
-              },
-              async () => {
-                const downloadURL = await getDownloadURL(
-                  uploadTask.snapshot.ref
-                );
-                console.log("File available at", downloadURL);
+      setUploadingState("uploading");
+      try {
+        const storageRef = ref(
+          storage,
+          `reviewImages/${authUser?.uid}/public/${imageName}_${Date.now()}`
+        );
+        let bytes: number = 0;
+        const uploadTask = uploadBytesResumable(
+          storageRef,
+          uploadedFile as File
+        );
+        uploadTask.on(
+          "state_changed",
+          (snapshot: { bytesTransferred: number; totalBytes: number }) => {
+            bytes = snapshot.totalBytes;
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setUploadPercentage(Math.round(progress));
+          },
+          (error) => {
+            console.error(error);
+          },
+          async () => {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            console.log("File available at", downloadURL);
 
-                const docRef = doc(collection(db, "reviewImages"));
+            const docRef = doc(collection(db, "reviewImages"));
 
-                const data: IReviewImageData = {
-                  id: docRef.id,
-                  imageURL: [downloadURL],
-                  uploadedBy: user?.name as string,
-                  uploadedByEmail: authUser?.email ?? "",
-                  uploadedById: authUser?.uid,
-                  timeStamp: Date.now(),
-                  imageName: imageName as string,
-                  imageDescription: description,
-                  size: bytes / (1024 * 1024),
-                  views: 0,
-                  threads: 0,
-                  lastUpdated: Date.now(),
-                  newUpdate: "Uploaded",
-                  isPrivate: false,
-                  currentVersion: 1,
-                };
+            const data: IReviewImageData = {
+              id: docRef.id,
+              imageURL: [downloadURL],
+              uploadedBy: user?.name as string,
+              uploadedByEmail: authUser?.email ?? "",
+              uploadedById: authUser?.uid,
+              timeStamp: Date.now(),
+              imageName: imageName as string,
+              imageDescription: description,
+              size: bytes / (1024 * 1024),
+              views: 0,
+              threads: 0,
+              lastUpdated: Date.now(),
+              newUpdate: "Uploaded",
+              isPrivate: false,
+              currentVersion: 1,
+            };
 
-                await setDoc(docRef, data);
-                await setDoc(
-                  doc(db, "reviewImages", docRef.id, "private/password"),
-                  {
-                    password,
-                  }
-                );
-                message.success("Image uploaded successfully");
-                newReviewImageEvent(data);
-                setUploadingState("success");
-                setUploadedImageId(docRef.id);
+            await setDoc(docRef, data);
+            await setDoc(
+              doc(db, "reviewImages", docRef.id, "private/password"),
+              {
+                password,
               }
             );
-          } catch (error) {
-            message.error("Some error occurred");
-            setUploadingState("error");
+            message.success("Image uploaded successfully");
+            newReviewImageEvent(data);
+            setUploadingState("success");
+            setUploadedImageId(docRef.id);
           }
-        } else {
-          message.error("You have exceeded your storage limit");
-        }
+        );
+      } catch (error) {
+        message.error("Some error occurred");
+        setUploadingState("error");
       }
     } else {
       message.error("File size should be less than 75MB");

@@ -9,22 +9,22 @@ import { useRouter } from "next/router";
 import { useUserContext } from "@/contexts/UserContext";
 import { Button, Result, Skeleton, message } from "antd";
 import ForgotPasswordCard from "@/components/AuthComponents/ForgotPasswordCard";
+import WorkspaceCard from "@/components/AuthComponents/WorkspaceCard";
+import FFPage from "@/components/FFComponents/FFPage";
 
 const Signup = () => {
   const [currentTab, setCurrentTab] = useState<number>(0);
   const [animatedTab, setAnimatedTab] = useState<number>(1);
   const [isVerificationWindow, setIsVerificationWindow] =
     useState<boolean>(false);
-  const router = useRouter();
+
   const { authUser, sendEmailVerificationToUser, logout } = useAuth();
   const { user } = useUserContext();
 
   useEffect(() => {
-    if (authUser && user && user.name) {
-      router.push("/");
-    }
-    if (authUser) {
-      setCurrentTab(1);
+    if (authUser && user) {
+      if (!user.name) setCurrentTab(1);
+      else setCurrentTab(3);
     } else {
       setCurrentTab(0);
     }
@@ -45,61 +45,63 @@ const Signup = () => {
     }, 1000);
   }, [currentTab]);
 
-  const TabList = [SignupCard, SocialCard, ForgotPasswordCard];
+  const TabList = [SignupCard, SocialCard, ForgotPasswordCard, WorkspaceCard];
 
   return (
-    <>
-      <Head>
-        <title>Freeflow | Sign Up</title>
-      </Head>
-      {isVerificationWindow ? (
-        <div className="flex h-screen w-screen items-center justify-center bg-black">
-          <Result
-            status="403"
-            title="Email not verified"
-            subTitle="We have sent you an email for verification. Please verify your email to continue"
-            extra={
-              <>
-                <Button type="primary" onClick={logout}>
-                  Continue with different account
-                </Button>
-                <Button
-                  type="primary"
-                  onClick={async () => {
-                    await sendEmailVerificationToUser();
-                  }}
-                >
-                  Resend verification email
-                </Button>
-              </>
-            }
-          />
-        </div>
-      ) : (
-        <div className="flex min-h-screen items-center justify-center bg-black">
-          <div className={`flex w-full items-center justify-center`}>
-            <Skeleton
-              loading={animatedTab === 1}
-              className="h-full w-1/2"
-              active
-            >
-              {React.createElement(TabList[currentTab], {
-                setCurrentTab,
-              })}
-            </Skeleton>
-          </div>
-          <div className="hidden w-full items-end justify-end lg:flex">
-            <Image
-              src={`/login/Frame${currentTab + 1}.png`}
-              alt={"Login image"}
-              width={1000}
-              height={1000}
-              className={`h-screen w-auto`}
+    <FFPage isAuthRequired={true}>
+      <>
+        <Head>
+          <title>Freeflow | Sign Up</title>
+        </Head>
+        {isVerificationWindow ? (
+          <div className="flex h-screen w-screen items-center justify-center bg-black">
+            <Result
+              status="403"
+              title="Email not verified"
+              subTitle="We have sent you an email for verification. Please verify your email to continue"
+              extra={
+                <>
+                  <Button type="primary" onClick={logout}>
+                    Continue with different account
+                  </Button>
+                  <Button
+                    type="primary"
+                    onClick={async () => {
+                      await sendEmailVerificationToUser();
+                    }}
+                  >
+                    Resend verification email
+                  </Button>
+                </>
+              }
             />
           </div>
-        </div>
-      )}
-    </>
+        ) : (
+          <div className="flex min-h-screen items-center justify-center bg-black">
+            <div className={`flex w-full items-center justify-center`}>
+              <Skeleton
+                loading={animatedTab === 1}
+                className="h-full w-1/2"
+                active
+              >
+                {React.createElement(TabList[currentTab], {
+                  setCurrentTab,
+                })}
+              </Skeleton>
+            </div>
+            <div className="hidden w-full items-end justify-end lg:flex">
+              <Image
+                src={`/login/Frame${currentTab + 1}.png`}
+                alt={"Login image"}
+                width={1000}
+                height={1000}
+                className={`h-screen w-auto`}
+              />
+            </div>
+          </div>
+        )}
+      </>
+    </FFPage>
   );
 };
 export default Signup;

@@ -25,7 +25,7 @@ const SignupCard = ({ setCurrentTab }: Props) => {
 
   const handleContinue = async () => {
     if (authType === "Sign up") {
-      const result = await signupWithEmail(email, password);
+      await signupWithEmail(email, password);
     } else {
       await signinWithEmail(email, password);
     }

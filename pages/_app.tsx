@@ -13,6 +13,7 @@ import customTheme from "@/theme/themeConfig";
 import { TaskContextProvider } from "@/contexts/TaskContext";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { WorkspaceContextProvider } from "@/contexts/WorkspaceContext";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -59,12 +60,14 @@ function MyApp({ Component, pageProps }: AppProps) {
           <ConfigProvider theme={customTheme}>
             <AuthContextProvider>
               <UserContextProvider>
-                <ImageContextProvider>
-                  <TaskContextProvider>
-                    <Component {...pageProps} />
-                    <Analytics />
-                  </TaskContextProvider>
-                </ImageContextProvider>
+                <WorkspaceContextProvider>
+                  <ImageContextProvider>
+                    <TaskContextProvider>
+                      <Component {...pageProps} />
+                      <Analytics />
+                    </TaskContextProvider>
+                  </ImageContextProvider>
+                </WorkspaceContextProvider>
               </UserContextProvider>
             </AuthContextProvider>
           </ConfigProvider>
