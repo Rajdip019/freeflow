@@ -41,6 +41,8 @@ const FFPage: React.FC<Props> = ({ children, isAuthRequired }) => {
         } else {
           router.push("/");
         }
+      } else {
+        router.push("/auth");
       }
     } else {
       if (isAuthRequired) {

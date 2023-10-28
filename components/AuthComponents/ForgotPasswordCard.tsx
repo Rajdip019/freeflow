@@ -30,7 +30,7 @@ const ForgotPasswordCard = ({ setCurrentTab }: Props) => {
   };
 
   return (
-    <div className="rounded-2xl bg-[#141414] p-5 px-7 text-white md:w-[50%]">
+    <div className="w-[80%] rounded-2xl bg-[#141414] p-5 px-7 text-white md:w-[70%] xl:w-[47%]">
       <Image
         src={"/logo/freeflow.png"}
         alt={"Logo image"}

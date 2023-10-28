@@ -5,9 +5,8 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRouter } from "next/router";
 import { useUserContext } from "@/contexts/UserContext";
-import { Button, Result, Skeleton, message } from "antd";
+import { Button, Result, Skeleton } from "antd";
 import ForgotPasswordCard from "@/components/AuthComponents/ForgotPasswordCard";
 import WorkspaceCard from "@/components/AuthComponents/WorkspaceCard";
 import FFPage from "@/components/FFComponents/FFPage";
@@ -22,12 +21,16 @@ const Signup = () => {
   const { user } = useUserContext();
 
   useEffect(() => {
-    if (authUser && user) {
-      if (!user.name) setCurrentTab(1);
-      else setCurrentTab(3);
+    console.log("Waiting");
+    if (authUser) {
+      if (user)
+        if (!user.name) setCurrentTab(1);
+        else setCurrentTab(3);
+      else setCurrentTab(1);
     } else {
       setCurrentTab(0);
     }
+    console.log("success");
   }, [authUser, user]);
 
   useEffect(() => {
@@ -96,6 +99,7 @@ const Signup = () => {
                 width={1000}
                 height={1000}
                 className={`h-screen w-auto`}
+                priority
               />
             </div>
           </div>

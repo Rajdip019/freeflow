@@ -9,7 +9,7 @@ import {
   TwitterOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Button, Divider, Form, Input, Typography, message } from "antd";
+import { Button, Divider, Form, Input, Typography } from "antd";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 const { Text, Title } = Typography;
@@ -18,16 +18,17 @@ type Props = {
 };
 
 const SocialCard = ({ setCurrentTab }: Props) => {
+  const { authUser } = useAuth();
   const [linkedIn, setLinkedIn] = useState<string>("");
   const [twitter, setTwitter] = useState<string>("");
-  const [name, setName] = useState<string>("");
-  const { updateUser } = useUserContext();
-  const { authUser } = useAuth();
-  const { createWorkspace, workspaceId } = useWorkspaceContext();
-  const router = useRouter();
+  const [name, setName] = useState<string>(authUser?.displayName as string);
+  const { createUser } = useUserContext();
+  const { createWorkspace } = useWorkspaceContext();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleContinue = async () => {
     if (authUser) {
+      setLoading(true);
       const workspaceData: IWorkspace = {
         name: name + "'s workspace",
         description: "",
@@ -44,7 +45,7 @@ const SocialCard = ({ setCurrentTab }: Props) => {
         isCompleted: false,
       };
       const id = await createWorkspace(workspaceData);
-      const data: Partial<IUser> = {
+      const data: IUser = {
         name,
         linkedIn,
         twitter,
@@ -54,14 +55,17 @@ const SocialCard = ({ setCurrentTab }: Props) => {
             role: "owner",
           },
         ],
+        email: authUser.email as string,
+        createTime: Date.now(),
       };
-      await updateUser(data);
+      await createUser(authUser.uid, data);
       setCurrentTab(3);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="rounded-2xl bg-[#141414] p-5 px-7 text-white md:w-[50%]">
+    <div className="w-[80%] rounded-2xl bg-[#141414] p-5 px-7 text-white md:w-[70%] xl:w-[47%]">
       <Form
         layout="vertical"
         className="flex flex-col space-y-5"
@@ -94,6 +98,7 @@ const SocialCard = ({ setCurrentTab }: Props) => {
           <Input
             placeholder="John Doe..."
             prefix={<UserOutlined />}
+            value={name}
             onChange={(e) => {
               setName(e.target.value);
             }}
@@ -120,7 +125,12 @@ const SocialCard = ({ setCurrentTab }: Props) => {
           />
         </Form.Item>
 
-        <Button type="primary" className="w-full" htmlType="submit">
+        <Button
+          type="primary"
+          className="w-full"
+          htmlType="submit"
+          loading={loading}
+        >
           Continue
         </Button>
       </Form>

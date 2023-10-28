@@ -12,6 +12,7 @@ import FirebaseAuth, {
 import { sendEmailVerification } from "@firebase/auth";
 import React, { useContext, useEffect } from "react";
 import { Spin, message } from "antd";
+import { useUserContext } from "./UserContext";
 
 export interface IAuthContext {
   authUser: FirebaseAuth.User | null;
@@ -46,6 +47,7 @@ export function AuthContextProvider({ children }: any) {
     defaultValues.authUser
   );
   const auth = getAuth();
+  const { setUser } = useUserContext();
 
   const googleAuthProvider = new GoogleAuthProvider();
 
@@ -118,6 +120,7 @@ export function AuthContextProvider({ children }: any) {
   const logout = async () => {
     await signOut(auth);
     setAuthUser(null);
+    setUser(null);
   };
 
   useEffect(() => {
