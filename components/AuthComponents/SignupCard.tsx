@@ -97,6 +97,8 @@ const SignupCard = ({ setCurrentTab }: Props) => {
           >
             <Input
               placeholder="example@gmail.com"
+              value={email}
+              defaultValue={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </Form.Item>

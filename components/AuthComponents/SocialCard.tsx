@@ -21,7 +21,10 @@ const SocialCard = ({ setCurrentTab }: Props) => {
   const { authUser } = useAuth();
   const [linkedIn, setLinkedIn] = useState<string>("");
   const [twitter, setTwitter] = useState<string>("");
-  const [name, setName] = useState<string>(authUser?.displayName as string);
+  const [name, setName] = useState<{ firstName: string; lastName: string }>({
+    firstName: authUser?.displayName?.split(" ")[0] || "",
+    lastName: authUser?.displayName?.split(" ")[1] || "",
+  });
   const { createUser } = useUserContext();
   const { createWorkspace } = useWorkspaceContext();
   const [loading, setLoading] = useState<boolean>(false);
@@ -46,7 +49,7 @@ const SocialCard = ({ setCurrentTab }: Props) => {
       };
       const id = await createWorkspace(workspaceData);
       const data: IUser = {
-        name,
+        name: name.firstName + " " + name.lastName,
         linkedIn,
         twitter,
         workspaces: [
@@ -91,16 +94,48 @@ const SocialCard = ({ setCurrentTab }: Props) => {
         <Divider />
         {/* Name */}
         <Form.Item
-          label="Name"
-          name="name"
-          rules={[{ required: true, message: "Please input your name!" }]}
+          label="First Name"
+          name="firstName"
+          rules={[
+            {
+              required: name.firstName === "",
+              message: "Please input your first name!",
+            },
+          ]}
         >
           <Input
-            placeholder="John Doe..."
+            placeholder="John"
             prefix={<UserOutlined />}
-            value={name}
+            value={name.firstName}
+            defaultValue={name.firstName}
             onChange={(e) => {
-              setName(e.target.value);
+              setName({
+                ...name,
+                firstName: e.target.value,
+              });
+            }}
+          />
+        </Form.Item>
+        <Form.Item
+          label={"Last Name"}
+          name={"Last Name"}
+          rules={[
+            {
+              required: name.lastName === "",
+              message: "Last Name is required!",
+            },
+          ]}
+        >
+          <Input
+            placeholder="Deo"
+            prefix={<UserOutlined />}
+            value={name.lastName}
+            defaultValue={name.lastName}
+            onChange={(e) => {
+              setName({
+                ...name,
+                lastName: e.target.value,
+              });
             }}
           />
         </Form.Item>

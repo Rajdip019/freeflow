@@ -53,14 +53,10 @@ const WorkspaceCard = (props: Props) => {
         </div>
         <Divider />
         {/* Name */}
-        <Form.Item
-          label="Workspace Name"
-          name="name"
-          rules={[{ required: true, message: "Workspace Name required!!" }]}
-        >
+        <Form.Item label="Workspace Name" required>
           <Input
             placeholder={user?.name + "'s workspace"}
-            value={workspaceName}
+            defaultValue={user?.name + "'s workspace"}
             prefix={<FolderViewOutlined />}
             onChange={(e) => {
               setWorkspaceName(e.target.value);
