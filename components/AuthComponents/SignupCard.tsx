@@ -22,16 +22,37 @@ const SignupCard = ({ setCurrentTab }: Props) => {
   const [password, setPassword] = useState<string>("");
   const { signUpWithGoogle, signinWithEmail, signupWithEmail } = useAuth();
   const [animatedTab, setAnimatedTab] = useState<number>(1);
+  const [loading, setLoading] = useState<{
+    email: boolean;
+    google: boolean;
+    apple: boolean;
+  }>({
+    email: false,
+    google: false,
+    apple: false,
+  });
 
   const handleContinue = async () => {
+    setLoading({
+      ...loading,
+      email: true,
+    });
     if (authType === "Sign up") {
       await signupWithEmail(email, password);
     } else {
       await signinWithEmail(email, password);
     }
+    setLoading({
+      ...loading,
+      email: false,
+    });
   };
 
   const handleGoogleAuth = async () => {
+    setLoading({
+      ...loading,
+      google: true,
+    });
     const result = await signUpWithGoogle();
     if (result) {
       message.success("Successfully signed with Google");
@@ -39,6 +60,10 @@ const SignupCard = ({ setCurrentTab }: Props) => {
     } else {
       message.error("Failed to sign with Google");
     }
+    setLoading({
+      ...loading,
+      google: false,
+    });
   };
 
   useEffect(() => {
@@ -50,7 +75,7 @@ const SignupCard = ({ setCurrentTab }: Props) => {
 
   return (
     <Skeleton loading={animatedTab === 1} active className="w-1/2">
-      <div className="rounded-2xl bg-[#141414] p-5 px-7 text-white md:w-[47%]">
+      <div className="w-[80%] rounded-2xl bg-[#141414] p-5 px-7 text-white md:w-[70%] xl:w-[47%]">
         <Form layout="vertical" className="space-y-4" onFinish={handleContinue}>
           <Image
             src={"/logo/freeflow.png"}
@@ -93,18 +118,33 @@ const SignupCard = ({ setCurrentTab }: Props) => {
             </Typography.Link>
           </div>
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              loading={loading.email}
+            >
               {authType}
             </Button>
           </Form.Item>
           <Divider>Or</Divider>
           <Form.Item>
-            <Button icon={<GoogleOutlined />} block onClick={handleGoogleAuth}>
+            <Button
+              icon={<GoogleOutlined />}
+              block
+              onClick={handleGoogleAuth}
+              loading={loading.google}
+            >
               Continue with Google
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button disabled icon={<AppleFilled />} block>
+            <Button
+              disabled
+              icon={<AppleFilled />}
+              block
+              loading={loading.apple}
+            >
               Continue with Apple
             </Button>
           </Form.Item>
