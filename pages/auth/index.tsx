@@ -11,6 +11,11 @@ import ForgotPasswordCard from "@/components/AuthComponents/ForgotPasswordCard";
 import WorkspaceCard from "@/components/AuthComponents/WorkspaceCard";
 import FFPage from "@/components/FFComponents/FFPage";
 
+import Frame1 from "../../public/Login/Frame1.png";
+import Frame2 from "../../public/Login/Frame2.png";
+import Frame3 from "../../public/Login/Frame3.png";
+import Frame4 from "../../public/Login/Frame4.png";
+
 const Signup = () => {
   const [currentTab, setCurrentTab] = useState<number>(0);
   const [animatedTab, setAnimatedTab] = useState<number>(1);
@@ -21,7 +26,6 @@ const Signup = () => {
   const { user } = useUserContext();
 
   useEffect(() => {
-    console.log("Waiting");
     if (authUser) {
       if (user)
         if (!user.name) setCurrentTab(1);
@@ -30,7 +34,6 @@ const Signup = () => {
     } else {
       setCurrentTab(0);
     }
-    console.log("success");
   }, [authUser, user]);
 
   useEffect(() => {
@@ -94,7 +97,15 @@ const Signup = () => {
             </div>
             <div className="hidden w-full items-end justify-end lg:flex">
               <Image
-                src={`/login/Frame${currentTab + 1}.png`}
+                src={
+                  currentTab === 0
+                    ? Frame1
+                    : currentTab === 1
+                    ? Frame2
+                    : currentTab === 2
+                    ? Frame3
+                    : Frame4
+                }
                 alt={"Login image"}
                 width={1000}
                 height={1000}
