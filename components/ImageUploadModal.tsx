@@ -81,7 +81,8 @@ const ImageUploadModal = ({
         currentVersion: 1,
       };
       await setDoc(docRef, data);
-      const imagePath = `reviewImages/${authUser?.uid}/${
+      const workspaceId = localStorage.getItem("currentWorkspaceId");
+      const imagePath = `designs/${workspaceId}/${
         docRef.id
       }/versions/${imageName}_${Date.now()}`;
       try {
