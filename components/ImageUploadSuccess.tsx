@@ -63,6 +63,7 @@ const ImageUploadSuccess: React.FC<Props> = ({
           color="purple"
           size="large"
           type="primary"
+          shape="round"
           className="mt-2 w-full"
           onClick={() => {
             setUploadingState("not-started"), clearFile();

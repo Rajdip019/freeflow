@@ -16,11 +16,10 @@ import Linkify from "react-linkify";
 import { useAuth } from "@/contexts/AuthContext";
 import { FFButton } from "@/theme/themeConfig";
 import { ArrowRightOutlined, LeftOutlined } from "@ant-design/icons";
-import { Divider, Typography, Input, Image } from "antd";
+import { Divider, Typography, Avatar, Spin, Input, Image } from "antd";
 import { randomColorGeneratorFromString } from "@/utils/randomColorGeneratorFromString";
 import { useFeedbackContext } from "@/contexts/FeedbackContext";
 import { useNotification } from "../shared/Notification";
-import Avatar from "react-avatar";
 
 interface Props {
   imageId: string;
@@ -88,7 +87,8 @@ const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
       await addDoc(
         collection(
           db,
-          `reviewImages/${imageId}/threads/${highlightedComment?.id as string
+          `reviewImages/${imageId}/threads/${
+            highlightedComment?.id as string
           }/comments`
         ),
         {
@@ -120,8 +120,8 @@ const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
   return (
     <div className=" flex h-[91vh] flex-col justify-between">
       {contextHolder}
-      <div className="pl-1.5">
-        <div className=" bg-sec sticky -top-[0.3rem] flex w-full items-center py-2 text-lg font-semibold md:pl-4">
+      <div>
+        <div className=" sticky top-0 flex w-full items-center py-2 pl-4 text-lg  font-semibold">
           <FFButton
             size="small"
             onClick={() => {
@@ -140,16 +140,20 @@ const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
           </Typography.Text>
         </div>
         <Divider className="my-2" />
-        <div className="flex md:pl-4">
+        <div className="flex pl-4">
           <div className="py-2">
             <div className=" flex items-center">
               <Avatar
-                name={highlightedComment?.name[0]}
-                alt={highlightedComment?.name[0]}
-                size="30"
-                round={true}
-                className="relative mr-2"
-              />
+                size="small"
+                className="mr-2"
+                style={{
+                  backgroundColor: randomColorGeneratorFromString(
+                    highlightedComment?.name as string
+                  ).color,
+                }}
+              >
+                {highlightedComment?.name[0]}
+              </Avatar>
               <span className=" font-sec ">{highlightedComment?.name}</span>
               <Moment
                 fromNow
@@ -186,12 +190,16 @@ const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
                         <div className="p-2">
                           <div className=" mb-1 flex items-center">
                             <Avatar
-                              name={comment.name[0]}
-                              alt={comment.name[0]}
-                              size="30"
-                              round={true}
-                              className="relative mr-2"
-                            />
+                              size="small"
+                              className="mr-2"
+                              style={{
+                                backgroundColor: randomColorGeneratorFromString(
+                                  comment.name
+                                ).color,
+                              }}
+                            >
+                              {comment.name[0]}
+                            </Avatar>
                             <Typography.Text strong className=" font-sec">
                               {comment.name}
                             </Typography.Text>
@@ -218,7 +226,7 @@ const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
               <div className="mt-20 flex flex-col justify-center">
                 <div className="p-4 text-center">
                   <Image
-                    src="/feedbackDrawer/empty-state-replies.png"
+                    src="/empty-state-replies.png"
                     alt=""
                     preview={false}
                   />

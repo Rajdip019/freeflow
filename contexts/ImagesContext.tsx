@@ -34,6 +34,7 @@ interface IDefaultValues {
   storage: number;
   getImages: () => any;
   deleteImage: (image: IReviewImageData) => any;
+  getPassword: (image: IReviewImageData) => any;
 }
 
 const defaultValues: IDefaultValues = {
@@ -42,6 +43,7 @@ const defaultValues: IDefaultValues = {
   storage: 0,
   getImages: () => {},
   deleteImage: () => {},
+  getPassword: () => {},
 };
 
 const imagesContext = createContext(defaultValues);
@@ -106,18 +108,46 @@ export const ImageContextProvider = ({ children }: Props) => {
       isClosable: true,
       position: "bottom-right",
     });
-    if (user && router.pathname !== "/") {
-      router.push("/");
-    } else if (router.pathname === "/") {
+    if (user && router.pathname !== "/design") {
+      router.push("/design");
+    } else if (router.pathname === "/design") {
       console.log("🚀 > deleteImage > router.pathname", router.pathname);
     } else {
       router.push("/");
     }
   };
 
+  const getPassword = async (image: IReviewImageData) => {
+    let imagePassword: any;
+    if (image.isPrivate) {
+      const passDocRef = doc(
+        db,
+        "reviewImages",
+        image.id,
+        "private",
+        "password"
+      );
+      const passDocSnap = await getDoc(passDocRef);
+      if (passDocSnap.exists()) {
+        imagePassword = await passDocSnap.data().password;
+      }
+    }
+    const newState = images.map((obj) => {
+      // 👇️ if id equals 2, update country property
+      if (obj.id === image.id) {
+        return { ...obj, private: { password: imagePassword } };
+      }
+      // 👇️ otherwise return the object as is
+      return obj;
+    });
+    setImages(newState);
+  };
+
   useEffect(() => {
     getImages();
   }, [authUser]);
+
+  console.log("🚀 > images:", images);
 
   const value = {
     images,
@@ -125,6 +155,7 @@ export const ImageContextProvider = ({ children }: Props) => {
     storage,
     getImages,
     deleteImage,
+    getPassword,
   };
 
   return (
