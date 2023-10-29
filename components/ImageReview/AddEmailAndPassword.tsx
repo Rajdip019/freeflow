@@ -27,7 +27,7 @@ const AddEmailAndPassword: React.FC<Props> = ({
     if (!isInputValid) {
       setErrorMessage("Please enter a valid email.");
       return;
-    }else{
+    } else {
       setUname(emailInput);
       setIsUnameValid(true);
     }
@@ -39,16 +39,18 @@ const AddEmailAndPassword: React.FC<Props> = ({
 
   return (
     <div className="flex h-screen items-center justify-center bg-black ">
-      <div className="w-96 rounded-2xl p-8 bg-sec ">
-          <Image src="/freeflow.png" width={150} preview={false} />
+      <div className="bg-sec w-96 rounded-2xl p-8 ">
+        <Image src="/logo/freeflow.png" width={150} preview={false} />
         <div className="mb-6 mt-5">
-          <Typography.Title level={4}> You are invited to review <span className=" text-p">{imageData?.imageName}</span> </Typography.Title>
+          <Typography.Title level={4}>
+            {" "}
+            You are invited to review{" "}
+            <span className=" text-p">{imageData?.imageName}</span>{" "}
+          </Typography.Title>
         </div>
         <div className="mt-10">
           <div className="mb-2 flex items-center gap-1">
-            <Typography.Text>
-              Enter your email to continue
-            </Typography.Text>
+            <Typography.Text>Enter your email to continue</Typography.Text>
           </div>
           <Input
             value={emailInput}
@@ -66,8 +68,10 @@ const AddEmailAndPassword: React.FC<Props> = ({
           </div>
         )}
         <div className="mt-5 flex justify-end gap-2">
-        <FFButton
-            onClick={() => {router.push("/");}}
+          <FFButton
+            onClick={() => {
+              router.push("/");
+            }}
           >
             Cancel
           </FFButton>

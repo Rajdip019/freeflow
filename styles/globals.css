@@ -115,3 +115,12 @@ body {
   background: rgb(162, 0, 255);
   border-radius: 10px;
 }
+
+.small-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  background: #141414;
+}
+.small-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(245, 244, 246, 0.203);
+  border-radius: 10px;
+}

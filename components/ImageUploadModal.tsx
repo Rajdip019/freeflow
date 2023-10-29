@@ -1,6 +1,6 @@
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import { storage, db } from "@/lib/firebaseConfig";
-import { collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, setDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import React, { useEffect, useState } from "react";
 import ImageUploaderDropzone from "./ImageDropZones/ImageUploaderDropzone";
@@ -8,9 +8,8 @@ import { useUserContext } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useImageContext } from "@/contexts/ImagesContext";
 import ImageUploadSuccess from "./ImageUploadSuccess";
-import { newReviewImageEvent } from "@/lib/events";
 import { Button, Input, Modal, Progress, Typography, message } from "antd";
-import { CloseOutlined, UploadOutlined } from "@ant-design/icons";
+import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 const { TextArea } = Input;
 
 interface Props {
@@ -28,7 +27,6 @@ const ImageUploadModal = ({
 }: Props) => {
   const [imageName, setImageName] = useState<string>();
   const [description, setDescription] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
   const [uploadedFile, setUploadedFile] = useState<File | null>();
   const [image, setImage] = useState<string | null>(null);
   const [uploadingState, setUploadingState] = useState<
@@ -59,20 +57,37 @@ const ImageUploadModal = ({
     setImage("");
     setUploadedFile(null);
     setImageName("");
-    setPassword("");
   };
 
   const [uploadPercentage, setUploadPercentage] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(visible);
-  const uploadFile = () => {
+  const uploadFile = async () => {
     if (fileSize < 75) {
       if (user?.storage) {
         if (storageUsed <= user.storage) {
           setUploadingState("uploading");
+          const docRef = doc(collection(db, "reviewImages"));
+          const data: Partial<IReviewImageData> = {
+            id: docRef.id,
+            uploadedBy: user?.name as string,
+            uploadedByEmail: authUser?.email ?? "",
+            uploadedById: authUser?.uid,
+            timeStamp: Date.now(),
+            imageName: imageName as string,
+            imageDescription: description,
+            views: 0,
+            threads: 0,
+            lastUpdated: Date.now(),
+            newUpdate: "Uploaded",
+            isPrivate: false,
+            currentVersion: 1,
+          };
+          await setDoc(docRef, data)
+          const imagePath = `reviewImages/${authUser?.uid}/${docRef.id}/versions/${imageName}_${Date.now()}`;
           try {
             const storageRef = ref(
               storage,
-              `reviewImages/${authUser?.uid}/public/${imageName}_${Date.now()}`
+              imagePath
             );
             let bytes: number = 0;
             const uploadTask = uploadBytesResumable(
@@ -95,36 +110,15 @@ const ImageUploadModal = ({
                   uploadTask.snapshot.ref
                 );
                 console.log("File available at", downloadURL);
-
-                const docRef = doc(collection(db, "reviewImages"));
-
-                const data: IReviewImageData = {
-                  id: docRef.id,
+                const data: Partial<IReviewImageData> = {
                   imageURL: [downloadURL],
-                  uploadedBy: user?.name as string,
-                  uploadedByEmail: authUser?.email ?? "",
-                  uploadedById: authUser?.uid,
-                  timeStamp: Date.now(),
-                  imageName: imageName as string,
-                  imageDescription: description,
                   size: bytes / (1024 * 1024),
-                  views: 0,
-                  threads: 0,
                   lastUpdated: Date.now(),
                   newUpdate: "Uploaded",
-                  isPrivate: false,
-                  currentVersion: 1,
+                  imagePath: [imagePath]
                 };
-
-                await setDoc(docRef, data);
-                await setDoc(
-                  doc(db, "reviewImages", docRef.id, "private/password"),
-                  {
-                    password,
-                  }
-                );
+                await updateDoc(docRef, data);
                 message.success("Image uploaded successfully");
-                newReviewImageEvent(data);
                 setUploadingState("success");
                 setUploadedImageId(docRef.id);
               }
@@ -151,8 +145,9 @@ const ImageUploadModal = ({
             clearFile();
             setUploadingState("not-started");
           }}
+          type="primary"
           size="large"
-          icon={<UploadOutlined />}
+          icon={<PlusOutlined />}
         >
           Upload
         </Button>
@@ -240,7 +235,6 @@ const ImageUploadModal = ({
                   <Button
                     disabled={!!!image || !!!imageName}
                     type="primary"
-                    shape="round"
                     className="mt-6 w-full"
                     size="large"
                     onClick={uploadFile}
