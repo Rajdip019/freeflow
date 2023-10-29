@@ -1,6 +1,13 @@
 /* eslint-disable no-undef */
 import { db } from "@/lib/firebaseConfig";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import {
   createContext,
   useContext,
@@ -10,8 +17,9 @@ import {
   Dispatch,
   SetStateAction,
 } from "react";
-import { IUser } from "../interfaces/User";
+import { IUser, IWorkspaceInUser } from "../interfaces/User";
 import { useAuth } from "./AuthContext";
+import { message } from "antd";
 
 interface Props {
   children: JSX.Element[] | JSX.Element;
@@ -23,6 +31,8 @@ interface IDefaultValues {
   createUser: (uid: string, data: Partial<IUser>) => any;
   getUserData: () => any;
   updateUser: (data: Partial<IUser>) => any;
+  addWorkspaceInUser: (userId: string, workspaceData: IWorkspaceInUser) => any;
+  fetchWorkspaceInUser: (userId: string) => any;
 }
 
 const defaultValues: IDefaultValues = {
@@ -31,6 +41,8 @@ const defaultValues: IDefaultValues = {
   createUser: () => {},
   getUserData: () => {},
   updateUser: () => {},
+  addWorkspaceInUser: () => {},
+  fetchWorkspaceInUser: () => {},
 };
 
 const userContext = createContext(defaultValues);
@@ -46,6 +58,38 @@ export const UserContextProvider = ({ children }: Props) => {
   const createUser = async (uid: string, data: Partial<IUser>) => {
     await setDoc(doc(db, "users", uid), data);
     setUser(data);
+  };
+
+  const addWorkspaceInUser = async (
+    userId: string,
+    workspaceData: IWorkspaceInUser
+  ) => {
+    try {
+      const UserWorkRef = doc(
+        db,
+        "users",
+        userId,
+        "workspaces",
+        workspaceData.id
+      );
+      await setDoc(UserWorkRef, workspaceData);
+    } catch (error) {
+      message.error("Failed to add workspace in user");
+    }
+  };
+
+  const fetchWorkspaceInUser = async (userId: string) => {
+    try {
+      const UserWorkRef = collection(db, "users", userId, "workspaces");
+      const UserWorkSnap = await getDocs(UserWorkRef);
+      let data: IWorkspaceInUser[] = [];
+      UserWorkSnap.forEach((doc) => {
+        data.push(doc.data() as IWorkspaceInUser);
+      });
+      return data;
+    } catch (error) {
+      message.error("Failed to fetch workspace in user");
+    }
   };
 
   const getUserData = useCallback(async () => {
@@ -86,6 +130,8 @@ export const UserContextProvider = ({ children }: Props) => {
     createUser,
     getUserData,
     updateUser,
+    addWorkspaceInUser,
+    fetchWorkspaceInUser,
   };
 
   return <userContext.Provider value={value}>{children}</userContext.Provider>;
