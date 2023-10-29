@@ -64,11 +64,28 @@ const ImageUploadModal = ({
   const uploadFile = async () => {
     if (fileSize < 75) {
       setUploadingState("uploading");
+      const docRef = doc(collection(db, "reviewImages"));
+      const data: Partial<IReviewImageData> = {
+        id: docRef.id,
+        uploadedBy: user?.name as string,
+        uploadedByEmail: authUser?.email ?? "",
+        uploadedById: authUser?.uid,
+        timeStamp: Date.now(),
+        imageName: imageName as string,
+        imageDescription: description,
+        views: 0,
+        threads: 0,
+        lastUpdated: Date.now(),
+        newUpdate: "Uploaded",
+        isPrivate: false,
+        currentVersion: 1,
+      };
+      await setDoc(docRef, data);
+      const imagePath = `reviewImages/${authUser?.uid}/${
+        docRef.id
+      }/versions/${imageName}_${Date.now()}`;
       try {
-        const storageRef = ref(
-          storage,
-          `reviewImages/${authUser?.uid}/public/${imageName}_${Date.now()}`
-        );
+        const storageRef = ref(storage, imagePath);
         let bytes: number = 0;
         const uploadTask = uploadBytesResumable(
           storageRef,
@@ -88,32 +105,15 @@ const ImageUploadModal = ({
           async () => {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
             console.log("File available at", downloadURL);
-
-            const docRef = doc(collection(db, "reviewImages"));
-
-            const data: IReviewImageData = {
-              id: docRef.id,
+            const data: Partial<IReviewImageData> = {
               imageURL: [downloadURL],
-              uploadedBy: user?.name as string,
-              uploadedByEmail: authUser?.email ?? "",
-              uploadedById: authUser?.uid,
-              timeStamp: Date.now(),
-              imageName: imageName as string,
-              imageDescription: description,
               size: bytes / (1024 * 1024),
-              views: 0,
-              threads: 0,
               lastUpdated: Date.now(),
               newUpdate: "Uploaded",
-              isPrivate: false,
-              currentVersion: 1,
-              imagePath: [],
+              imagePath: [imagePath],
             };
-
-            await setDoc(docRef, data);
-
+            await updateDoc(docRef, data);
             message.success("Image uploaded successfully");
-
             setUploadingState("success");
             setUploadedImageId(docRef.id);
           }
