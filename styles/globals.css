@@ -124,3 +124,29 @@ body {
   background: rgba(245, 244, 246, 0.203);
   border-radius: 10px;
 }
+
+.animate-slide-right {
+  animation: slide-right 1s;
+}
+
+@keyframes slide-right {
+  0% {
+    transform: translate(-20%);
+  }
+  100% {
+    transform: translate(0%);
+  }
+}
+
+.animate-slide-left {
+  animation: slide-left 1s;
+}
+
+@keyframes slide-left {
+  0% {
+    transform: translateX(20%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}

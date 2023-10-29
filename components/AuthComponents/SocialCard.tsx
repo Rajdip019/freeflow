@@ -1,13 +1,15 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserContext } from "@/contexts/UserContext";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import { IUser } from "@/interfaces/User";
+import { IWorkspace } from "@/interfaces/Workspace";
 import {
   LinkedinFilled,
   RocketOutlined,
   TwitterOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Button, Divider, Form, Input, Typography, message } from "antd";
+import { Button, Divider, Form, Input, Typography } from "antd";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 const { Text, Title } = Typography;
@@ -16,25 +18,57 @@ type Props = {
 };
 
 const SocialCard = ({ setCurrentTab }: Props) => {
+  const { authUser } = useAuth();
   const [linkedIn, setLinkedIn] = useState<string>("");
   const [twitter, setTwitter] = useState<string>("");
-  const [name, setName] = useState<string>("");
-  const { updateUser } = useUserContext();
-  const router = useRouter();
+  const [name, setName] = useState<{ firstName: string; lastName: string }>({
+    firstName: authUser?.displayName?.split(" ")[0] || "",
+    lastName: authUser?.displayName?.split(" ")[1] || "",
+  });
+  const { createUser } = useUserContext();
+  const { createWorkspace } = useWorkspaceContext();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleContinue = async () => {
-    const data: Partial<IUser> = {
-      name,
-      linkedIn,
-      twitter,
-    };
-    await updateUser(data);
-    message.success(`Welcome ${name} to Freeflow!`);
-    router.push("/tasks");
+    if (authUser) {
+      setLoading(true);
+      const workspaceData: IWorkspace = {
+        name: name + "'s workspace",
+        description: "",
+        avatarUrl: "",
+        collaborators: [
+          {
+            id: authUser?.uid,
+            role: "owner",
+          },
+        ],
+        subscription: "free",
+        storageUsed: 0,
+        createdAt: Date.now(),
+        isCompleted: false,
+      };
+      const id = await createWorkspace(workspaceData);
+      const data: IUser = {
+        name: name.firstName + " " + name.lastName,
+        linkedIn,
+        twitter,
+        workspaces: [
+          {
+            id: id,
+            role: "owner",
+          },
+        ],
+        email: authUser.email as string,
+        createTime: Date.now(),
+      };
+      await createUser(authUser.uid, data);
+      setCurrentTab(3);
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="rounded-2xl bg-[#141414] p-5 px-7 text-white md:w-[50%]">
+    <div className="w-[80%] rounded-2xl bg-[#141414] p-5 px-7 text-white md:w-[70%] xl:w-[47%]">
       <Form
         layout="vertical"
         className="flex flex-col space-y-5"
@@ -60,15 +94,48 @@ const SocialCard = ({ setCurrentTab }: Props) => {
         <Divider />
         {/* Name */}
         <Form.Item
-          label="Name"
-          name="name"
-          rules={[{ required: true, message: "Please input your name!" }]}
+          label="First Name"
+          name="firstName"
+          rules={[
+            {
+              required: name.firstName === "",
+              message: "Please input your first name!",
+            },
+          ]}
         >
           <Input
-            placeholder="John Doe..."
+            placeholder="John"
             prefix={<UserOutlined />}
+            value={name.firstName}
+            defaultValue={name.firstName}
             onChange={(e) => {
-              setName(e.target.value);
+              setName({
+                ...name,
+                firstName: e.target.value,
+              });
+            }}
+          />
+        </Form.Item>
+        <Form.Item
+          label={"Last Name"}
+          name={"Last Name"}
+          rules={[
+            {
+              required: name.lastName === "",
+              message: "Last Name is required!",
+            },
+          ]}
+        >
+          <Input
+            placeholder="Deo"
+            prefix={<UserOutlined />}
+            value={name.lastName}
+            defaultValue={name.lastName}
+            onChange={(e) => {
+              setName({
+                ...name,
+                lastName: e.target.value,
+              });
             }}
           />
         </Form.Item>
@@ -93,7 +160,12 @@ const SocialCard = ({ setCurrentTab }: Props) => {
           />
         </Form.Item>
 
-        <Button type="primary" className="w-full" htmlType="submit">
+        <Button
+          type="primary"
+          className="w-full"
+          htmlType="submit"
+          loading={loading}
+        >
           Continue
         </Button>
       </Form>

@@ -45,6 +45,7 @@ export const UserContextProvider = ({ children }: Props) => {
 
   const createUser = async (uid: string, data: Partial<IUser>) => {
     await setDoc(doc(db, "users", uid), data);
+    setUser(data);
   };
 
   const getUserData = useCallback(async () => {
@@ -55,19 +56,6 @@ export const UserContextProvider = ({ children }: Props) => {
         const docSnap = await getDoc(userRef);
         if (docSnap.exists()) {
           setUser(docSnap.data());
-        } else {
-          await createUser(authUser.uid, {
-            email: authUser.email as string,
-            imageURL: authUser.photoURL as string,
-            createTime: Date.now(),
-            storage: 1024,
-          });
-          setUser({
-            email: authUser.email as string,
-            imageURL: authUser.photoURL as string,
-            createTime: Date.now(),
-            storage: 1024,
-          });
         }
       }
     } catch (e) {
