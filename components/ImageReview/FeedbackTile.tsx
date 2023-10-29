@@ -2,23 +2,20 @@ import { IReview } from "@/interfaces/Thread";
 import React from "react";
 import Moment from "react-moment";
 import Linkify from "react-linkify";
-import { Divider, Typography } from "antd";
+import { Avatar, Divider, Typography } from "antd";
+import { randomColorGeneratorFromString } from "@/utils/randomColorGeneratorFromString";
 import { FFButton } from "@/theme/themeConfig";
 import { useFeedbackContext } from "@/contexts/FeedbackContext";
-import Avatar from "react-avatar";
 interface Props {
   thread: IReview;
-  onClose?: () => void;
-  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const FeedbackTile: React.FC<Props> = ({ thread, onClose, setOpen }) => {
+const FeedbackTile: React.FC<Props> = ({ thread }) => {
   const {
     setHighlightedComment,
     highlightedComment,
     setIsFocusedThread,
     version,
-    isFocusedThread,
   } = useFeedbackContext();
   const componentDecorator = (href: string, text: string, key: any) => (
     <Typography.Link
@@ -35,22 +32,23 @@ const FeedbackTile: React.FC<Props> = ({ thread, onClose, setOpen }) => {
     <>
       {version === thread.version && (
         <div
-          onClickCapture={() => {
+          onClick={() => {
             setHighlightedComment(thread);
-            onClose && !isFocusedThread && onClose();
           }}
-          className={`cursor-pointer transition-all ${highlightedComment?.id === thread.id ? "bg-black" : ""
-            }`}
+          className={`cursor-pointer transition-all ${
+            highlightedComment?.id === thread.id ? "bg-black" : ""
+          }`}
         >
           <div className="py-2 pl-2.5">
             <div className=" flex items-center">
               <Avatar
-                name={thread.name[0]}
-                alt={thread.name[0]}
-                size="30"
-                round={true}
                 className="mr-2"
+                style={{
+                  backgroundColor: randomColorGeneratorFromString(thread.name)
+                    .color,
+                }}
               >
+                {thread.name[0]}
               </Avatar>
               <Typography.Text strong>{thread.name}</Typography.Text>
               <Moment fromNow className=" ml-2 text-sm text-gray-400">
@@ -68,7 +66,6 @@ const FeedbackTile: React.FC<Props> = ({ thread, onClose, setOpen }) => {
               <Typography.Text
                 className=" text-sm"
                 onClick={() => {
-                  setOpen && setOpen(true);
                   setHighlightedComment(thread);
                   setIsFocusedThread(true);
                 }}

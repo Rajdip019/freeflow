@@ -120,10 +120,10 @@ const FeedbackNavbar = () => {
   return (
     <div className="bg-sec flex h-16 items-center justify-between px-5">
       <div
-        className="hidden cursor-pointer gap-2 md:flex"
+        className="flex cursor-pointer gap-2"
         onClick={() => router.push("/")}
       >
-        <img src="/logo/freeflow.png" alt="" className=" w-32" />
+        <img src="/freeflow.png" alt="" className=" w-32" />
       </div>
       <Typography.Text className=" flex items-center justify-center gap-2 font-semibold">
         {isCompareView ? "" : imageData?.imageName}{" "}

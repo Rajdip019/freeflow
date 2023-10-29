@@ -9,16 +9,18 @@ import { Tooltip, Input, message, Modal, Typography } from "antd";
 
 interface Props {
   image: IReviewImageData;
+  isText?: boolean;
+  isIcon?: boolean;
   isTooltip?: boolean;
   isMenuItem?: boolean;
-  type?: "text" | "icon" | "both";
 }
 
 const SendInvitesIconModal: React.FC<Props> = ({
   image,
+  isText = false,
   isTooltip = true,
+  isIcon = true,
   isMenuItem = false,
-  type = "icon",
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -53,8 +55,8 @@ const SendInvitesIconModal: React.FC<Props> = ({
               onClick={showModal}
               className=" flex w-full border-none shadow-none"
             >
-              {type === "text" && "Send Invites"}
-              {type === "icon" && <SendOutlined />}
+              {isText && "Send Email Invites"}
+              {isIcon && <SendOutlined />}
             </FFButton>
           </Tooltip>
         ) : (
@@ -62,14 +64,14 @@ const SendInvitesIconModal: React.FC<Props> = ({
             onClick={showModal}
             className=" flex w-full border-none shadow-none"
           >
-            {type === "text" && "Send Invites"}
-            {type === "icon" && <SendOutlined />}
+            {isText && "Send Email Invites"}
+            {isIcon && <SendOutlined />}
           </FFButton>
         )
       ) : (
         <Typography.Text onClick={showModal} className="gap-2">
-          <SendOutlined className="mr-2" />
-          {"Send Invites"}
+          <SendOutlined size={10} className="mr-2" />
+          {"Send Email Invites"}
         </Typography.Text>
       )}
 

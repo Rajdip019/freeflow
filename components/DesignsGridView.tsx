@@ -35,7 +35,8 @@ const DesignsGridView: React.FC<Props> = ({ image }) => {
       label: (
         <SendInvitesIconModal
           image={image}
-          type="text"
+          isText={true}
+          isIcon={false}
           isTooltip={false}
           isMenuItem={true}
         />
@@ -48,25 +49,22 @@ const DesignsGridView: React.FC<Props> = ({ image }) => {
   ];
   return (
     <div className="relative h-64 w-64 rounded-xl border border-[#181818]">
-      {(image.currentVersion && image.imageURL) ? (
-          <Image
-            src={
-              image.currentVersion
-                ? image.imageURL[image.currentVersion - 1]
-                : (image.imageURL as any)
-            }
-            alt={image.imageName}
-            className="aspect-square w-full rounded-xl object-cover"
-            loading="lazy"
-            preview={true}
-          />
-        ) : (
-          <div className=" text-white">Waiting for image...</div>
-        )}
+      <Image
+        src={
+          image.currentVersion
+            ? image.imageURL[image.currentVersion - 1]
+            : (image.imageURL as any)
+        }
+        alt={image.imageName}
+        className="aspect-square w-full rounded-xl object-cover"
+        loading="lazy"
+        preview={true}
+      />
       <div className="absolute left-0 top-0 flex h-64 w-64 flex-col justify-between p-2 text-white opacity-0 transition-all hover:bg-[#0000008d] hover:opacity-100">
         <div className="flex items-end justify-end">
           <Tag color="red">{image.newUpdate}</Tag>
         </div>
+
         <div className="flex items-center justify-between">
           <Link
             target="_blank"

@@ -19,7 +19,7 @@ import { ArrowRightOutlined } from "@ant-design/icons";
 interface ReviewCanvasProps {
   imageSrc: string;
   imageId: string;
-  open?: boolean;
+  open: boolean;
 }
 
 const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
@@ -145,11 +145,7 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
           cropEnableImageSelection={false}
         ></PinturaEditor>
       </div>
-      <div
-        className={`flex w-11/12 ${
-          open ? "md:w-8/12" : "md:w-6/12"
-        } items-center gap-3`}
-      >
+      <div className={`flex ${open ? "w-8/12" : "w-6/12"} items-center gap-3`}>
         <Input
           value={comment}
           onChange={(e) => {
