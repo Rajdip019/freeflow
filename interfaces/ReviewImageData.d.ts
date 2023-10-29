@@ -15,6 +15,7 @@ export interface IReviewImageData {
   sentEmailInvites?: string[];
   isPrivate: boolean;
   currentVersion: number;
+  imagePath: string[];
   // Nested Firestore documents in /reviewImages/{id}/private
   private?: {
     password?: string;

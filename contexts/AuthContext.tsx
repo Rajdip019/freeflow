@@ -4,19 +4,29 @@ import FirebaseAuth, {
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
 } from "@firebase/auth";
+
+import { sendEmailVerification } from "@firebase/auth";
 import React, { useContext, useEffect } from "react";
-import { Spinner } from "@chakra-ui/react";
+import { Spin, message } from "antd";
 
 export interface IAuthContext {
   authUser: FirebaseAuth.User | null;
   signUpWithGoogle: () => any;
+  signupWithEmail: (email: string, password: string) => any;
+  signinWithEmail: (email: string, password: string) => any;
+  sendEmailVerificationToUser: () => any;
   logout: () => any;
 }
 
 const defaultValues: IAuthContext = {
   authUser: null,
   signUpWithGoogle: () => {},
+  signupWithEmail: () => {},
+  signinWithEmail: () => {},
+  sendEmailVerificationToUser: () => {},
   logout: () => {},
 };
 
@@ -38,21 +48,64 @@ export function AuthContextProvider({ children }: any) {
 
   const signUpWithGoogle = async () => {
     const result = await signInWithPopup(auth, googleAuthProvider);
-
     try {
       const user = result.user;
       if (user) {
         setAuthUser(user);
         return user;
       }
-    } catch (error: any) {
-      console.log(error.message);
+    } catch {
+      message.error("Failed to authenticate with Google");
+    }
+  };
+
+  const signupWithEmail = async (email: string, password: string) => {
+    try {
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = result.user;
+      if (user) {
+        await sendEmailVerificationToUser();
+        setAuthUser(user);
+        return user;
+      }
+    } catch {
+      message.error("Failed to create account: check your email and password");
+    }
+  };
+
+  const signinWithEmail = async (email: string, password: string) => {
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      const user = result.user;
+
+      if (user) {
+        setAuthUser(user);
+        if (user.emailVerified === false) {
+          message.error("Please verify your email");
+        }
+        return user;
+      }
+    } catch {
+      message.error("Failed to authenticate: check your email and password");
+    }
+  };
+
+  const sendEmailVerificationToUser = async () => {
+    try {
+      auth.currentUser && (await sendEmailVerification(auth.currentUser));
+      message.success("Verification email sent successfully");
+    } catch {
+      message.error("Failed to send verification email, Wrong mail");
     }
   };
 
   const logout = async () => {
     await signOut(auth);
-    window.location.href = "/auth/signup";
+    setAuthUser(null);
   };
 
   useEffect(() => {
@@ -65,6 +118,9 @@ export function AuthContextProvider({ children }: any) {
   const value = {
     authUser,
     signUpWithGoogle,
+    signupWithEmail,
+    signinWithEmail,
+    sendEmailVerificationToUser,
     logout,
   };
 
@@ -72,7 +128,7 @@ export function AuthContextProvider({ children }: any) {
     <AuthContext.Provider value={value}>
       {isLoading ? (
         <div className=" flex h-screen items-center justify-center">
-          <Spinner />
+          <Spin />
         </div>
       ) : (
         children

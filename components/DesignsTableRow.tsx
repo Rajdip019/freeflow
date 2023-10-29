@@ -27,24 +27,34 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
   });
   return (
     <>
-      <Table dataSource={images} scroll={{ x: 300 }} pagination={false}>
+      <Table dataSource={images} scroll={{ x: 300 }} pagination={false} bordered={false}>
         <Column
           title="Design"
           dataIndex="imageName"
           key="imageName"
           width={50}
           render={(text, record: IReviewImageData) => (
-            <Image
-              src={
-                record.currentVersion
-                  ? record.imageURL[record.currentVersion - 1]
-                  : (record.imageURL as any)
-              }
-              width={50}
-              height={50}
-              preview={true}
-              className="rounded"
-            />
+            <>
+              {(record.currentVersion && record.imageURL) ? (
+                <Image
+                  src={
+                    record.currentVersion
+                      ? record.imageURL[record.currentVersion - 1]
+                      : (record.imageURL as any)
+                  }
+                  width={50}
+                  height={50}
+                  preview={true}
+                  className="rounded"
+                />
+              ) : (
+                <div>
+                  <Typography.Text className="text-white text-center text-sm">
+                    Waiting for image...
+                  </Typography.Text>
+                </div>
+              )}
+            </>
           )}
         />
         <Column
@@ -54,7 +64,7 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
             </Typography.Text>
           )}
           className="cursor-pointer"
-          onCell={(record, rowIndex) => {
+          onCell={(record) => {
             return {
               onClick: (event) => {
                 window.open(`/review-image/${record.id}`, "_blank");
@@ -71,7 +81,7 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
             <Tag color="green">{record.newUpdate}</Tag>
           )}
           className="cursor-pointer"
-          onCell={(record, rowIndex) => {
+          onCell={(record) => {
             return {
               onClick: (event) => {
                 window.open(`/review-image/${record.id}`, "_blank");
@@ -93,7 +103,7 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
             </Typography.Text>
           )}
           className="cursor-pointer"
-          onCell={(record, rowIndex) => {
+          onCell={(record) => {
             return {
               onClick: (event) => {
                 window.open(`/review-image/${record.id}`, "_blank");
@@ -115,9 +125,9 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
             </Typography.Text>
           )}
           className="cursor-pointer"
-          onCell={(record, rowIndex) => {
+          onCell={(record) => {
             return {
-              onClick: (event) => {
+              onClick: () => {
                 window.open(`/review-image/${record.id}`, "_blank");
               },
             };
@@ -173,8 +183,6 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
                       label: (
                         <SendInvitesIconModal
                           image={record}
-                          isText={true}
-                          isIcon={false}
                           isTooltip={false}
                           isMenuItem={true}
                         />
