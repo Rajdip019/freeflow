@@ -63,7 +63,8 @@ const VersionUploadModal: React.FC<Props> = ({
     if (fileSize < 75) {
       setUploadingState("uploading");
       const docRef = doc(db, "reviewImages", prevImage.id);
-      const imagePath = `reviewImages/${authUser?.uid}/${
+      const workspaceId = localStorage.getItem("currentWorkspaceId");
+      const imagePath = `designs/${workspaceId}/${
         docRef.id
       }/${imageName}_${Date.now()}_v${prevImage.currentVersion + 1}`;
       try {
