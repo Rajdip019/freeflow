@@ -4,4 +4,6 @@ export interface IUser {
   imageURL?: string;
   createTime: number;
   storage: number;
+  linkedIn?: string;
+  twitter?: string;
 }

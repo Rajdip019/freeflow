@@ -5,18 +5,45 @@ import { message, Tooltip } from "antd";
 interface Props {
   align?: "right" | "left";
   value: string;
+  type?: "text" | "icon" | "both";
 }
 
-const Copy: React.FC<Props> = ({ align, value }) => {
+const Copy: React.FC<Props> = ({ align, value, type = "icon" }) => {
   return (
-    <Tooltip title={"Copy to clipboard"}>
-      <LinkOutlined
-        onClick={() => {
-          copy(value);
-          message.info("Copied to clipboard");
-        }}
-      />
-    </Tooltip>
+    <>
+      {type === "icon" && (
+        <Tooltip title={"Copy to clipboard"}>
+          <LinkOutlined
+            onClick={() => {
+              copy(value);
+              message.info("Copied to clipboard");
+            }}
+          />
+        </Tooltip>
+      )}
+      {type === "text" && (
+        <div
+          onClick={() => {
+            copy(value);
+            message.info("Copied to clipboard");
+          }}
+        >
+          Copy Link
+        </div>
+      )}
+      {type === "both" && (
+        <div
+          onClick={() => {
+            copy(value);
+            message.info("Copied to clipboard");
+          }}
+          className="flex gap-2"
+        >
+          <LinkOutlined />
+          Copy Link
+        </div>
+      )}
+    </>
   );
 };
 

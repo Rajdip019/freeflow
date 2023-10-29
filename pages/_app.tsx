@@ -10,6 +10,9 @@ import Script from "next/script";
 import { IS_PRODUCTION } from "@/utils/constants";
 import { ConfigProvider } from "antd";
 import customTheme from "@/theme/themeConfig";
+import { TaskContextProvider } from "@/contexts/TaskContext";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -51,18 +54,22 @@ function MyApp({ Component, pageProps }: AppProps) {
           </Script>
         </>
       )}
-      <ChakraProvider>
-        <ConfigProvider theme={customTheme}>
-          <AuthContextProvider>
-            <UserContextProvider>
-              <ImageContextProvider>
-                <Component {...pageProps} />
-                <Analytics />
-              </ImageContextProvider>
-            </UserContextProvider>
-          </AuthContextProvider>
-        </ConfigProvider>
-      </ChakraProvider>
+      <DndProvider backend={HTML5Backend}>
+        <ChakraProvider>
+          <ConfigProvider theme={customTheme}>
+            <AuthContextProvider>
+              <UserContextProvider>
+                <ImageContextProvider>
+                  <TaskContextProvider>
+                    <Component {...pageProps} />
+                    <Analytics />
+                  </TaskContextProvider>
+                </ImageContextProvider>
+              </UserContextProvider>
+            </AuthContextProvider>
+          </ConfigProvider>
+        </ChakraProvider>
+      </DndProvider>
     </>
   );
 }
