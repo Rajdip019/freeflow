@@ -1,8 +1,8 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserContext } from "@/contexts/UserContext";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
-import { IUser } from "@/interfaces/User";
-import { IWorkspace } from "@/interfaces/Workspace";
+import { IUser, IWorkspaceInUser } from "@/interfaces/User";
+import { IWorkspace, IUserInWorkspace } from "@/interfaces/Workspace";
 import {
   LinkedinFilled,
   RocketOutlined,
@@ -25,43 +25,50 @@ const SocialCard = ({ setCurrentTab }: Props) => {
     firstName: authUser?.displayName?.split(" ")[0] || "",
     lastName: authUser?.displayName?.split(" ")[1] || "",
   });
-  const { createUser } = useUserContext();
-  const { createWorkspace } = useWorkspaceContext();
+  const { createUser, addWorkspaceInUser } = useUserContext();
+  const { createWorkspace, addUserInWorkspace } = useWorkspaceContext();
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleContinue = async () => {
     if (authUser) {
       setLoading(true);
       const workspaceData: IWorkspace = {
-        name: name + "'s workspace",
+        name: name.firstName + " " + name.lastName + "'s workspace",
         description: "",
         avatarUrl: "",
-        collaborators: [
-          {
-            id: authUser?.uid,
-            role: "owner",
-          },
-        ],
         subscription: "free",
         storageUsed: 0,
         createdAt: Date.now(),
         isCompleted: false,
       };
-      const id = await createWorkspace(workspaceData);
       const data: IUser = {
         name: name.firstName + " " + name.lastName,
         linkedIn,
         twitter,
-        workspaces: [
-          {
-            id: id,
-            role: "owner",
-          },
-        ],
         email: authUser.email as string,
         createTime: Date.now(),
       };
+      const id = await createWorkspace(workspaceData);
       await createUser(authUser.uid, data);
+      const collaboratorsData: IUserInWorkspace = {
+        id: authUser?.uid,
+        role: "owner",
+        name: name.firstName + " " + name.lastName,
+        email: authUser.email as string,
+        inviteTime: Date.now(),
+        imageURL: authUser.photoURL as string,
+        status: "Accepted",
+      };
+      const workspaceDataUser: IWorkspaceInUser = {
+        id: id,
+        role: "owner",
+        name: name.firstName + " " + name.lastName + "'s workspace",
+        avatarUrl: "",
+      };
+
+      await addUserInWorkspace(id, collaboratorsData);
+      await addWorkspaceInUser(authUser.uid, workspaceDataUser);
+
       setCurrentTab(3);
       setLoading(false);
     }

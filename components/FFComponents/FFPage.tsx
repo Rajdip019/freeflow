@@ -1,8 +1,9 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserContext } from "@/contexts/UserContext";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
+import { IWorkspaceInUser } from "@/interfaces/User";
 import { IWorkspace } from "@/interfaces/Workspace";
-import { Spin } from "antd";
+import { Spin, Typography } from "antd";
 import { useRouter } from "next/router";
 import React, { ReactElement, useEffect, useState } from "react";
 
@@ -12,32 +13,33 @@ interface Props {
 }
 
 const FFPage: React.FC<Props> = ({ children, isAuthRequired }) => {
-  const { user } = useUserContext();
+  const { user, fetchWorkspaceInUser } = useUserContext();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
   const { authUser } = useAuth();
   const { fetchWorkspace } = useWorkspaceContext();
 
-  const checkWorkspace = async () => {
-    if (user) {
-      const data: IWorkspace =
-        user.workspaces && (await fetchWorkspace(user.workspaces[0].id));
-
-      if (data?.isCompleted === false) router.push("/auth");
-      else router.push("/");
-    }
-  };
-
-  useEffect(() => {
+  const checkPath = async () => {
     setIsLoading(true);
-    console.log(user);
     if (authUser) {
       if (authUser.emailVerified === false) {
         router.push("/auth");
       } else if (user) {
+        const WorkUser: IWorkspaceInUser[] = await fetchWorkspaceInUser(
+          authUser.uid
+        );
         if (!user.name) router.push("/auth");
-        else if (user.workspaces && user.workspaces[0].id) {
-          checkWorkspace();
+        else if (
+          WorkUser &&
+          WorkUser.filter((w) => w.role === "owner") &&
+          WorkUser.filter((w) => w.role === "owner").length &&
+          WorkUser.filter((w) => w.role === "owner")[0].id
+        ) {
+          const data: IWorkspace = await fetchWorkspace(
+            WorkUser.filter((w) => w.role === "owner")[0].id
+          );
+          if (data?.isCompleted === false) router.push("/auth");
+          else router.push("/");
         } else {
           router.push("/");
         }
@@ -50,13 +52,18 @@ const FFPage: React.FC<Props> = ({ children, isAuthRequired }) => {
       }
     }
     setIsLoading(false);
+  };
+
+  useEffect(() => {
+    checkPath();
   }, [user, authUser]);
 
   return (
     <div>
       {isLoading ? (
-        <div className=" flex h-screen items-center justify-center bg-black">
+        <div className="flex h-screen items-center justify-center bg-black">
           <Spin size="large" />
+          <Typography className="ml-3 text-white">Loading...</Typography>
         </div>
       ) : (
         <>{children}</>

@@ -5,10 +5,13 @@ export interface IUser {
   createTime: number;
   linkedIn?: string;
   twitter?: string;
-  workspaces: IUserWorkspace[];
+  // workspaces will be a sub-collection
+  // workspaces?: IWorkspaceInUser[];
 }
 
-export interface IUserWorkspace {
+export interface IWorkspaceInUser {
   id: string;
   role: "owner" | "admin" | "editor" | "viewer";
+  name: string;
+  avatarUrl?: string;
 }
