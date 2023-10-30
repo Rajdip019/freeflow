@@ -109,7 +109,7 @@ export const ImageContextProvider = ({ children }: Props) => {
     if (user && router.pathname !== "/") {
       router.push("/");
     } else if (router.pathname === "/") {
-      console.log("🚀 > deleteImage > router.pathname", router.pathname);
+      // console.log("🚀 > deleteImage > router.pathname", router.pathname);
     } else {
       router.push("/");
     }

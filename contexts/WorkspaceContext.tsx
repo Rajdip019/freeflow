@@ -64,6 +64,7 @@ export function WorkspaceContextProvider({ children }: any) {
         return WorkspaceSnap.data() as IWorkspace;
       }
     } catch (error) {
+      console.log(error);
       message.error("Failed to fetch workspace");
     }
   };
@@ -109,7 +110,8 @@ export function WorkspaceContextProvider({ children }: any) {
       const WorkUserSnap = await getDocs(WorkUserRef);
       let data: IUserInWorkspace[] = [];
       WorkUserSnap.forEach((doc) => {
-        data.push(doc.data() as IUserInWorkspace);
+        doc.data().status === "Accepted" &&
+          data.push(doc.data() as IUserInWorkspace);
       });
       return data;
     } catch (error) {
@@ -121,8 +123,6 @@ export function WorkspaceContextProvider({ children }: any) {
     workspaceId: string,
     workspaceData: IWorkspace
   ) => {
-    console.log(workspaceId);
-
     try {
       const WorkspaceRef = doc(db, "workspaces", workspaceId);
       await updateDoc(WorkspaceRef, { ...workspaceData });

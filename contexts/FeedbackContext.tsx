@@ -88,7 +88,6 @@ export function FeedbackContextProvider({ children }: any) {
           setVersion(docSnap.data().currentVersion);
         } else {
           setError(true);
-          console.log("No such document!");
         }
       }
     );

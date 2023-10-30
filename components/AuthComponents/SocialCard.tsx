@@ -64,6 +64,7 @@ const SocialCard = ({ setCurrentTab }: Props) => {
         role: "owner",
         name: name.firstName + " " + name.lastName + "'s workspace",
         avatarUrl: "",
+        status: "Accepted",
       };
 
       await addUserInWorkspace(id, collaboratorsData);

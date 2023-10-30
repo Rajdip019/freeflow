@@ -47,7 +47,6 @@ const VersionUploadModal: React.FC<Props> = ({
     setUploadedFile(file);
     setFileSize(Math.round(file.size / (1024 * 1024)));
     setImageName(file.name);
-    console.log("File uploaded:", file);
   };
 
   const clearFile = () => {
@@ -87,7 +86,6 @@ const VersionUploadModal: React.FC<Props> = ({
           },
           async () => {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            console.log("File available at", downloadURL);
 
             const data: Partial<IReviewImageData> = {
               imageURL: [...prevImage.imageURL, downloadURL],

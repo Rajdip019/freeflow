@@ -31,7 +31,6 @@ const SendInvitesIconModal: React.FC<Props> = ({
   const handleSendInvites = async () => {
     try {
       const _emails = formatCommaSeparatedStringToArray(invitesInputText);
-      console.log("_emails", _emails);
       await postJson(`/api/review-image/${image.id}/send-invites`, {
         emails: _emails,
       });

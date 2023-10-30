@@ -22,8 +22,6 @@ export default async function handler(
         return res.status(404).end();
       }
       const data = docSnap.data() as IReviewImageData;
-      console.log("ImageId", imageId);
-      console.log("data", data);
 
       const designReviewUrl = `${APP_URL}/review-image/${imageId}`;
 
