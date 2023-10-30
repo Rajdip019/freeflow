@@ -88,6 +88,7 @@ export const UserContextProvider = ({ children }: Props) => {
       });
       return data;
     } catch (error) {
+      console.log(error);
       message.error("Failed to fetch workspace in user");
     }
   };

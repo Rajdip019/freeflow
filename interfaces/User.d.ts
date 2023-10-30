@@ -14,4 +14,5 @@ export interface IWorkspaceInUser {
   role: "owner" | "admin" | "editor" | "viewer";
   name: string;
   avatarUrl?: string;
+  status?: "Pending" | "Accepted";
 }

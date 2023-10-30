@@ -16,9 +16,9 @@ const InviteTeamCard = ({ setCurrentTab }: Props) => {
   const [emailList, setEmailList] = useState<string[]>([""]);
 
   const handleContinue = () => {
-    console.log(emailList);
-    console.log("Send to the dashboard");
+    // console.log("Send to the dashboard");
   };
+
   return (
     <div className="rounded-2xl bg-[#141414] p-5 px-7 text-white md:w-[50%]">
       <Form

@@ -20,5 +20,5 @@ export interface IUserInWorkspace {
   email: string;
   imageURL?: string;
   inviteTime: number;
-  status: "pending" | "Accepted" | "Rejected" | "Expired";
+  status?: "Pending" | "Accepted";
 }

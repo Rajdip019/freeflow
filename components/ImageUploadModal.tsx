@@ -50,7 +50,6 @@ const ImageUploadModal = ({
     setUploadedFile(file);
     setFileSize(Math.round(file.size / (1024 * 1024)));
     setImageName(file.name.split(".")[file.name.split(".").length - 2]);
-    console.log("File uploaded:", file);
   };
 
   const clearFile = () => {
@@ -105,7 +104,6 @@ const ImageUploadModal = ({
           },
           async () => {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            console.log("File available at", downloadURL);
             const data: Partial<IReviewImageData> = {
               imageURL: [downloadURL],
               size: bytes / (1024 * 1024),
