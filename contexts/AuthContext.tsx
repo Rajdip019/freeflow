@@ -11,8 +11,10 @@ import FirebaseAuth, {
 
 import { sendEmailVerification } from "@firebase/auth";
 import React, { useContext, useEffect } from "react";
-import { Spin, message } from "antd";
+import { message } from "antd";
 import { useUserContext } from "./UserContext";
+import Lottie from "react-lottie-player";
+import LogoLoading from "../public/LogoLoading.json";
 
 export interface IAuthContext {
   authUser: FirebaseAuth.User | null;
@@ -143,8 +145,13 @@ export function AuthContextProvider({ children }: any) {
   return (
     <AuthContext.Provider value={value}>
       {isLoading ? (
-        <div className=" flex h-screen items-center justify-center">
-          <Spin />
+        <div className=" flex h-screen items-center justify-center bg-black">
+          <Lottie
+            loop
+            style={{ width: 200, height: 200 }}
+            animationData={LogoLoading}
+            play
+          />
         </div>
       ) : (
         children

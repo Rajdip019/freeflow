@@ -2,6 +2,7 @@
 import { db } from "@/lib/firebaseConfig";
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -20,7 +21,8 @@ import {
 import { IUser, IWorkspaceInUser } from "../interfaces/User";
 import { useAuth } from "./AuthContext";
 import { message } from "antd";
-
+import Lottie from "react-lottie-player";
+import LogoLoading from "../public/LogoLoading.json";
 interface Props {
   children: JSX.Element[] | JSX.Element;
 }
@@ -32,6 +34,7 @@ interface IDefaultValues {
   getUserData: () => any;
   updateUser: (data: Partial<IUser>) => any;
   addWorkspaceInUser: (userId: string, workspaceData: IWorkspaceInUser) => any;
+  removeWorkspaceInUser: (userId: string, workspaceDataId: string) => any;
   fetchWorkspaceInUser: (userId: string) => any;
 }
 
@@ -42,6 +45,7 @@ const defaultValues: IDefaultValues = {
   getUserData: () => {},
   updateUser: () => {},
   addWorkspaceInUser: () => {},
+  removeWorkspaceInUser: () => {},
   fetchWorkspaceInUser: () => {},
 };
 
@@ -54,6 +58,7 @@ export function useUserContext() {
 export const UserContextProvider = ({ children }: Props) => {
   const [user, setUser] = useState<Partial<IUser> | null>(defaultValues.user);
   const { authUser } = useAuth();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const createUser = async (uid: string, data: Partial<IUser>) => {
     await setDoc(doc(db, "users", uid), data);
@@ -78,6 +83,24 @@ export const UserContextProvider = ({ children }: Props) => {
     }
   };
 
+  const removeWorkspaceInUser = async (
+    userId: string,
+    workspaceDataId: string
+  ) => {
+    try {
+      const UserWorkRef = doc(
+        db,
+        "users",
+        userId,
+        "workspaces",
+        workspaceDataId
+      );
+      await deleteDoc(UserWorkRef);
+    } catch (error) {
+      message.error("Failed to remove workspace in user");
+    }
+  };
+
   const fetchWorkspaceInUser = async (userId: string) => {
     try {
       const UserWorkRef = collection(db, "users", userId, "workspaces");
@@ -96,12 +119,15 @@ export const UserContextProvider = ({ children }: Props) => {
   const getUserData = useCallback(async () => {
     try {
       if (authUser && authUser.emailVerified) {
+        setLoading(true);
         const uid = authUser.uid;
         const userRef = doc(db, "users", uid);
         const docSnap = await getDoc(userRef);
         if (docSnap.exists()) {
           setUser(docSnap.data());
         }
+        setLoading(false);
+        return docSnap.data();
       }
     } catch (e) {
       console.error(e);
@@ -131,9 +157,25 @@ export const UserContextProvider = ({ children }: Props) => {
     createUser,
     getUserData,
     updateUser,
+    removeWorkspaceInUser,
     addWorkspaceInUser,
     fetchWorkspaceInUser,
   };
 
-  return <userContext.Provider value={value}>{children}</userContext.Provider>;
+  return (
+    <>
+      {loading ? (
+        <div className=" flex h-screen items-center justify-center bg-black">
+          <Lottie
+            loop
+            style={{ width: 200, height: 200 }}
+            animationData={LogoLoading}
+            play
+          />
+        </div>
+      ) : (
+        <userContext.Provider value={value}>{children}</userContext.Provider>
+      )}
+    </>
+  );
 };
