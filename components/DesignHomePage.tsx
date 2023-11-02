@@ -36,8 +36,7 @@ const DesignHomePage = () => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [options, setOptions] = useState<{ value: string }[]>([]);
-  const [contactUsButtonState, setContactUsButtonState] =
-    useState<boolean>(false);
+
   const filteredImages = images.filter((image) =>
     image.imageName.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -97,7 +96,7 @@ const DesignHomePage = () => {
       <Head>
         <title>FreeFlow</title>
       </Head>
-      <section className="flex w-full items-center justify-between border-b border-[#2c2b2b] bg-[#141414] px-8 py-4">
+      <section className="flex w-full items-center justify-between overflow-hidden border-b border-[#2c2b2b] bg-[#141414] px-8 py-4">
         <Image src="/logo/freeflow.png" width={120} preview={false} />
         <div className=" flex items-center justify-center gap-3">
           <AutoComplete
@@ -164,7 +163,12 @@ const DesignHomePage = () => {
           </div>
         </div>
       </section>
-      <div className="min-h-[88.1vh] px-5 md:min-h-min">
+      <div
+        className="min-h-[88.1vh] overflow-scroll px-5 md:min-h-min"
+        style={{
+          height: "calc(100vh - 40px)",
+        }}
+      >
         {filteredImages.length !== 0 ? (
           <>
             {isGridView ? (
@@ -220,26 +224,6 @@ const DesignHomePage = () => {
             </Empty>
           </div>
         )}
-        <a
-          href="https://linktr.ee/freeflowapp"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <FFButton
-            className="fixed bottom-5 z-50 w-6 rounded-full transition-all hover:w-auto"
-            onMouseEnter={() => {
-              setContactUsButtonState(true);
-            }}
-            onMouseLeave={() => setContactUsButtonState(false)}
-          >
-            {" "}
-            {contactUsButtonState ? (
-              "Contact Us"
-            ) : (
-              <QuestionCircleOutlined />
-            )}{" "}
-          </FFButton>
-        </a>
       </div>
     </DashboardLayout>
   );

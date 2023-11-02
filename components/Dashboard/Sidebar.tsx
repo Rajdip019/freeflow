@@ -1,130 +1,170 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { useAuth } from "@/contexts/AuthContext";
-import { Button, Divider, Image, Popconfirm, Space, Typography } from "antd";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
+import { FFButton } from "@/theme/themeConfig";
 import {
-  DesktopOutlined,
-  DoubleLeftOutlined,
-  DoubleRightOutlined,
-  EditOutlined,
-  HomeOutlined,
-  LogoutOutlined,
+  FileImageOutlined,
+  FileZipOutlined,
+  FormOutlined,
+  // InboxOutlined,
+  QuestionCircleOutlined,
+  SearchOutlined,
   SettingOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
+import { Button, Select, Space, Typography, Image } from "antd";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import Avatar from "react-avatar";
 
 const Sidebar = () => {
-  const sidebarData = [
+  const { workspaceInUser, renderWorkspace, fetchFullWorkspace } =
+    useWorkspaceContext();
+
+  const [open, setOpen] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<string>("Designs");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.isReady) {
+      const path = router.pathname;
+      if (path === "/") setActiveTab("Designs");
+      else if (path === "/inbox") setActiveTab("Inbox");
+      else if (path === "/people") setActiveTab("People");
+      else if (path === "/brand-assets")
+        setActiveTab("Brand Assets & Guidelines");
+    }
+  }, [router.isReady]);
+
+  const fetchNewWorkspace = async (workspaceTab: string) => {
+    fetchFullWorkspace(workspaceTab);
+    localStorage.setItem("currentWorkspaceId", workspaceTab);
+  };
+
+  const menu_items = [
     {
-      title: "Tasks",
-      url: "/tasks",
-      icon: <EditOutlined />,
+      label: "Brand Assets & Guidelines",
+      icon: <FileZipOutlined />,
+      href: "/brand-assets",
     },
     {
-      title: "Design",
-      url: "/design",
-      icon: <DesktopOutlined />,
+      label: "Designs",
+      icon: <FileImageOutlined />,
+      href: "/",
+    },
+    // {
+    //   label: "Inbox",
+    //   icon: <InboxOutlined />,
+    //   href: "/inbox",
+    // },
+    {
+      label: "People",
+      icon: <UserOutlined />,
+      href: "/people",
     },
   ];
-  const { logout } = useAuth();
-  const router = useRouter();
-  const [width, setWidth] = useState<number>(NaN);
-  useEffect(() => {
-    const width = localStorage.getItem("sidebarWidth");
-    if (width) {
-      setWidth(parseInt(width));
-    } else {
-      setWidth(56);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isNaN(width)) return;
-    localStorage.setItem("sidebarWidth", width.toString());
-  }, [width]);
-
-  const [active, setActive] = useState<string>("");
-
-  useEffect(() => {
-    setActive(router.asPath);
-  }, [router]);
-
   return (
     <Space
       direction="vertical"
-      className="bg-sec sticky top-0 hidden h-screen border-r border-r-[#ffffff1e] md:flex"
+      className="bg-sec sticky top-0 hidden h-screen w-[260px] border-r border-r-[#ffffff1e] md:flex"
     >
-      <Space direction="vertical" className={`w-${width} transition-all`}>
-        <Space className="w-full items-center justify-between">
-          <Image
-            src="/logo/freeflow.png"
-            width={120}
-            hidden={width === 14}
-            className="m-4 mt-6 transition-all"
-            preview={false}
-          />
-          <Button
-            className="m-3 -ml-1 mt-6 transition-all"
-            icon={
-              width === 56 ? <DoubleLeftOutlined /> : <DoubleRightOutlined />
-            }
-            onClick={() => setWidth(width === 56 ? 14 : 56)}
-          />
-        </Space>
-        <Divider />
-        <Space
-          direction="vertical"
-          className={`${
-            width === 56 ? "ml-2 w-52" : "w-full items-center justify-center"
-          } space-y-2`}
-        >
-          {sidebarData.map((route, index) => {
-            return (
-              <Space
-                className={`flex w-full cursor-pointer rounded-xl p-3 ${
-                  width !== 56 && "items-center justify-center"
-                }  ${
-                  active === route.url
-                    ? "bg-purple-600 text-white"
-                    : "bg-[#000000b5] text-[#ffffff96] transition-all hover:bg-[#3e287ba7]"
-                } `}
-                onClick={() => router.push(route.url)}
-                key={index}
-              >
-                {route.icon}
-                {width === 56 && (
-                  <Typography.Text
-                    className={`${
-                      active === route.url ? " text-white" : " text-[#ffffff96]"
-                    }`}
-                  >
-                    {route.title}
+      {
+        <div className="flex h-screen flex-col justify-between p-2">
+          <div>
+            <Select
+              style={{ width: "250px" }}
+              dropdownStyle={{ fontSize: "20px" }}
+              size="large"
+              bordered={false}
+              open={open}
+              onDropdownVisibleChange={() => setOpen(!open)}
+              onChange={(value) => fetchNewWorkspace(value as string)}
+              placeholder={
+                <Space>
+                  <Avatar
+                    name={renderWorkspace?.name}
+                    size="30"
+                    round={true}
+                    textSizeRatio={2}
+                  />
+                  <Typography.Text>{renderWorkspace?.name}</Typography.Text>
+                </Space>
+              }
+              dropdownRender={(menu) => (
+                <>
+                  <Typography.Text className="mb-1 ml-2 text-[#ffffffb1]">
+                    Change workspace
                   </Typography.Text>
-                )}
-              </Space>
-            );
-          })}
-          <Divider className="mt-[340px]" />
-          <Popconfirm
-            title="Logout"
-            description="Are you sure to Logout?"
-            onConfirm={() => {
-              logout();
-            }}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Space
-              className={`w-full cursor-pointer rounded-xl bg-[#cc0d33ac] p-3 text-white transition-all`}
-            >
-              <LogoutOutlined className="rotate-180" />
-              {""}
-              {width === 56 && (
-                <Typography.Text className="text-white">Logout</Typography.Text>
+                  {menu}
+                </>
               )}
+              suffixIcon={null}
+            >
+              {workspaceInUser.map((workspace) => {
+                return (
+                  <Select.Option key={workspace.id} value={workspace.id}>
+                    <Space>
+                      <Avatar
+                        name={workspace.name}
+                        src={workspace.avatarUrl}
+                        size="30"
+                        round={true}
+                        textSizeRatio={2}
+                      />
+                      <Typography.Text>{workspace.name}</Typography.Text>
+                    </Space>
+                  </Select.Option>
+                );
+              })}
+            </Select>
+            <Space className="my-4">
+              <Button className="w-[200px] text-start" icon={<FormOutlined />}>
+                New Design
+              </Button>
+              <Button icon={<SearchOutlined />} />
             </Space>
-          </Popconfirm>
-        </Space>
-      </Space>
+            {menu_items.map((item) => (
+              <Space
+                onClick={() => router.push(item.href)}
+                className={`my-1 w-full cursor-pointer rounded-md p-1 pl-4 transition-all ${
+                  activeTab === item.label
+                    ? "bg-[#642AB5] text-white"
+                    : "text-[#ffffffa7]"
+                }`}
+              >
+                {item.icon}
+                {item.label}
+              </Space>
+            ))}
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex">
+              <FFButton
+                type="text"
+                className="w-6 rounded-full transition-all"
+                icon={<SettingOutlined />}
+              />
+
+              <a
+                href="https://linktr.ee/freeflowapp"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <FFButton
+                  type="text"
+                  className="w-6 rounded-full transition-all"
+                  icon={<QuestionCircleOutlined />}
+                />
+              </a>
+            </div>
+            <Image
+              className="mb-4"
+              src={"/logo/freeflow.png"}
+              alt="freeflow"
+              width={120}
+              preview={false}
+            />
+          </div>
+        </div>
+      }
     </Space>
   );
 };

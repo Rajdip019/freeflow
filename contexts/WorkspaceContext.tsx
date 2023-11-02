@@ -1,7 +1,8 @@
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import { IUser, IWorkspaceInUser } from "@/interfaces/User";
 import { IWorkspace, IUserInWorkspace } from "@/interfaces/Workspace";
 import { db } from "@/lib/firebaseConfig";
-import { message } from "antd";
+import { Spin, message } from "antd";
 import {
   addDoc,
   collection,
@@ -12,23 +13,43 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useAuth } from "./AuthContext";
+import { useUserContext } from "./UserContext";
+import Lottie from "react-lottie-player";
+import LogoLoading from "../public/LogoLoading.json";
 
 export interface IWorkspaceContext {
-  currentWorkspace: IWorkspace;
+  renderWorkspace: IWorkspace | null;
+  setRenderWorkspace: Dispatch<SetStateAction<IWorkspace | null>>;
+  setWorkspaceInUser: Dispatch<SetStateAction<IWorkspaceInUser[]>>;
+  workspaceInUser: IWorkspaceInUser[];
   currentUserInWorkspace: IUserInWorkspace[];
   currentDesignInWorkspace: IReviewImageData[];
+  fetchFullWorkspace: (workspaceId: string) => any;
   fetchWorkspace: (workspaceId: string) => any;
   createWorkspace: (workspaceData: IWorkspace) => any;
   updateWorkspace: (workspaceId: string, workspaceData: IWorkspace) => any;
   deleteWorkspace: (workspaceId: string) => any;
   addUserInWorkspace: (workspaceId: string, userData: IUserInWorkspace) => any;
+  removeUserFromWorkspace: (workspaceId: string, userId: string) => any;
   fetchUserInWorkspace: (workspaceId: string) => any;
   fetchDesignInWorkspace: (workspaceId: string) => any;
 }
 
 const defaultValues: IWorkspaceContext = {
-  currentWorkspace: {} as IWorkspace,
+  renderWorkspace: null,
+  setRenderWorkspace: () => {},
+  setWorkspaceInUser: () => {},
+  fetchFullWorkspace: () => {},
+  workspaceInUser: [] as IWorkspaceInUser[],
   currentUserInWorkspace: {} as IUserInWorkspace[],
   currentDesignInWorkspace: {} as IReviewImageData[],
   fetchWorkspace: () => {},
@@ -36,6 +57,7 @@ const defaultValues: IWorkspaceContext = {
   updateWorkspace: () => {},
   deleteWorkspace: () => {},
   addUserInWorkspace: () => {},
+  removeUserFromWorkspace: () => {},
   fetchUserInWorkspace: () => {},
   fetchDesignInWorkspace: () => {},
 };
@@ -47,15 +69,24 @@ export function useWorkspaceContext() {
 }
 
 export function WorkspaceContextProvider({ children }: any) {
-  const [currentWorkspace, setCurrentWorkspace] = useState<IWorkspace>(
-    defaultValues.currentWorkspace
-  );
   const [currentUserInWorkspace, setCurrentUserInWorkspace] = useState<
     IUserInWorkspace[]
   >(defaultValues.currentUserInWorkspace);
   const [currentDesignInWorkspace, setCurrentDesignInWorkspace] = useState<
     IReviewImageData[]
   >(defaultValues.currentDesignInWorkspace);
+  const [renderWorkspace, setRenderWorkspace] = useState<IWorkspace | null>(
+    defaultValues.renderWorkspace
+  );
+  const [workspaceInUser, setWorkspaceInUser] = useState<IWorkspaceInUser[]>(
+    defaultValues.workspaceInUser
+  );
+  const [loading, setLoading] = useState<boolean>(false);
+  const [sideLoading, setSideLoading] = useState<boolean>(false);
+  const { fetchWorkspaceInUser } = useUserContext();
+
+  const { authUser } = useAuth();
+
   const fetchWorkspace = async (workspaceId: string) => {
     try {
       const WorkspaceRef = doc(db, "workspaces", workspaceId);
@@ -64,7 +95,6 @@ export function WorkspaceContextProvider({ children }: any) {
         return WorkspaceSnap.data() as IWorkspace;
       }
     } catch (error) {
-      console.log(error);
       message.error("Failed to fetch workspace");
     }
   };
@@ -99,6 +129,24 @@ export function WorkspaceContextProvider({ children }: any) {
     }
   };
 
+  const removeUserFromWorkspace = async (
+    workspaceId: string,
+    userId: string
+  ) => {
+    try {
+      const WorkUserRef = doc(
+        db,
+        "workspaces",
+        workspaceId,
+        "collaborators",
+        userId
+      );
+      await deleteDoc(WorkUserRef);
+    } catch (error) {
+      message.error("Failed to remove user in workspace");
+    }
+  };
+
   const fetchUserInWorkspace = async (workspaceId: string) => {
     try {
       const WorkUserRef = collection(
@@ -110,8 +158,7 @@ export function WorkspaceContextProvider({ children }: any) {
       const WorkUserSnap = await getDocs(WorkUserRef);
       let data: IUserInWorkspace[] = [];
       WorkUserSnap.forEach((doc) => {
-        doc.data().status === "Accepted" &&
-          data.push(doc.data() as IUserInWorkspace);
+        data.push(doc.data() as IUserInWorkspace);
       });
       return data;
     } catch (error) {
@@ -128,7 +175,6 @@ export function WorkspaceContextProvider({ children }: any) {
       await updateDoc(WorkspaceRef, { ...workspaceData });
     } catch (error) {
       message.error("Failed to update workspace");
-      console.log(error);
     }
   };
 
@@ -155,30 +201,85 @@ export function WorkspaceContextProvider({ children }: any) {
     }
   };
 
-  const preFetch = async (workspaceId: string) => {
-    const workData: IWorkspace = (await fetchWorkspace(
-      workspaceId
-    )) as IWorkspace;
-    setCurrentWorkspace(workData);
-    const userData: IUserInWorkspace[] = (await fetchUserInWorkspace(
-      workspaceId
-    )) as IUserInWorkspace[];
-    setCurrentUserInWorkspace(userData);
-    const designData: IReviewImageData[] = (await fetchDesignInWorkspace(
-      workspaceId
-    )) as IReviewImageData[];
-    setCurrentDesignInWorkspace(designData);
-  };
-
   useEffect(() => {
-    const currentWorkspaceId = localStorage.getItem("currentWorkspaceId");
-    if (currentWorkspaceId) {
-      preFetch(currentWorkspaceId);
-    }
+    setLoading(true);
+    fetchUserWork();
+    setLoading(false);
   }, []);
 
+  const fetchUserWork = async () => {
+    if (authUser) {
+      const workspaceInUser = await fetchWorkspaceInUser(authUser.uid);
+      const filteredWorkspace = workspaceInUser.filter(
+        (workspace: IWorkspaceInUser) => workspace.status === "Accepted"
+      );
+      setWorkspaceInUser(filteredWorkspace as IWorkspaceInUser[]);
+      const currentWorkspaceId = localStorage.getItem("currentWorkspaceId");
+      if (currentWorkspaceId) {
+        const _currentWorkspace = await fetchWorkspace(currentWorkspaceId);
+        const userInWorkspace = await fetchUserInWorkspace(currentWorkspaceId);
+        if (
+          userInWorkspace &&
+          userInWorkspace?.filter(
+            (user: IUserInWorkspace) => user.id === authUser.uid
+          ).length > 0 &&
+          userInWorkspace?.filter(
+            (user: IUserInWorkspace) => user.id === authUser.uid
+          )[0].status === "Accepted"
+        ) {
+          setRenderWorkspace(_currentWorkspace as IWorkspace);
+          setCurrentUserInWorkspace(userInWorkspace as IUserInWorkspace[]);
+          const designInWorkspace = await fetchDesignInWorkspace(
+            currentWorkspaceId
+          );
+          setCurrentDesignInWorkspace(designInWorkspace as IReviewImageData[]);
+        } else {
+          fetchOtherWorkspace();
+        }
+      } else {
+        fetchOtherWorkspace();
+      }
+    }
+  };
+
+  const fetchOtherWorkspace = async () => {
+    if (authUser) {
+      const _workspaceInUser = await fetchWorkspaceInUser(authUser?.uid);
+      const workspaceInUser = _workspaceInUser.filter(
+        (workspace: IWorkspaceInUser) => workspace.status === "Accepted"
+      );
+      if (workspaceInUser && workspaceInUser.length > 0) {
+        const _currentWorkspace = await fetchWorkspace(workspaceInUser[0].id);
+        setRenderWorkspace(_currentWorkspace as IWorkspace);
+        const userInWorkspace = await fetchUserInWorkspace(
+          workspaceInUser[0].id
+        );
+        setCurrentUserInWorkspace(userInWorkspace as IUserInWorkspace[]);
+        const designInWorkspace = await fetchDesignInWorkspace(
+          workspaceInUser[0].id
+        );
+        setCurrentDesignInWorkspace(designInWorkspace as IReviewImageData[]);
+      }
+    }
+  };
+
+  const fetchFullWorkspace = async (workspaceId: string) => {
+    setSideLoading(true);
+    const workspace = await fetchWorkspace(workspaceId);
+    const userInWorkspace = await fetchUserInWorkspace(workspaceId);
+    const designInWorkspace = await fetchDesignInWorkspace(workspaceId);
+    setRenderWorkspace(workspace as IWorkspace);
+    setCurrentUserInWorkspace(userInWorkspace as IUserInWorkspace[]);
+    setCurrentDesignInWorkspace(designInWorkspace as IReviewImageData[]);
+    setSideLoading(false);
+  };
+
   const value = {
-    currentWorkspace,
+    renderWorkspace,
+    setRenderWorkspace,
+    setWorkspaceInUser,
+    fetchFullWorkspace,
+    workspaceInUser,
     currentUserInWorkspace,
     currentDesignInWorkspace,
     fetchWorkspace,
@@ -186,13 +287,36 @@ export function WorkspaceContextProvider({ children }: any) {
     updateWorkspace,
     deleteWorkspace,
     addUserInWorkspace,
+    removeUserFromWorkspace,
     fetchUserInWorkspace,
     fetchDesignInWorkspace,
   };
 
-  return (
+  return loading ? (
+    <div className=" flex h-screen items-center justify-center bg-black">
+      <Lottie
+        loop
+        style={{ width: 200, height: 200 }}
+        animationData={LogoLoading}
+        play
+      />
+    </div>
+  ) : (
     <WorkspaceContext.Provider value={value}>
-      {children}
+      <Spin
+        wrapperClassName="bg-black h-screen"
+        spinning={sideLoading}
+        indicator={
+          <Lottie
+            loop
+            style={{ width: 200, height: 200 }}
+            animationData={LogoLoading}
+            play
+          />
+        }
+      >
+        {children}
+      </Spin>
     </WorkspaceContext.Provider>
   );
 }
