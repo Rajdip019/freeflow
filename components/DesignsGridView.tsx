@@ -12,40 +12,41 @@ import SendInvitesIconModal from "./Modal/SendInvitesIconModal";
 
 interface Props {
   image: IReviewImageData;
+  setSideImage: React.Dispatch<React.SetStateAction<IReviewImageData | null>>;
 }
 
-const DesignsGridView: React.FC<Props> = ({ image }) => {
-  const items: MenuProps["items"] = [
-    {
-      key: "1",
+const DesignsGridView: React.FC<Props> = ({ image, setSideImage }) => {
+  // const items: MenuProps["items"] = [
+  //   {
+  //     key: "1",
 
-      label: <ChangeFileNameModal image={image} />,
-    },
-    {
-      key: "2",
-      label: (
-        <VersionUploadModal
-          prevImage={image as IReviewImageData}
-          pos={"start"}
-        />
-      ),
-    },
-    {
-      key: "3",
-      label: (
-        <SendInvitesIconModal
-          image={image}
-          type="text"
-          isTooltip={false}
-          isMenuItem={true}
-        />
-      ),
-    },
-    {
-      key: "4",
-      label: <ImageDeleteModalConfirmation image={image} />,
-    },
-  ];
+  //     label: <ChangeFileNameModal image={image} />,
+  //   },
+  //   {
+  //     key: "2",
+  //     label: (
+  //       <VersionUploadModal
+  //         prevImage={image as IReviewImageData}
+  //         pos={"start"}
+  //       />
+  //     ),
+  //   },
+  //   {
+  //     key: "3",
+  //     label: (
+  //       <SendInvitesIconModal
+  //         image={image}
+  //         type="text"
+  //         isTooltip={false}
+  //         isMenuItem={true}
+  //       />
+  //     ),
+  //   },
+  //   {
+  //     key: "4",
+  //     label: <ImageDeleteModalConfirmation image={image} />,
+  //   },
+  // ];
   return (
     <div className="relative h-64 w-64 rounded-xl border border-[#181818]">
       {image.currentVersion && image.imageURL ? (
@@ -56,14 +57,15 @@ const DesignsGridView: React.FC<Props> = ({ image }) => {
               : (image.imageURL as any)
           }
           alt={image.imageName}
-          className="aspect-square w-full rounded-xl object-cover"
+          className="aspect-square w-full cursor-pointer rounded-xl object-cover"
           loading="lazy"
-          preview={true}
+          preview={false}
+          onClick={() => setSideImage(image)}
         />
       ) : (
         <div className=" text-white">Waiting for image...</div>
       )}
-      <div className="absolute left-0 top-0 flex h-64 w-64 flex-col justify-between p-2 text-white opacity-0 transition-all hover:bg-[#0000008d] hover:opacity-100">
+      {/* <div className="absolute left-0 top-0 flex h-64 w-64 flex-col justify-between p-2 text-white opacity-0 transition-all hover:bg-[#0000008d] hover:opacity-100">
         <div className="flex items-end justify-end">
           <Tag color="red">{image.newUpdate}</Tag>
         </div>
@@ -111,7 +113,7 @@ const DesignsGridView: React.FC<Props> = ({ image }) => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

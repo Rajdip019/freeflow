@@ -47,6 +47,7 @@ const SocialCard = ({ setCurrentTab }: Props) => {
         twitter,
         email: authUser.email as string,
         createTime: Date.now(),
+        imageURL: authUser.photoURL ? authUser.photoURL : "",
       };
       const id = await createWorkspace(workspaceData);
       await createUser(authUser.uid, data);
