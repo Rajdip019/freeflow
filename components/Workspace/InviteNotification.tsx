@@ -1,5 +1,3 @@
-import DashboardLayout from "@/components/Dashboard/DashboardLayout";
-import Header from "@/components/Dashboard/Header";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserContext } from "@/contexts/UserContext";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";

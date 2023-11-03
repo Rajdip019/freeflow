@@ -1,17 +1,9 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserContext } from "@/contexts/UserContext";
-import Inbox from "@/pages/inbox";
-import { BellOutlined } from "@ant-design/icons";
-import {
-  Badge,
-  Breadcrumb,
-  Dropdown,
-  MenuProps,
-  Space,
-  Typography,
-} from "antd";
+import { Breadcrumb, Dropdown, MenuProps, Space, Typography } from "antd";
 import React from "react";
 import Avatar from "react-avatar";
+import Inbox from "../Workspace/InviteNotification";
 
 type Props = {
   breadcrumb: {

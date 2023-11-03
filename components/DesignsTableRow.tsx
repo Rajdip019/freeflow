@@ -1,27 +1,14 @@
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import React from "react";
 import Moment from "react-moment";
-import ChangeFileNameModal from "./Modal/ChangeFileNameModal";
-import SendInvitesIconModal from "./Modal/SendInvitesIconModal";
-import VersionUploadModal from "./VersionControl/VersionUploadModal";
-import {
-  Table,
-  Image,
-  Tag,
-  Typography,
-  Button,
-  Space,
-  MenuProps,
-  Dropdown,
-} from "antd";
-import { MoreOutlined } from "@ant-design/icons";
-import ImageDeleteModalConfirmation from "./Modal/ImageDeleteModalConfirmation";
+import { Table, Image, Tag, Typography } from "antd";
 const { Column } = Table;
 interface Props {
   images: IReviewImageData[];
+  setSideImage: React.Dispatch<React.SetStateAction<IReviewImageData | null>>;
 }
 
-const DesignsTableRow: React.FC<Props> = ({ images }) => {
+const DesignsTableRow: React.FC<Props> = ({ images, setSideImage }) => {
   images = images.sort((a, b) => {
     return new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime();
   });
@@ -32,6 +19,13 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
         scroll={{ x: 300 }}
         pagination={false}
         bordered={false}
+        onRow={(record) => {
+          return {
+            onClick: (event) => {
+              setSideImage(record);
+            },
+          };
+        }}
       >
         <Column
           title="Design"
@@ -69,13 +63,6 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
             </Typography.Text>
           )}
           className="cursor-pointer"
-          onCell={(record) => {
-            return {
-              onClick: (event) => {
-                window.open(`/review-image/${record.id}`, "_blank");
-              },
-            };
-          }}
         />
         <Column
           // open image on this cell click
@@ -86,13 +73,6 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
             <Tag color="green">{record.newUpdate}</Tag>
           )}
           className="cursor-pointer"
-          onCell={(record) => {
-            return {
-              onClick: (event) => {
-                window.open(`/review-image/${record.id}`, "_blank");
-              },
-            };
-          }}
         />
         <Column
           title="Views"
@@ -108,13 +88,6 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
             </Typography.Text>
           )}
           className="cursor-pointer"
-          onCell={(record) => {
-            return {
-              onClick: (event) => {
-                window.open(`/review-image/${record.id}`, "_blank");
-              },
-            };
-          }}
         />
         <Column
           title="Size"
@@ -133,7 +106,7 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
           onCell={(record) => {
             return {
               onClick: () => {
-                window.open(`/review-image/${record.id}`, "_blank");
+                setSideImage(record);
               },
             };
           }}
@@ -160,12 +133,12 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
           onCell={(record, rowIndex) => {
             return {
               onClick: (event) => {
-                window.open(`/review-image/${record.id}`, "_blank");
+                setSideImage(record);
               },
             };
           }}
         />
-        <Column
+        {/* <Column
           title="Action"
           key={"action"}
           render={(text, record: IReviewImageData) => (
@@ -203,7 +176,7 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
               </Dropdown>
             </Space>
           )}
-        />
+        /> */}
       </Table>
     </>
   );
