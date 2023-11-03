@@ -161,6 +161,9 @@ const ImageInfoDrawer = ({ image }: Props) => {
               className="mt-4 w-full"
               icon={<ExportOutlined />}
               size="large"
+              onClick={() => {
+                window.open(`/review-image/${image.id}`);
+              }}
             >
               Open in Feedback Tool
             </Button>
