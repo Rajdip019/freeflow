@@ -126,7 +126,7 @@ const Inbox = (props: Props) => {
             dot={
               workspaceInUser?.filter((w) => w.status === "Pending").length > 0
             }
-            className="mr-4"
+            className="mr-2"
           >
             <BellIcon className="cursor-pointer" w={6} h={6} />
           </Badge>

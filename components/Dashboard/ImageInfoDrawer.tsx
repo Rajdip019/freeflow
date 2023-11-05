@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Dropdown, MenuProps, Space, Typography } from "antd";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import {
-  EditOutlined,
+  CloseOutlined,
   ExportOutlined,
   FileImageTwoTone,
   InfoCircleFilled,
@@ -17,32 +17,15 @@ import { useImageContext } from "@/contexts/ImagesContext";
 
 type Props = {
   image: IReviewImageData | null;
+  sideVisible: boolean;
+  setSideVisible: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const ImageInfoDrawer = ({ image }: Props) => {
+const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
   const { images } = useImageContext();
   return (
     <>
-      {image === null ? (
-        <div className="bg-sec sticky top-0 hidden h-screen w-[26%] flex-col space-y-4 border-l border-l-[#ffffff1e] md:flex">
-          <Space className="h-[35vh] w-full items-center justify-center bg-black">
-            <Typography.Text className="text-8xl">
-              <FileImageTwoTone />
-            </Typography.Text>
-          </Space>
-          <Typography.Text className="m-4 text-xl">
-            Designs ({images.length} items)
-          </Typography.Text>
-          <Space className="m-4 rounded-md border border-[#ffffff40] p-4">
-            <Typography.Text className="mr-2 text-xl text-white">
-              <InfoCircleFilled />
-            </Typography.Text>
-            <Typography.Text className="text-[17px]">
-              Select a single design to get more information about it.
-            </Typography.Text>
-          </Space>
-        </div>
-      ) : (
+      {image !== null && sideVisible && (
         <div className="bg-sec sticky top-0 hidden h-screen w-[26%] flex-col justify-between space-y-4 border-l border-l-[#ffffff1e] md:flex">
           <Space direction="vertical" className="w-full">
             <Space className="w-full items-center justify-center bg-black">
@@ -168,6 +151,12 @@ const ImageInfoDrawer = ({ image }: Props) => {
               Open in Feedback Tool
             </Button>
           </Space>
+          <Button
+            type="text"
+            onClick={() => setSideVisible(false)}
+            className="absolute right-2 top-0 bg-[#00000075]"
+            icon={<CloseOutlined />}
+          />
         </div>
       )}
     </>

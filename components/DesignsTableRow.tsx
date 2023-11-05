@@ -6,9 +6,14 @@ const { Column } = Table;
 interface Props {
   images: IReviewImageData[];
   setSideImage: React.Dispatch<React.SetStateAction<IReviewImageData | null>>;
+  setSideVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DesignsTableRow: React.FC<Props> = ({ images, setSideImage }) => {
+const DesignsTableRow: React.FC<Props> = ({
+  images,
+  setSideImage,
+  setSideVisible,
+}) => {
   images = images.sort((a, b) => {
     return new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime();
   });
@@ -23,6 +28,7 @@ const DesignsTableRow: React.FC<Props> = ({ images, setSideImage }) => {
           return {
             onClick: (event) => {
               setSideImage(record);
+              setSideVisible(true);
             },
           };
         }}

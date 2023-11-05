@@ -39,6 +39,7 @@ const InviteUserInWorkspaceModel: React.FC<Props> = ({
     addUserInWorkspace,
     currentUserInWorkspace,
     fetchFullWorkspace,
+    fetchUserWork,
   } = useWorkspaceContext();
   const { addWorkspaceInUser } = useUserContext();
 
@@ -102,11 +103,19 @@ const InviteUserInWorkspaceModel: React.FC<Props> = ({
           avatarUrl: "",
           status: "Pending",
         };
+
         try {
-          await addUserInWorkspace(currentWorkspaceId, newUserInWorkspaceData);
-          await addWorkspaceInUser(id, newWorkspaceInUserData);
-          await fetchFullWorkspace(currentWorkspaceId);
-          message.success("User invited successfully");
+          console.log(newWorkspaceInUserData);
+          console.log(newUserInWorkspaceData);
+
+          // await addUserInWorkspace(currentWorkspaceId, newUserInWorkspaceData);
+          // await addWorkspaceInUser(id, newWorkspaceInUserData);
+
+          // await fetchUserWork();
+
+          // message.success("User invited successfully");
+          setEmail("");
+          setRole("");
         } catch (err) {
           message.error("Failed to invite user");
         }

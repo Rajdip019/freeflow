@@ -42,6 +42,7 @@ export interface IWorkspaceContext {
   removeUserFromWorkspace: (workspaceId: string, userId: string) => any;
   fetchUserInWorkspace: (workspaceId: string) => any;
   fetchDesignInWorkspace: (workspaceId: string) => any;
+  fetchUserWork: () => any;
 }
 
 const defaultValues: IWorkspaceContext = {
@@ -60,6 +61,7 @@ const defaultValues: IWorkspaceContext = {
   removeUserFromWorkspace: () => {},
   fetchUserInWorkspace: () => {},
   fetchDesignInWorkspace: () => {},
+  fetchUserWork: () => {},
 };
 
 const WorkspaceContext = createContext<IWorkspaceContext>(defaultValues);
@@ -280,6 +282,7 @@ export function WorkspaceContextProvider({ children }: any) {
     setWorkspaceInUser,
     fetchFullWorkspace,
     workspaceInUser,
+    fetchUserWork,
     currentUserInWorkspace,
     currentDesignInWorkspace,
     fetchWorkspace,

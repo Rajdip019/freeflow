@@ -19,6 +19,7 @@ import ImageUploadModal from "../ImageUploadModal";
 import { useUserContext } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
 import Avatar from "react-avatar";
+import Inbox from "../Workspace/InviteNotification";
 type Props = {
   isGridView: boolean;
   setIsGridView: React.Dispatch<React.SetStateAction<boolean>>;
@@ -55,7 +56,7 @@ const DesignHeader = ({ isGridView, setIsGridView }: Props) => {
     <section className="flex w-full items-center justify-between overflow-hidden border-b border-[#2c2b2b] bg-[#141414] px-8 py-4">
       <Image src="/logo/freeflow.png" width={120} preview={false} />
       <div className=" flex items-center justify-center gap-3">
-        <div className="flex items-center gap-2">
+        <div className="mr-1 flex items-center gap-2">
           <Space>
             <Tooltip title="List View" aria-title="List View">
               <Button
@@ -73,11 +74,11 @@ const DesignHeader = ({ isGridView, setIsGridView }: Props) => {
                 className="h-9 w-9"
               />
             </Tooltip>
-            <ImageUploadModal />
           </Space>
         </div>
         <div className="flex">
           <Space>
+            <Inbox />
             <Dropdown menu={{ items }} placement="bottomRight">
               <div>
                 <Avatar
