@@ -119,7 +119,7 @@ export const UserContextProvider = ({ children }: Props) => {
   const getUserData = useCallback(async () => {
     try {
       if (authUser && authUser.emailVerified) {
-        setLoading(true);
+        !user && setLoading(true);
         const uid = authUser.uid;
         const userRef = doc(db, "users", uid);
         const docSnap = await getDoc(userRef);

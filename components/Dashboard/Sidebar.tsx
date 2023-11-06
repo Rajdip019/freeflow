@@ -10,16 +10,20 @@ import {
   SettingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Button, Select, Space, Typography, Image } from "antd";
+import { Button, Select, Space, Typography, Image, Skeleton } from "antd";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Avatar from "react-avatar";
+import SearchModal from "../Modal/SearchModel";
+import ImageUploadModal from "../ImageUploadModal";
 
 const Sidebar = () => {
   const { workspaceInUser, renderWorkspace, fetchFullWorkspace } =
     useWorkspaceContext();
 
   const [open, setOpen] = useState<boolean>(false);
+  const [visible, setVisible] = useState<boolean>(false);
+  const [showModel, setShowModel] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Designs");
   const router = useRouter();
 
@@ -40,11 +44,11 @@ const Sidebar = () => {
   };
 
   const menu_items = [
-    {
-      label: "Brand Assets & Guidelines",
-      icon: <FileZipOutlined />,
-      href: "/brand-assets",
-    },
+    // {
+    //   label: "Brand Assets & Guidelines",
+    //   icon: <FileZipOutlined />,
+    //   href: "/brand-assets",
+    // },
     {
       label: "Designs",
       icon: <FileImageOutlined />,
@@ -61,12 +65,22 @@ const Sidebar = () => {
       href: "/people",
     },
   ];
+
   return (
     <Space
       direction="vertical"
       className="bg-sec sticky top-0 hidden h-screen w-[260px] border-r border-r-[#ffffff1e] md:flex"
     >
-      {
+      {showModel && (
+        <ImageUploadModal visible={true} setShowModal={setShowModel} />
+      )}
+      {visible && <SearchModal visible={visible} setVisible={setVisible} />}
+
+      <Skeleton
+        loading={renderWorkspace === null || workspaceInUser?.length === 0}
+        active
+        className="w-[260px] items-center justify-center p-2"
+      >
         <div className="flex h-screen flex-col justify-between p-2">
           <div>
             <Select
@@ -116,10 +130,17 @@ const Sidebar = () => {
               })}
             </Select>
             <Space className="my-4">
-              <Button className="w-[200px] text-start" icon={<FormOutlined />}>
+              <Button
+                className="w-[200px] text-start"
+                icon={<FormOutlined />}
+                onClick={() => setShowModel(true)}
+              >
                 New Design
               </Button>
-              <Button icon={<SearchOutlined />} />
+              <Button
+                onClick={() => setVisible(true)}
+                icon={<SearchOutlined />}
+              />
             </Space>
             {menu_items.map((item) => (
               <Space
@@ -164,7 +185,7 @@ const Sidebar = () => {
             />
           </div>
         </div>
-      }
+      </Skeleton>
     </Space>
   );
 };

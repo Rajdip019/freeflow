@@ -1,21 +1,18 @@
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
-import Moment from "react-moment";
 import React from "react";
-import Copy from "./shared/Copy";
-import { APP_URL } from "@/utils/constants";
-import Link from "next/link";
-import { Dropdown, Image, MenuProps, Tag, Typography } from "antd";
-import VersionUploadModal from "./VersionControl/VersionUploadModal";
-import ChangeFileNameModal from "./Modal/ChangeFileNameModal";
-import ImageDeleteModalConfirmation from "./Modal/ImageDeleteModalConfirmation";
-import SendInvitesIconModal from "./Modal/SendInvitesIconModal";
+import { Image } from "antd";
 
 interface Props {
   image: IReviewImageData;
   setSideImage: React.Dispatch<React.SetStateAction<IReviewImageData | null>>;
+  setSideVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DesignsGridView: React.FC<Props> = ({ image, setSideImage }) => {
+const DesignsGridView: React.FC<Props> = ({
+  image,
+  setSideImage,
+  setSideVisible,
+}) => {
   // const items: MenuProps["items"] = [
   //   {
   //     key: "1",
@@ -60,7 +57,10 @@ const DesignsGridView: React.FC<Props> = ({ image, setSideImage }) => {
           className="aspect-square w-full cursor-pointer rounded-xl object-cover"
           loading="lazy"
           preview={false}
-          onClick={() => setSideImage(image)}
+          onClick={() => {
+            setSideVisible(true);
+            setSideImage(image);
+          }}
         />
       ) : (
         <div className=" text-white">Waiting for image...</div>

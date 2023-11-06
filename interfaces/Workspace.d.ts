@@ -1,6 +1,7 @@
 import { IReviewImageData } from "./ReviewImageData";
 
 export interface IWorkspace {
+  id?: string;
   name: string;
   description?: string;
   avatarUrl?: string;

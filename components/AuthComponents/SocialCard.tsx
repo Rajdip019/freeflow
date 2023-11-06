@@ -10,7 +10,6 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Button, Divider, Form, Input, Typography } from "antd";
-import { useRouter } from "next/router";
 import React, { useState } from "react";
 const { Text, Title } = Typography;
 type Props = {
@@ -26,7 +25,8 @@ const SocialCard = ({ setCurrentTab }: Props) => {
     lastName: authUser?.displayName?.split(" ")[1] || "",
   });
   const { createUser, addWorkspaceInUser } = useUserContext();
-  const { createWorkspace, addUserInWorkspace } = useWorkspaceContext();
+  const { createWorkspace, addUserInWorkspace, fetchInitialWorkspace } =
+    useWorkspaceContext();
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleContinue = async () => {
@@ -70,6 +70,8 @@ const SocialCard = ({ setCurrentTab }: Props) => {
 
       await addUserInWorkspace(id, collaboratorsData);
       await addWorkspaceInUser(authUser.uid, workspaceDataUser);
+      localStorage.setItem("currentWorkspaceId", id);
+      await fetchInitialWorkspace();
 
       setCurrentTab(3);
       setLoading(false);

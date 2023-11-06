@@ -14,6 +14,8 @@ import {
   Badge,
   Button,
   Divider,
+  Dropdown,
+  Menu,
   Popconfirm,
   Space,
   Tag,
@@ -21,6 +23,7 @@ import {
   Typography,
   message,
 } from "antd";
+import Head from "next/head";
 import React, { useState } from "react";
 import Avatar from "react-avatar";
 
@@ -42,7 +45,7 @@ const PeopleContent = (props: Props) => {
   const handleRemoveUser = async (userId: string) => {
     try {
       setCnfLoading(true);
-      const workspaceId = localStorage.getItem("currentWorkspaceId");
+      const workspaceId = renderWorkspace?.id;
       if (workspaceId) {
         await removeUserFromWorkspace(workspaceId, userId);
         await removeWorkspaceInUser(userId, workspaceId);
@@ -54,8 +57,12 @@ const PeopleContent = (props: Props) => {
       console.log(error);
     }
   };
+
   return (
     <DashboardLayout>
+      <Head>
+        <title>People | Freeflow</title>
+      </Head>
       <Header
         breadcrumb={[
           {
@@ -98,7 +105,7 @@ const PeopleContent = (props: Props) => {
                     : "blue"
                 }
               >
-                <div className="flex h-56 w-52 flex-col rounded border-2 border-[#ffffff42] p-4">
+                <div className="flex h-60 w-52 flex-col rounded border-2 border-[#ffffff42] p-4">
                   <Avatar
                     src={user?.imageURL}
                     name={user?.name}
@@ -127,21 +134,51 @@ const PeopleContent = (props: Props) => {
                         currentUserInWorkspace?.filter(
                           (u) => u?.id === authUser?.uid
                         )[0]?.role === "admin") && (
-                        <Tooltip title="Remove">
-                          <Popconfirm
-                            title="Are you sure to remove this user?"
-                            okText="Yes"
-                            cancelText="No"
-                            okButtonProps={{ loading: cnfLoading }}
-                            onConfirm={() => handleRemoveUser(user.id)}
+                        <>
+                          {/* <Dropdown
+                            overlay={
+                              <Menu>
+                                <Menu.Item>
+                                  Delete
+                                </Menu.Item>
+                                <Menu.Item>
+                                  <Menu
+                                    onClick={(e) =>
+                                      handleRoleChange(user.id, e.key)
+                                    }
+                                  >
+                                    <Menu.Item key="admin">Admin</Menu.Item>
+                                    <Menu.Item key="editor">Editor</Menu.Item>
+                                    <Menu.Item key="viewer">Viewer</Menu.Item>
+                                  </Menu>
+                                </Menu.Item>
+                              </Menu>
+                            }
                           >
-                            <FFButton
-                              type="text"
-                              className="w-6 rounded-full text-gray-400 transition-all"
-                              icon={<LogoutOutlined />}
-                            />
-                          </Popconfirm>
-                        </Tooltip>
+                            <a
+                              className="ant-dropdown-link"
+                              onClick={(e) => e.preventDefault()}
+                            >
+                              Change Role
+                            </a>
+                          </Dropdown> */}
+
+                          <Tooltip title="Remove">
+                            <Popconfirm
+                              title="Are you sure to remove this user?"
+                              okText="Yes"
+                              cancelText="No"
+                              okButtonProps={{ loading: cnfLoading }}
+                              onConfirm={() => handleRemoveUser(user.id)}
+                            >
+                              <FFButton
+                                type="text"
+                                className="w-6 rounded-full text-gray-400 transition-all"
+                                icon={<LogoutOutlined />}
+                              />
+                            </Popconfirm>
+                          </Tooltip>
+                        </>
                       )}
                   </Space>
                 </div>
@@ -149,7 +186,7 @@ const PeopleContent = (props: Props) => {
             ))}
           <Space
             onClick={() => setVisibleInviteModel(true)}
-            className="flex h-56 w-52 cursor-pointer flex-col items-center justify-center rounded border-2 border-[#ffffff42]"
+            className="flex h-60 w-52 cursor-pointer flex-col items-center justify-center rounded border-2 border-[#ffffff42]"
           >
             <Typography.Text className="text-4xl text-[#ffffff5d] ">
               <PlusCircleOutlined />

@@ -10,6 +10,7 @@ import { useImageContext } from "@/contexts/ImagesContext";
 import { Button, Modal, Typography, message } from "antd";
 import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 import { FFButton } from "@/theme/themeConfig";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 
 interface Props {
   prevImage: IReviewImageData;
@@ -32,8 +33,7 @@ const VersionUploadModal: React.FC<Props> = ({
   >("not-started");
   const [uploadedImageId, setUploadedImageId] = useState<string>("{imageId}");
   const [fileSize, setFileSize] = useState<number>(0);
-  const { user } = useUserContext();
-  const { authUser } = useAuth();
+  const { renderWorkspace } = useWorkspaceContext();
   const { storage: storageUsed } = useImageContext();
 
   const [open, setOpen] = useState(false);
@@ -62,7 +62,7 @@ const VersionUploadModal: React.FC<Props> = ({
     if (fileSize < 75) {
       setUploadingState("uploading");
       const docRef = doc(db, "reviewImages", prevImage.id);
-      const workspaceId = localStorage.getItem("currentWorkspaceId");
+      const workspaceId = renderWorkspace?.id;
       const imagePath = `designs/${workspaceId}/${
         docRef.id
       }/${imageName}_${Date.now()}_v${prevImage.currentVersion + 1}`;

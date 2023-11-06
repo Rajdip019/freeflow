@@ -34,6 +34,8 @@ interface IDefaultValues {
   storage: number;
   getImages: () => any;
   deleteImage: (image: IReviewImageData) => any;
+  searchQuery: string;
+  setSearchQuery: Dispatch<SetStateAction<string>>;
 }
 
 const defaultValues: IDefaultValues = {
@@ -42,6 +44,8 @@ const defaultValues: IDefaultValues = {
   storage: 0,
   getImages: () => {},
   deleteImage: () => {},
+  searchQuery: "",
+  setSearchQuery: () => {},
 };
 
 const imagesContext = createContext(defaultValues);
@@ -59,6 +63,7 @@ export const ImageContextProvider = ({ children }: Props) => {
   const toast = useToast();
   const { user } = useUserContext();
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState<string>("");
   // const { onCopy, hasCopied } = useClipboard(value);
 
   const getImages = useCallback(async () => {
@@ -125,6 +130,8 @@ export const ImageContextProvider = ({ children }: Props) => {
     storage,
     getImages,
     deleteImage,
+    searchQuery,
+    setSearchQuery,
   };
 
   return (

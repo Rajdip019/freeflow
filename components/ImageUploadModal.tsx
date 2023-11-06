@@ -10,6 +10,7 @@ import { useImageContext } from "@/contexts/ImagesContext";
 import ImageUploadSuccess from "./ImageUploadSuccess";
 import { Button, Input, Modal, Progress, Typography, message } from "antd";
 import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 const { TextArea } = Input;
 
 interface Props {
@@ -38,6 +39,7 @@ const ImageUploadModal = ({
   const { user } = useUserContext();
   const { authUser } = useAuth();
   const { storage: storageUsed } = useImageContext();
+  const { renderWorkspace } = useWorkspaceContext();
 
   useEffect(() => {
     if (visible && propFile && propImage) {
@@ -80,7 +82,7 @@ const ImageUploadModal = ({
         currentVersion: 1,
       };
       await setDoc(docRef, data);
-      const workspaceId = localStorage.getItem("currentWorkspaceId");
+      const workspaceId = renderWorkspace?.id;
       const imagePath = `designs/${workspaceId}/${
         docRef.id
       }/versions/${imageName}_${Date.now()}`;

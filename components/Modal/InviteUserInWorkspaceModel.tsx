@@ -38,7 +38,8 @@ const InviteUserInWorkspaceModel: React.FC<Props> = ({
     renderWorkspace,
     addUserInWorkspace,
     currentUserInWorkspace,
-    fetchFullWorkspace,
+    setCurrentUserInWorkspace,
+    setWorkspaceInUser,
   } = useWorkspaceContext();
   const { addWorkspaceInUser } = useUserContext();
 
@@ -73,7 +74,7 @@ const InviteUserInWorkspaceModel: React.FC<Props> = ({
       setConfirmLoading(false);
     } else {
       const userData: IUser = querySnapshot.docs[0].data() as IUser;
-      inviteUser(userData, querySnapshot.docs[0].id, role);
+      await inviteUser(userData, querySnapshot.docs[0].id, role);
       setVisible(false);
       setConfirmLoading(false);
     }
@@ -81,7 +82,7 @@ const InviteUserInWorkspaceModel: React.FC<Props> = ({
 
   const inviteUser = async (userData: IUser, id: string, role: string) => {
     if (renderWorkspace) {
-      const currentWorkspaceId = localStorage.getItem("currentWorkspaceId");
+      const currentWorkspaceId = renderWorkspace.id;
       if (currentWorkspaceId) {
         const newUserInWorkspaceData: IUserInWorkspace = {
           id: id,
@@ -102,11 +103,19 @@ const InviteUserInWorkspaceModel: React.FC<Props> = ({
           avatarUrl: "",
           status: "Pending",
         };
+
         try {
           await addUserInWorkspace(currentWorkspaceId, newUserInWorkspaceData);
           await addWorkspaceInUser(id, newWorkspaceInUserData);
-          await fetchFullWorkspace(currentWorkspaceId);
+
+          setCurrentUserInWorkspace([
+            ...currentUserInWorkspace,
+            newUserInWorkspaceData,
+          ]);
+
           message.success("User invited successfully");
+          setEmail("");
+          setRole("");
         } catch (err) {
           message.error("Failed to invite user");
         }
