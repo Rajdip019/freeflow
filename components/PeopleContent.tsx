@@ -45,10 +45,10 @@ const PeopleContent = (props: Props) => {
   const handleRemoveUser = async (userId: string) => {
     try {
       setCnfLoading(true);
-      const workspaceId = localStorage.getItem("currentWorkspaceId");
+      const workspaceId = renderWorkspace?.id;
       if (workspaceId) {
         await removeUserFromWorkspace(workspaceId, userId);
-        // await removeWorkspaceInUser(userId, workspaceId);
+        await removeWorkspaceInUser(userId, workspaceId);
         await fetchFullWorkspace(workspaceId);
       }
       setCnfLoading(false);

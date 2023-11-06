@@ -17,6 +17,7 @@ import {
   Dispatch,
   SetStateAction,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -30,6 +31,7 @@ export interface IWorkspaceContext {
   renderWorkspace: IWorkspace | null;
   setRenderWorkspace: Dispatch<SetStateAction<IWorkspace | null>>;
   setWorkspaceInUser: Dispatch<SetStateAction<IWorkspaceInUser[]>>;
+  setCurrentUserInWorkspace: Dispatch<SetStateAction<IUserInWorkspace[]>>;
   workspaceInUser: IWorkspaceInUser[];
   currentUserInWorkspace: IUserInWorkspace[];
   currentDesignInWorkspace: IReviewImageData[];
@@ -42,7 +44,7 @@ export interface IWorkspaceContext {
   removeUserFromWorkspace: (workspaceId: string, userId: string) => any;
   fetchUserInWorkspace: (workspaceId: string) => any;
   fetchDesignInWorkspace: (workspaceId: string) => any;
-  fetchUserWork: () => any;
+  fetchInitialWorkspace: () => any;
 }
 
 const defaultValues: IWorkspaceContext = {
@@ -53,6 +55,7 @@ const defaultValues: IWorkspaceContext = {
   workspaceInUser: [] as IWorkspaceInUser[],
   currentUserInWorkspace: {} as IUserInWorkspace[],
   currentDesignInWorkspace: {} as IReviewImageData[],
+  setCurrentUserInWorkspace: () => {},
   fetchWorkspace: () => {},
   createWorkspace: () => {},
   updateWorkspace: () => {},
@@ -61,7 +64,7 @@ const defaultValues: IWorkspaceContext = {
   removeUserFromWorkspace: () => {},
   fetchUserInWorkspace: () => {},
   fetchDesignInWorkspace: () => {},
-  fetchUserWork: () => {},
+  fetchInitialWorkspace: () => {},
 };
 
 const WorkspaceContext = createContext<IWorkspaceContext>(defaultValues);
@@ -94,7 +97,10 @@ export function WorkspaceContextProvider({ children }: any) {
       const WorkspaceRef = doc(db, "workspaces", workspaceId);
       const WorkspaceSnap = await getDoc(WorkspaceRef);
       if (WorkspaceSnap.exists()) {
-        return WorkspaceSnap.data() as IWorkspace;
+        return {
+          id: WorkspaceSnap.id,
+          ...WorkspaceSnap.data(),
+        } as IWorkspace;
       }
     } catch (error) {
       message.error("Failed to fetch workspace");
@@ -204,66 +210,102 @@ export function WorkspaceContextProvider({ children }: any) {
   };
 
   useEffect(() => {
-    setLoading(true);
-    fetchUserWork();
-    setLoading(false);
+    fetchInitialWorkspace();
   }, []);
 
-  const fetchUserWork = async () => {
-    if (authUser) {
-      const workspaceInUser = await fetchWorkspaceInUser(authUser.uid);
-      const filteredWorkspace = workspaceInUser.filter(
-        (workspace: IWorkspaceInUser) => workspace.status === "Accepted"
-      );
-      setWorkspaceInUser(filteredWorkspace as IWorkspaceInUser[]);
+  const fetchInitialWorkspace = async () => {
+    try {
+      // Get the initial workspace from local storage
       const currentWorkspaceId = localStorage.getItem("currentWorkspaceId");
-      if (currentWorkspaceId) {
-        const _currentWorkspace = await fetchWorkspace(currentWorkspaceId);
-        const userInWorkspace = await fetchUserInWorkspace(currentWorkspaceId);
-        if (
-          userInWorkspace &&
-          userInWorkspace?.filter(
-            (user: IUserInWorkspace) => user.id === authUser.uid
-          ).length > 0 &&
-          userInWorkspace?.filter(
-            (user: IUserInWorkspace) => user.id === authUser.uid
-          )[0].status === "Accepted"
-        ) {
-          setRenderWorkspace(_currentWorkspace as IWorkspace);
-          setCurrentUserInWorkspace(userInWorkspace as IUserInWorkspace[]);
-          const designInWorkspace = await fetchDesignInWorkspace(
+      if (authUser) {
+        // fetch current users workspace and filter by accepted ones
+        const allWorkspace = await fetchWorkspaceInUser(authUser.uid);
+        const newWorkspace = allWorkspace.filter(
+          (workspace: IWorkspaceInUser) => workspace.status === "Accepted"
+        );
+        setWorkspaceInUser(newWorkspace);
+
+        if (currentWorkspaceId) {
+          // fetch user in this workspace, check if current user is allowed, then fetch all other necessary information
+          const userInWorkspace = await fetchUserInWorkspace(
             currentWorkspaceId
           );
-          setCurrentDesignInWorkspace(designInWorkspace as IReviewImageData[]);
-        } else {
-          fetchOtherWorkspace();
-        }
-      } else {
-        fetchOtherWorkspace();
+          if (
+            userInWorkspace?.some((user) => user.id === authUser.uid) &&
+            userInWorkspace.filter((user) => user.id === authUser.uid)[0]
+              .status === "Accepted"
+          ) {
+            const workspaceData = await fetchWorkspace(currentWorkspaceId);
+            const workspaceDesigns = await fetchDesignInWorkspace(
+              currentWorkspaceId
+            );
+            setCurrentUserInWorkspace(userInWorkspace);
+            workspaceData && setRenderWorkspace(workspaceData);
+            workspaceDesigns && setCurrentDesignInWorkspace(workspaceDesigns);
+            // else case fetch from the users workspace
+          } else fetchFullWorkspace(newWorkspace[0].id);
+        } else fetchFullWorkspace(newWorkspace[0].id);
       }
+    } catch (e) {
+      console.error(e);
     }
   };
 
-  const fetchOtherWorkspace = async () => {
-    if (authUser) {
-      const _workspaceInUser = await fetchWorkspaceInUser(authUser?.uid);
-      const workspaceInUser = _workspaceInUser.filter(
-        (workspace: IWorkspaceInUser) => workspace.status === "Accepted"
-      );
-      if (workspaceInUser && workspaceInUser.length > 0) {
-        const _currentWorkspace = await fetchWorkspace(workspaceInUser[0].id);
-        setRenderWorkspace(_currentWorkspace as IWorkspace);
-        const userInWorkspace = await fetchUserInWorkspace(
-          workspaceInUser[0].id
-        );
-        setCurrentUserInWorkspace(userInWorkspace as IUserInWorkspace[]);
-        const designInWorkspace = await fetchDesignInWorkspace(
-          workspaceInUser[0].id
-        );
-        setCurrentDesignInWorkspace(designInWorkspace as IReviewImageData[]);
-      }
-    }
-  };
+  // const fetchInitialWorkspace = async () => {
+  //   if (authUser) {
+  //     const workspaceInUser = await fetchWorkspaceInUser(authUser.uid);
+  //     const filteredWorkspace = workspaceInUser.filter(
+  //       (workspace: IWorkspaceInUser) => workspace.status === "Accepted"
+  //     );
+  //     setWorkspaceInUser(filteredWorkspace as IWorkspaceInUser[]);
+  //     const currentWorkspaceId = localStorage.getItem("currentWorkspaceId");
+  //     if (currentWorkspaceId) {
+  //       const _currentWorkspace = await fetchWorkspace(currentWorkspaceId);
+  //       const userInWorkspace = await fetchUserInWorkspace(currentWorkspaceId);
+  //       if (
+  //         userInWorkspace &&
+  //         userInWorkspace?.filter(
+  //           (user: IUserInWorkspace) => user.id === authUser.uid
+  //         ).length > 0 &&
+  //         userInWorkspace?.filter(
+  //           (user: IUserInWorkspace) => user.id === authUser.uid
+  //         )[0].status === "Accepted"
+  //       ) {
+  //         setRenderWorkspace(_currentWorkspace as IWorkspace);
+  //         setCurrentUserInWorkspace(userInWorkspace as IUserInWorkspace[]);
+  //         const designInWorkspace = await fetchDesignInWorkspace(
+  //           currentWorkspaceId
+  //         );
+  //         setCurrentDesignInWorkspace(designInWorkspace as IReviewImageData[]);
+  //       } else {
+  //         fetchOtherWorkspace();
+  //       }
+  //     } else {
+  //       fetchOtherWorkspace();
+  //     }
+  //   }
+  // };
+
+  // const fetchOtherWorkspace = async () => {
+  //   if (authUser) {
+  //     const _workspaceInUser = await fetchWorkspaceInUser(authUser?.uid);
+  //     const workspaceInUser = _workspaceInUser.filter(
+  //       (workspace: IWorkspaceInUser) => workspace.status === "Accepted"
+  //     );
+  //     if (workspaceInUser && workspaceInUser.length > 0) {
+  //       const _currentWorkspace = await fetchWorkspace(workspaceInUser[0].id);
+  //       setRenderWorkspace(_currentWorkspace as IWorkspace);
+  //       const userInWorkspace = await fetchUserInWorkspace(
+  //         workspaceInUser[0].id
+  //       );
+  //       setCurrentUserInWorkspace(userInWorkspace as IUserInWorkspace[]);
+  //       const designInWorkspace = await fetchDesignInWorkspace(
+  //         workspaceInUser[0].id
+  //       );
+  //       setCurrentDesignInWorkspace(designInWorkspace as IReviewImageData[]);
+  //     }
+  //   }
+  // };
 
   const fetchFullWorkspace = async (workspaceId: string) => {
     setSideLoading(true);
@@ -280,9 +322,10 @@ export function WorkspaceContextProvider({ children }: any) {
     renderWorkspace,
     setRenderWorkspace,
     setWorkspaceInUser,
+    setCurrentUserInWorkspace,
     fetchFullWorkspace,
     workspaceInUser,
-    fetchUserWork,
+    fetchInitialWorkspace,
     currentUserInWorkspace,
     currentDesignInWorkspace,
     fetchWorkspace,

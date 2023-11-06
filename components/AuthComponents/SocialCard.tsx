@@ -25,7 +25,7 @@ const SocialCard = ({ setCurrentTab }: Props) => {
     lastName: authUser?.displayName?.split(" ")[1] || "",
   });
   const { createUser, addWorkspaceInUser } = useUserContext();
-  const { createWorkspace, addUserInWorkspace, fetchUserWork } =
+  const { createWorkspace, addUserInWorkspace, fetchInitialWorkspace } =
     useWorkspaceContext();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -70,8 +70,8 @@ const SocialCard = ({ setCurrentTab }: Props) => {
 
       await addUserInWorkspace(id, collaboratorsData);
       await addWorkspaceInUser(authUser.uid, workspaceDataUser);
-      await fetchUserWork();
       localStorage.setItem("currentWorkspaceId", id);
+      await fetchInitialWorkspace();
 
       setCurrentTab(3);
       setLoading(false);

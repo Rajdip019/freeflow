@@ -48,7 +48,7 @@ const Inbox = (props: Props) => {
     if (authUser) {
       fetchData();
     }
-  }, [authUser]);
+  }, []);
 
   const acceptInvite = async (workspaceId: string) => {
     try {
@@ -70,8 +70,8 @@ const Inbox = (props: Props) => {
         );
         await updateDoc(userRef, { status: "Accepted" });
         await updateDoc(workRef, { status: "Accepted" });
-        await fetchFullWorkspace(workspaceId);
         localStorage.setItem("currentWorkspaceId", workspaceId);
+        await fetchFullWorkspace(workspaceId);
         message.success("Invite accepted successfully");
         fetchData();
         setConfirmLoading(false);

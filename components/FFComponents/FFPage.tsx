@@ -18,13 +18,13 @@ interface Props {
 
 const FFPage: React.FC<Props> = ({ children, isAuthRequired }) => {
   const { user, fetchWorkspaceInUser, getUserData } = useUserContext();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
   const { authUser } = useAuth();
   const { fetchWorkspace } = useWorkspaceContext();
 
   const checkPath = async () => {
-    setIsLoading(true);
+    // setIsLoading(true);
     if (authUser) {
       const uid = authUser.uid;
       let user;
@@ -66,7 +66,7 @@ const FFPage: React.FC<Props> = ({ children, isAuthRequired }) => {
         router.push("/auth");
       }
     }
-    setIsLoading(false);
+    // setIsLoading(false);
   };
 
   useEffect(() => {
