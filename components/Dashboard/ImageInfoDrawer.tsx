@@ -1,5 +1,13 @@
 import React from "react";
-import { Button, Dropdown, MenuProps, Space, Typography } from "antd";
+import {
+  Button,
+  Dropdown,
+  MenuProps,
+  Space,
+  Typography,
+  Drawer,
+  Divider,
+} from "antd";
 import { IReviewImageData } from "@/interfaces/ReviewImageData";
 import {
   CloseOutlined,
@@ -22,20 +30,25 @@ type Props = {
 };
 
 const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
-  const { images } = useImageContext();
   return (
-    <>
-      {image !== null && sideVisible && (
-        <div className="bg-sec sticky top-0 hidden h-screen w-[26%] flex-col justify-between space-y-4 border-l border-l-[#ffffff1e] md:flex">
+    <Drawer
+      open={sideVisible}
+      onClose={() => setSideVisible(false)}
+      className="p-0"
+      title="Design details"
+    >
+      {image && (
+        <div className="w-full">
           <Space direction="vertical" className="w-full">
-            <Space className="w-full items-center justify-center bg-black">
+            <Space className="w-full items-center justify-center bg-[#141414]">
               <img
-                className="h-[35vh]"
+                className="h-[30vh] w-auto"
                 src={image?.imageURL[0]}
                 alt={image?.imageName}
               />
             </Space>
-            <Space className="w-full items-center justify-between px-4 text-3xl">
+
+            <Space className="w-full items-center justify-between px-2 text-3xl">
               <Space>
                 <FileImageTwoTone />
                 <Typography.Text className="text-xl font-semibold">
@@ -77,8 +90,9 @@ const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
               </Space>
             </Space>
           </Space>
-          <Space className="px-4" direction="vertical">
+          <Space className="mt-10 w-full px-2" direction="vertical">
             <Typography.Text className="font-semibold">Details</Typography.Text>
+            <div className="mb-1 h-[1px] w-full bg-[#ffffff18]" />
             <Space className="w-full" direction="vertical">
               <Space className="w-full justify-between">
                 <Typography.Text className=" text-sm text-[#ffffff90]">
@@ -138,7 +152,7 @@ const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
               </Space>
             </Space>
           </Space>
-          <Space className="items-center justify-center p-8">
+          <Space className="w-full items-center justify-center p-8">
             <Button
               type="primary"
               className="mt-4 w-full"
@@ -151,15 +165,9 @@ const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
               Open in Feedback Tool
             </Button>
           </Space>
-          <Button
-            type="text"
-            onClick={() => setSideVisible(false)}
-            className="absolute right-2 top-0 bg-[#00000075]"
-            icon={<CloseOutlined />}
-          />
         </div>
       )}
-    </>
+    </Drawer>
   );
 };
 

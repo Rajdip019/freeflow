@@ -48,7 +48,7 @@ const DesignHomePage = () => {
       {visible && <SearchModal visible={visible} setVisible={setVisible} />}
 
       <div className="flex w-full">
-        <div className={`${sideVisible ? "w-[74%]" : "w-full"}`}>
+        <div className={`${sideVisible ? "w-full lg:w-[74%]" : "w-full"}`}>
           <DesignHeader isGridView={isGridView} setIsGridView={setIsGridView} />
 
           <div
@@ -68,7 +68,7 @@ const DesignHomePage = () => {
               <>
                 {isGridView ? (
                   <div className="py-4">
-                    <div className="flex flex-wrap gap-4">
+                    <div className="flex w-full flex-wrap items-center justify-center gap-4 md:justify-normal">
                       {orderBy(filteredImages, ["timeStamp"], ["desc"]).map(
                         (image) => {
                           return (

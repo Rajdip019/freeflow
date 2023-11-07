@@ -4,11 +4,15 @@ import InviteUserInWorkspaceModel from "@/components/Modal/InviteUserInWorkspace
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserContext } from "@/contexts/UserContext";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
+import { IUserInWorkspace } from "@/interfaces/Workspace";
 import { FFButton } from "@/theme/themeConfig";
 import {
+  DeleteOutlined,
   LogoutOutlined,
+  MoreOutlined,
   PlusCircleOutlined,
   PlusOutlined,
+  SwapOutlined,
 } from "@ant-design/icons";
 import {
   Badge,
@@ -16,6 +20,7 @@ import {
   Divider,
   Dropdown,
   Menu,
+  MenuProps,
   Popconfirm,
   Space,
   Tag,
@@ -39,20 +44,28 @@ const PeopleContent = (props: Props) => {
 
   const { removeWorkspaceInUser } = useUserContext();
   const [visibleInviteModel, setVisibleInviteModel] = useState<boolean>(false);
-  const [cnfLoading, setCnfLoading] = useState<boolean>(false);
   const { authUser } = useAuth();
 
   const handleRemoveUser = async (userId: string) => {
     try {
-      setCnfLoading(true);
       const workspaceId = renderWorkspace?.id;
       if (workspaceId) {
         await removeUserFromWorkspace(workspaceId, userId);
         await removeWorkspaceInUser(userId, workspaceId);
         await fetchFullWorkspace(workspaceId);
       }
-      setCnfLoading(false);
       message.success("User removed successfully");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleChangeRole = async (role: string, userId: string) => {
+    try {
+      const workspaceId = renderWorkspace?.id;
+      if (workspaceId) {
+      }
+      message.success("User role changed to " + role);
     } catch (error) {
       console.log(error);
     }
@@ -134,51 +147,60 @@ const PeopleContent = (props: Props) => {
                         currentUserInWorkspace?.filter(
                           (u) => u?.id === authUser?.uid
                         )[0]?.role === "admin") && (
-                        <>
-                          {/* <Dropdown
-                            overlay={
-                              <Menu>
-                                <Menu.Item>
-                                  Delete
-                                </Menu.Item>
-                                <Menu.Item>
-                                  <Menu
-                                    onClick={(e) =>
-                                      handleRoleChange(user.id, e.key)
-                                    }
+                        <Dropdown
+                          menu={{
+                            items: [
+                              {
+                                label: "Change role",
+                                icon: <SwapOutlined />,
+                                key: "1",
+                                children: [
+                                  {
+                                    label: "Admin",
+                                    key: "1-2",
+                                    onClick: () =>
+                                      handleChangeRole("Admin", user.id),
+                                  },
+                                  {
+                                    label: "Editor",
+                                    key: "1-2",
+                                    onClick: () =>
+                                      handleChangeRole("Editor", user.id),
+                                  },
+                                  {
+                                    label: "Viewer",
+                                    key: "1-3",
+                                    onClick: () =>
+                                      handleChangeRole("Viewer", user.id),
+                                  },
+                                ],
+                              },
+                              {
+                                label: (
+                                  <Popconfirm
+                                    onConfirm={() => handleRemoveUser(user.id)}
+                                    title="Are you sure want to remove this user?"
+                                    className="flex items-center justify-start gap-2"
                                   >
-                                    <Menu.Item key="admin">Admin</Menu.Item>
-                                    <Menu.Item key="editor">Editor</Menu.Item>
-                                    <Menu.Item key="viewer">Viewer</Menu.Item>
-                                  </Menu>
-                                </Menu.Item>
-                              </Menu>
-                            }
+                                    <DeleteOutlined />
+                                    <Typography.Text>
+                                      Delete user
+                                    </Typography.Text>
+                                  </Popconfirm>
+                                ),
+                                key: "2",
+                              },
+                            ] as MenuProps["items"],
+                          }}
+                          trigger={["click"]}
+                        >
+                          <Button
+                            type="text"
+                            className="flex w-4 items-center justify-center rounded-full text-xl"
                           >
-                            <a
-                              className="ant-dropdown-link"
-                              onClick={(e) => e.preventDefault()}
-                            >
-                              Change Role
-                            </a>
-                          </Dropdown> */}
-
-                          <Tooltip title="Remove">
-                            <Popconfirm
-                              title="Are you sure to remove this user?"
-                              okText="Yes"
-                              cancelText="No"
-                              okButtonProps={{ loading: cnfLoading }}
-                              onConfirm={() => handleRemoveUser(user.id)}
-                            >
-                              <FFButton
-                                type="text"
-                                className="w-6 rounded-full text-gray-400 transition-all"
-                                icon={<LogoutOutlined />}
-                              />
-                            </Popconfirm>
-                          </Tooltip>
-                        </>
+                            <MoreOutlined />
+                          </Button>
+                        </Dropdown>
                       )}
                   </Space>
                 </div>

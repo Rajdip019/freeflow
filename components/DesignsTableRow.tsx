@@ -63,6 +63,7 @@ const DesignsTableRow: React.FC<Props> = ({
           )}
         />
         <Column
+          title="Name"
           render={(text, record: IReviewImageData) => (
             <Typography.Text className="group flex items-center truncate hover:underline">
               {record.imageName}{" "}
@@ -78,7 +79,7 @@ const DesignsTableRow: React.FC<Props> = ({
           render={(text, record: IReviewImageData) => (
             <Tag color="green">{record.newUpdate}</Tag>
           )}
-          className="cursor-pointer"
+          className="hidden cursor-pointer lg:table-cell"
         />
         <Column
           title="Views"
@@ -93,7 +94,7 @@ const DesignsTableRow: React.FC<Props> = ({
               )}
             </Typography.Text>
           )}
-          className="cursor-pointer"
+          className="hidden cursor-pointer lg:table-cell"
         />
         <Column
           title="Size"
@@ -108,7 +109,7 @@ const DesignsTableRow: React.FC<Props> = ({
               )}
             </Typography.Text>
           )}
-          className="cursor-pointer"
+          className="hidden cursor-pointer lg:table-cell"
           onCell={(record) => {
             return {
               onClick: () => {
