@@ -1,7 +1,5 @@
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
-import Link from "next/link";
-import React, { useState } from "react";
-import Moment from "react-moment";
+import { IReviewImage, IReviewImageVersion } from "@/interfaces/ReviewImageData";
+import React from "react";
 import ReviewCanvas from "../ImageReview/ReviewCanvas";
 import { useFeedbackContext } from "@/contexts/FeedbackContext";
 import { useRouter } from "next/router";
@@ -11,16 +9,16 @@ import CompareView from "../ImageReview/CompareView";
 import { FFButton } from "@/theme/themeConfig";
 import { defaultHighlightedThread } from "@/utils/constants";
 import { CloseCircleOutlined } from "@ant-design/icons";
-import FeedbackDrawer from "../ImageReview/FeedbackDrawer";
 import PreviewCanvas from "../ImageReview/PreviewCanvas";
 
 interface Props {
-  imageData: IReviewImageData;
+  image: IReviewImage;
+  imageData: IReviewImageVersion[];
 }
 
-const ReviewImageMobile: React.FC<Props> = ({ imageData }) => {
+const ReviewImageMobile: React.FC<Props> = ({ image, imageData }) => {
   const router = useRouter();
-  const { imageId } = router.query;
+  const { imageId, workspaceId } = router.query;
   const {
     version,
     isCompareView,
@@ -35,8 +33,9 @@ const ReviewImageMobile: React.FC<Props> = ({ imageData }) => {
       <div className=" md:flex md:h-[calc(100vh-4rem)]">
         {isCompareView ? (
           <CompareView
-            imageData={imageData as IReviewImageData}
-            currentVersion={imageData?.currentVersion as number}
+            imageData={imageData}
+            image={image as IReviewImage}
+            currentVersion={image?.latestVersion as number}
           />
         ) : (
           <div className="w-full">
@@ -63,12 +62,9 @@ const ReviewImageMobile: React.FC<Props> = ({ imageData }) => {
                 ) : (
                   <div className=" w-full">
                     <ReviewCanvas
-                      imageSrc={
-                        imageData?.currentVersion
-                          ? imageData?.imageURL[(version as number) - 1]
-                          : (imageData?.imageURL as any)
-                      }
+                      imageSrc={imageData[version - 1 ].imageURL as string}
                       imageId={imageId as string}
+                      workspaceId={workspaceId as string}
                     />
                   </div>
                 )}
@@ -78,7 +74,7 @@ const ReviewImageMobile: React.FC<Props> = ({ imageData }) => {
         )}
       </div>
       {isCompareView ? null : (
-        <FeedbackDrawerMobile imageId={imageId as string} />
+        <FeedbackDrawerMobile designId={imageId as string} workspaceId={workspaceId as string} />
       )}
     </div>
   );

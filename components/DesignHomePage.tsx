@@ -10,7 +10,7 @@ import { Button, Empty, Space, Typography } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import ImageInfoDrawer from "./Dashboard/ImageInfoDrawer";
 import DesignHeader from "./Dashboard/DesignHeader";
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import { IReviewImage } from "@/interfaces/ReviewImageData";
 import SearchModal from "./Modal/SearchModel";
 
 const DesignHomePage = () => {
@@ -20,7 +20,7 @@ const DesignHomePage = () => {
     image.imageName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const [sideImage, setSideImage] = useState<IReviewImageData | null>(null);
+  const [sideImage, setSideImage] = useState<IReviewImage | null>(null);
   const [visible, setVisible] = useState<boolean>(false);
   const [sideVisible, setSideVisible] = useState<boolean>(false);
 

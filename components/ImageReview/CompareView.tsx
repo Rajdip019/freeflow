@@ -1,15 +1,16 @@
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import { IReviewImage, IReviewImageVersion } from "@/interfaces/ReviewImageData";
 import React from "react";
 import PreviewCanvas from "./PreviewCanvas";
 import { Button, Dropdown, Typography } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 
 interface Props {
-  imageData: IReviewImageData;
+  image: IReviewImage;
+  imageData: IReviewImageVersion[];
   currentVersion: number;
 }
 
-const CompareView: React.FC<Props> = ({ imageData, currentVersion }) => {
+const CompareView: React.FC<Props> = ({image, imageData, currentVersion }) => {
   const [version1, setVersion1] = React.useState<number>(currentVersion);
   const [version2, setVersion2] = React.useState<number>(currentVersion - 1);
 
@@ -19,27 +20,27 @@ const CompareView: React.FC<Props> = ({ imageData, currentVersion }) => {
         <div className=" flex flex-col justify-around gap-5 md:flex-row ">
           <div className="flex w-full flex-col items-center justify-center">
             <Typography.Text className=" mb-5 text-sm  font-semibold">
-              {imageData.imageName}
+              {image.imageName}
             </Typography.Text>
             <div className="w-[90vw] md:w-[45vw]">
               <PreviewCanvas
-                imageSrc={imageData?.imageURL[(version1 as number) - 1]}
+                imageSrc={imageData[0].imageURL}
               />
             </div>
             <div className=" mt-5">
               <Dropdown
                 overlay={
                   <div className="rounded bg-gray-800 p-2">
-                    {imageData?.imageURL.map((_, index) => {
+                    {imageData?.map((_, index) => {
                       return (
                         <div
                           className="font-sec flex justify-center p-2 py-1 text-sm text-white hover:bg-purple-500"
                           key={index}
                           onClick={() => {
-                            setVersion1(imageData.imageURL.length - index);
+                            setVersion1(imageData.length - index);
                           }}
                         >
-                          {`Version ${imageData.imageURL.length - index}`}
+                          {`Version ${imageData.length - index}`}
                         </div>
                       );
                     })}
@@ -66,27 +67,27 @@ const CompareView: React.FC<Props> = ({ imageData, currentVersion }) => {
             className="flex w-full flex-col items-center justify-center   "
           >
             <Typography.Text className=" mb-5 text-sm  font-semibold">
-              {imageData.imageName}
+              {image.imageName}
             </Typography.Text>
             <div className="w-[90vw] md:w-[45vw]">
               <PreviewCanvas
-                imageSrc={imageData?.imageURL[(version2 as number) - 1]}
+                imageSrc={imageData[1].imageURL}
               />
             </div>
             <div className=" mb-10 mt-5 md:mb-0">
               <Dropdown
                 overlay={
                   <div className="rounded bg-gray-800 p-2">
-                    {imageData?.imageURL.map((_, index) => {
+                    {imageData?.map((_, index) => {
                       return (
                         <div
                           className="font-sec flex justify-center p-2 py-1 text-sm text-white hover:bg-purple-500"
                           key={index}
                           onClick={() => {
-                            setVersion2(imageData.imageURL.length - index);
+                            setVersion2(imageData.length - index);
                           }}
                         >
-                          {`Version ${imageData.imageURL.length - index}`}
+                          {`Version ${imageData.length - index}`}
                         </div>
                       );
                     })}

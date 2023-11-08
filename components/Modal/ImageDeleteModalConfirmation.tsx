@@ -1,11 +1,11 @@
 import { useImageContext } from "@/contexts/ImagesContext";
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import { IReviewImage } from "@/interfaces/ReviewImageData";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Modal, Space, Typography } from "antd";
 import React from "react";
 
 interface Props {
-  image: IReviewImageData;
+  image: IReviewImage;
   onlyIcon?: boolean;
 }
 

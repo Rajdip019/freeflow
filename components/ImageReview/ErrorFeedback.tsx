@@ -6,7 +6,6 @@ import { FFButton } from "@/theme/themeConfig";
 
 const ErrorFeedback = () => {
   const router = useRouter();
-  const { user } = useUserContext();
 
   return (
     <>

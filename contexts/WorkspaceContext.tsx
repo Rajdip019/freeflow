@@ -1,4 +1,4 @@
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import { IReviewImage } from "@/interfaces/ReviewImageData";
 import { IUser, IWorkspaceInUser } from "@/interfaces/User";
 import { IWorkspace, IUserInWorkspace } from "@/interfaces/Workspace";
 import { db } from "@/lib/firebaseConfig";
@@ -34,7 +34,7 @@ export interface IWorkspaceContext {
   setCurrentUserInWorkspace: Dispatch<SetStateAction<IUserInWorkspace[]>>;
   workspaceInUser: IWorkspaceInUser[];
   currentUserInWorkspace: IUserInWorkspace[];
-  currentDesignInWorkspace: IReviewImageData[];
+  currentDesignInWorkspace: IReviewImage[];
   fetchFullWorkspace: (workspaceId: string) => any;
   fetchWorkspace: (workspaceId: string) => any;
   createWorkspace: (workspaceData: IWorkspace) => any;
@@ -54,7 +54,7 @@ const defaultValues: IWorkspaceContext = {
   fetchFullWorkspace: () => {},
   workspaceInUser: [] as IWorkspaceInUser[],
   currentUserInWorkspace: {} as IUserInWorkspace[],
-  currentDesignInWorkspace: {} as IReviewImageData[],
+  currentDesignInWorkspace: {} as IReviewImage[],
   setCurrentUserInWorkspace: () => {},
   fetchWorkspace: () => {},
   createWorkspace: () => {},
@@ -78,7 +78,7 @@ export function WorkspaceContextProvider({ children }: any) {
     IUserInWorkspace[]
   >(defaultValues.currentUserInWorkspace);
   const [currentDesignInWorkspace, setCurrentDesignInWorkspace] = useState<
-    IReviewImageData[]
+    IReviewImage[]
   >(defaultValues.currentDesignInWorkspace);
   const [renderWorkspace, setRenderWorkspace] = useState<IWorkspace | null>(
     defaultValues.renderWorkspace
@@ -199,9 +199,9 @@ export function WorkspaceContextProvider({ children }: any) {
     try {
       const DesignRef = collection(db, "workspaces", workspaceId, "designs");
       const DesignSnap = await getDocs(DesignRef);
-      let DesignData: IReviewImageData[] = [];
+      let DesignData: IReviewImage[] = [];
       DesignSnap.forEach((design) => {
-        DesignData.push(design.data() as IReviewImageData);
+        DesignData.push(design.data() as IReviewImage);
       });
       return DesignData;
     } catch (error) {
@@ -314,7 +314,7 @@ export function WorkspaceContextProvider({ children }: any) {
     const designInWorkspace = await fetchDesignInWorkspace(workspaceId);
     setRenderWorkspace(workspace as IWorkspace);
     setCurrentUserInWorkspace(userInWorkspace as IUserInWorkspace[]);
-    setCurrentDesignInWorkspace(designInWorkspace as IReviewImageData[]);
+    setCurrentDesignInWorkspace(designInWorkspace as IReviewImage[]);
     setSideLoading(false);
   };
 

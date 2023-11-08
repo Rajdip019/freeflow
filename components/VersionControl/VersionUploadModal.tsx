@@ -1,19 +1,19 @@
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import { IReviewImage, IReviewImageVersion } from "@/interfaces/ReviewImageData";
 import { storage, db } from "@/lib/firebaseConfig";
-import { doc, updateDoc } from "firebase/firestore";
+import { collection, doc, setDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import React, { useState } from "react";
 import ImageUploaderDropzone from "../ImageDropZones/ImageUploaderDropzone";
-import { useUserContext } from "@/contexts/UserContext";
-import { useAuth } from "@/contexts/AuthContext";
-import { useImageContext } from "@/contexts/ImagesContext";
 import { Button, Modal, Typography, message } from "antd";
 import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 import { FFButton } from "@/theme/themeConfig";
+import { useUserContext } from "@/contexts/UserContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/router";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 
 interface Props {
-  prevImage: IReviewImageData;
+  prevImage: IReviewImage;
   pos: "start" | "mid" | "end";
   isText?: boolean;
   isMenu?: boolean;
@@ -31,13 +31,17 @@ const VersionUploadModal: React.FC<Props> = ({
   const [uploadingState, setUploadingState] = useState<
     "not-started" | "uploading" | "success" | "error"
   >("not-started");
-  const [uploadedImageId, setUploadedImageId] = useState<string>("{imageId}");
   const [fileSize, setFileSize] = useState<number>(0);
+  const router = useRouter();
+  const { workspaceId, designId } = router.query;
   const { renderWorkspace } = useWorkspaceContext();
-  const { storage: storageUsed } = useImageContext();
+  const workspace_id = workspaceId || renderWorkspace?.id;
+  const image_id = designId || prevImage.id;
 
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const { user } = useUserContext();
+  const { authUser } = useAuth();
 
   const showModal = () => {
     setOpen(true);
@@ -45,7 +49,7 @@ const VersionUploadModal: React.FC<Props> = ({
 
   const handleFileUploaded = (file: File) => {
     setUploadedFile(file);
-    setFileSize(Math.round(file.size / (1024 * 1024)));
+    setFileSize(Math.round(file.size /1024));
     setImageName(file.name);
   };
 
@@ -53,19 +57,15 @@ const VersionUploadModal: React.FC<Props> = ({
     setImage("");
     setUploadedFile(null);
     setImageName("");
+    setFileSize(0);
   };
-
-  const [uploadPercentage, setUploadPercentage] = useState<number>(0);
 
   const uploadFile = async () => {
     setConfirmLoading(true);
-    if (fileSize < 75) {
+    if ((fileSize/1024) < 75) {
       setUploadingState("uploading");
-      const docRef = doc(db, "reviewImages", prevImage.id);
-      const workspaceId = renderWorkspace?.id;
-      const imagePath = `designs/${workspaceId}/${
-        docRef.id
-      }/${imageName}_${Date.now()}_v${prevImage.currentVersion + 1}`;
+      const docRef = doc(collection(db, `workspaces/${workspace_id}/designs/${image_id}/versions`));
+      const imagePath = `designs/${workspace_id}/${image_id}/versions/${imageName}-${Date.now()}-v${prevImage.latestVersion + 1}`;
       try {
         const storageRef = ref(storage, imagePath);
         let bytes: number = 0;
@@ -77,9 +77,6 @@ const VersionUploadModal: React.FC<Props> = ({
           "state_changed",
           (snapshot: { bytesTransferred: number; totalBytes: number }) => {
             bytes = snapshot.totalBytes;
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setUploadPercentage(progress);
           },
           (error) => {
             console.error(error);
@@ -87,19 +84,21 @@ const VersionUploadModal: React.FC<Props> = ({
           async () => {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
 
-            const data: Partial<IReviewImageData> = {
-              imageURL: [...prevImage.imageURL, downloadURL],
-              size: (prevImage.size as number) + bytes / (1024 * 1024),
-              lastUpdated: Date.now(),
-              newUpdate: "New Version Uploaded",
-              currentVersion: prevImage.currentVersion + 1,
-              imagePath: [...prevImage.imagePath, imagePath],
+            const data: IReviewImageVersion = {
+              id: docRef.id,
+              imageURL: downloadURL,
+              size: fileSize,
+              timeStamp: Date.now(),
+              version: prevImage.latestVersion + 1,
+              imagePath: imagePath,
+              uploadedBy: user?.name as string,
+              uploadedByEmail: user?.email as string,
+              uploadedById: authUser?.uid as string,
             };
 
-            await updateDoc(docRef, data);
+            await setDoc(docRef, data);
             message.success("Version updated successfully");
             setOpen(false);
-            setUploadedImageId(docRef.id);
             setConfirmLoading(false);
           }
         );

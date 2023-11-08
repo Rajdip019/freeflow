@@ -1,4 +1,4 @@
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import { IReviewImage } from "@/interfaces/ReviewImageData";
 import React from "react";
 import { Dropdown, Image, MenuProps, Tag, Typography } from "antd";
 import Link from "next/link";
@@ -11,8 +11,8 @@ import SendInvitesIconModal from "./Modal/SendInvitesIconModal";
 import ImageDeleteModalConfirmation from "./Modal/ImageDeleteModalConfirmation";
 
 interface Props {
-  image: IReviewImageData;
-  setSideImage: React.Dispatch<React.SetStateAction<IReviewImageData | null>>;
+  image: IReviewImage;
+  setSideImage: React.Dispatch<React.SetStateAction<IReviewImage | null>>;
   setSideVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -23,13 +23,9 @@ const DesignsGridView: React.FC<Props> = ({
 }) => {
   return (
     <div className="relative h-64 w-64 cursor-pointer rounded-xl border border-[#181818]">
-      {image.currentVersion && image.imageURL ? (
+      {image.latestImageURL ? (
         <Image
-          src={
-            image.currentVersion
-              ? image.imageURL[image.currentVersion - 1]
-              : (image.imageURL as any)
-          }
+          src={image.latestImageURL}
           alt={image.imageName}
           className="aspect-square w-full cursor-pointer rounded-xl object-cover"
           loading="lazy"
@@ -53,7 +49,7 @@ const DesignsGridView: React.FC<Props> = ({
             {image.imageName}
           </Typography>
           <Typography className="text-[0.7rem]">
-            {image?.size && `${Math.round(image.size * 1024)} KB`}
+            {image?.totalSize && `${Math.round(image.totalSize)} KB`}
           </Typography>
         </div>
       </div>

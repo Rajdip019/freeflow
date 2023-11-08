@@ -17,16 +17,16 @@ import { useAuth } from "@/contexts/AuthContext";
 import { FFButton } from "@/theme/themeConfig";
 import { ArrowRightOutlined, LeftOutlined } from "@ant-design/icons";
 import { Divider, Typography, Input, Image } from "antd";
-import { randomColorGeneratorFromString } from "@/utils/randomColorGeneratorFromString";
 import { useFeedbackContext } from "@/contexts/FeedbackContext";
 import { useNotification } from "../shared/Notification";
 import Avatar from "react-avatar";
 
 interface Props {
-  imageId: string;
+  designId: string;
+  workspaceId : string
 }
 
-const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
+const FeedbackExpanded: React.FC<Props> = ({ designId, workspaceId }) => {
   const [comments, setComments] = useState<
     { name: string; comment: string; timeStamp: number }[]
   >([]);
@@ -43,12 +43,12 @@ const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
 
   const { notify, contextHolder } = useNotification();
   const { authUser } = useAuth();
-  const getComments = async () => {
+  const getReplies = async () => {
     if (highlightedComment !== defaultHighlightedThread) {
       const q = query(
         collection(
           db,
-          `reviewImages/${imageId}/threads/${highlightedComment?.id}/comments`
+          `workspaces/${workspaceId}/designs/${designId}/comments/${highlightedComment?.id}/replies`
         ),
         orderBy("timeStamp", "asc")
       );
@@ -70,7 +70,7 @@ const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
 
   useEffect(() => {
     setIsCommentsLoading(true);
-    getComments();
+    getReplies();
     setIsCommentsLoading(false);
   }, [highlightedComment]);
 
@@ -80,7 +80,7 @@ const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
     }
   }, [textareaRef, highlightedComment]);
 
-  const addNewComment = async () => {
+  const addNewReply = async () => {
     try {
       const name = uname
         ? uname.slice(0, uname.indexOf("@"))
@@ -88,9 +88,9 @@ const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
       await addDoc(
         collection(
           db,
-          `reviewImages/${imageId}/threads/${
+          `workspaces/${workspaceId}/designs/${designId}/comments/${
             highlightedComment?.id as string
-          }/comments`
+          }/replies`
         ),
         {
           name: name,
@@ -98,10 +98,6 @@ const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
           timeStamp: Date.now(),
         }
       );
-      await updateDoc(doc(db, `reviewImages`, imageId as string), {
-        lastUpdated: Date.now(),
-        newUpdate: "New Comment",
-      });
       setNewComment("");
     } catch (e) {
       console.error("Error", error);
@@ -250,7 +246,7 @@ const FeedbackExpanded: React.FC<Props> = ({ imageId }) => {
           disabled={!!!newComment}
           type="primary"
           className="px-2"
-          onClick={addNewComment}
+          onClick={addNewReply}
         >
           <ArrowRightOutlined />
         </FFButton>

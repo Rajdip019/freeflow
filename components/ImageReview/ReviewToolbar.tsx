@@ -1,14 +1,12 @@
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import { IReviewImage } from "@/interfaces/ReviewImageData";
 import React from "react";
 import SendInvitesIconModal from "../Modal/SendInvitesIconModal";
 import Copy from "../shared/Copy";
 import { APP_URL } from "@/utils/constants";
-import PublicAndPrivate from "./PublicAndPrivate";
 import {
   Popconfirm,
   message,
   Tooltip,
-  Button,
   Dropdown,
   MenuProps,
   Typography,
@@ -26,11 +24,11 @@ import { useFeedbackContext } from "@/contexts/FeedbackContext";
 
 const ReviewImageToolbarAdmin: React.FC = () => {
   const { deleteImage } = useImageContext();
-  const { isCompareView, setIsCompareView, imageData, isAdmin } =
+  const { isCompareView, setIsCompareView, image, isAdmin } =
     useFeedbackContext();
 
   const confirm = async () => {
-    await deleteImage(imageData as IReviewImageData);
+    await deleteImage(image as IReviewImage);
     message.success("File Deleted");
   };
 
@@ -50,22 +48,22 @@ const ReviewImageToolbarAdmin: React.FC = () => {
     {
       key: "2",
       label: (
-        <Copy value={`${APP_URL}/review-image/${imageData?.id}`} type="both" />
+        <Copy value={window.location.href} type="both" />
       ),
     },
+    // {
+    //   key: "3",
+    //   label: (
+    //     <SendInvitesIconModal
+    //       image={image as IReviewImage}
+    //       type="text"
+    //       isTooltip={false}
+    //       isMenuItem={true}
+    //     />
+    //   ),
+    // },
     {
       key: "3",
-      label: (
-        <SendInvitesIconModal
-          image={imageData as IReviewImageData}
-          type="text"
-          isTooltip={false}
-          isMenuItem={true}
-        />
-      ),
-    },
-    {
-      key: "4",
       label: (
         <Popconfirm
           title="Do you want to delete the file?"
@@ -90,7 +88,7 @@ const ReviewImageToolbarAdmin: React.FC = () => {
     <>
       {/* ////////////// Laptop Screen View /////////////////*/}
       <div className="hidden items-center gap-5 md:flex">
-        {imageData?.imageURL[1] && (
+        {image?.latestImageURL && (
           <Tooltip title="Toggle Comparison View">
             <FFButton
               className=" border-none shadow-none"
@@ -99,11 +97,11 @@ const ReviewImageToolbarAdmin: React.FC = () => {
             ></FFButton>
           </Tooltip>
         )}
-        <Copy value={`${APP_URL}/review-image/${imageData?.id}`} />
+        <Copy value={window.location.href} />
         {isAdmin && (
           <>
-            <SendInvitesIconModal image={imageData as IReviewImageData} />
-            <div className="-ml-3.5">
+            {/* <SendInvitesIconModal image={image as IReviewImage} /> */}
+            <div className="">
               <Popconfirm
                 title="Do you want to delete the file?"
                 description="By deleting this file you will also delete any feedback on it."
