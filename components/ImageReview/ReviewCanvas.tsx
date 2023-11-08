@@ -7,9 +7,8 @@ import {
 } from "@pqina/pintura";
 import { PinturaEditor } from "@pqina/react-pintura";
 import { db, storage } from "@/lib/firebaseConfig";
-import { addDoc, collection, updateDoc, doc } from "firebase/firestore";
+import { addDoc, collection, updateDoc, doc, setDoc } from "firebase/firestore";
 import { useUserContext } from "@/contexts/UserContext";
-import { useAuth } from "@/contexts/AuthContext";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { Input, message, notification } from "antd";
 import { useFeedbackContext } from "@/contexts/FeedbackContext";
@@ -19,12 +18,14 @@ import { ArrowRightOutlined } from "@ant-design/icons";
 interface ReviewCanvasProps {
   imageSrc: string;
   imageId: string;
+  workspaceId: string;
   open?: boolean;
 }
 
 const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
   imageSrc,
   imageId,
+  workspaceId,
   open,
 }) => {
   const cachedImage = imageSrc.replace(
@@ -35,42 +36,33 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
   const [comment, setComment] = React.useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const { user } = useUserContext();
-  const { authUser } = useAuth();
 
-  const { uname, imageData, version, setVersion } = useFeedbackContext();
+  const { uname, image, version, setVersion } = useFeedbackContext();
 
   const addNewReviewToDatabase = async (blob: Blob, editorRef: any) => {
     try {
-      const storageRef = ref(
-        storage,
-        `reviewImages/${authUser?.uid}/public/${
-          imageData?.imageName
-        }/comments/${imageData?.imageName}-${Date.now()}.png`
-      );
+      const docRef = doc(collection(db, `workspaces/${workspaceId}/designs/${imageId}/comments`));
+      const imagePath = `designs/${workspaceId}/${docRef.id}/${image?.imageName}-${Date.now()}`;
+      const storageRef = ref(storage, imagePath);
       let bytes: number = 0;
       const uploadTask = uploadBytesResumable(storageRef, blob as File);
       uploadTask.on(
         "state_changed",
         (snapshot: { bytesTransferred: number; totalBytes: number }) => {
           bytes = snapshot.totalBytes;
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         },
         (error) => {
           console.error(error);
         },
         async () => {
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          await addDoc(collection(db, `reviewImages/${imageId}/threads`), {
+          await setDoc(docRef, {
             name: user?.name?.split("@")[0] || uname?.split("@")[0],
             initialComment: comment,
             timeStamp: Date.now(),
             version: version,
             imageURL: downloadURL,
-          });
-          await updateDoc(doc(db, `reviewImages`, imageId as string), {
-            lastUpdated: Date.now(),
-            newUpdate: "New Thread",
+            imagePath : imagePath,
           });
           message.success("Thread added successfully");
           await editorRef?.current?.editor.loadImage(cachedImage);

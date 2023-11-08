@@ -1,11 +1,11 @@
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import { IReviewImage } from "@/interfaces/ReviewImageData";
 import React from "react";
 import Moment from "react-moment";
 import { Table, Image, Tag, Typography } from "antd";
 const { Column } = Table;
 interface Props {
-  images: IReviewImageData[];
-  setSideImage: React.Dispatch<React.SetStateAction<IReviewImageData | null>>;
+  images: IReviewImage[];
+  setSideImage: React.Dispatch<React.SetStateAction<IReviewImage | null>>;
   setSideVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -15,7 +15,7 @@ const DesignsTableRow: React.FC<Props> = ({
   setSideVisible,
 }) => {
   images = images.sort((a, b) => {
-    return new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime();
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
   return (
     <>
@@ -38,15 +38,11 @@ const DesignsTableRow: React.FC<Props> = ({
           dataIndex="imageName"
           key="imageName"
           width={50}
-          render={(text, record: IReviewImageData) => (
+          render={(text, record: IReviewImage) => (
             <>
-              {record.currentVersion && record.imageURL ? (
+              {record.latestImageURL ? (
                 <Image
-                  src={
-                    record.currentVersion
-                      ? record.imageURL[record.currentVersion - 1]
-                      : (record.imageURL as any)
-                  }
+                  src={record.latestImageURL}
                   width={50}
                   height={50}
                   preview={true}
@@ -64,7 +60,7 @@ const DesignsTableRow: React.FC<Props> = ({
         />
         <Column
           title="Name"
-          render={(text, record: IReviewImageData) => (
+          render={(text, record: IReviewImage) => (
             <Typography.Text className="group flex items-center truncate hover:underline">
               {record.imageName}{" "}
             </Typography.Text>
@@ -76,23 +72,8 @@ const DesignsTableRow: React.FC<Props> = ({
           title="Status"
           dataIndex="newUpdate"
           key="newUpdate"
-          render={(text, record: IReviewImageData) => (
+          render={(text, record: IReviewImage) => (
             <Tag color="green">{record.newUpdate}</Tag>
-          )}
-          className="hidden cursor-pointer lg:table-cell"
-        />
-        <Column
-          title="Views"
-          dataIndex="views"
-          key="views"
-          render={(text, record: IReviewImageData) => (
-            <Typography.Text>
-              {record.views ? (
-                <span> {record.views}</span>
-              ) : (
-                <span>No Data</span>
-              )}
-            </Typography.Text>
           )}
           className="hidden cursor-pointer lg:table-cell"
         />
@@ -100,10 +81,10 @@ const DesignsTableRow: React.FC<Props> = ({
           title="Size"
           dataIndex="size"
           key="size"
-          render={(text, record: IReviewImageData) => (
+          render={(text, record: IReviewImage) => (
             <Typography.Text>
-              {record.size ? (
-                <span>{Math.round(record.size * 1024)} KB</span>
+              {record.totalSize ? (
+                <span>{Math.round(record.totalSize)} KB</span>
               ) : (
                 <span>No Data</span>
               )}
@@ -122,22 +103,22 @@ const DesignsTableRow: React.FC<Props> = ({
           title="Created At"
           dataIndex="timestamp"
           key="timestamp"
-          render={(text, record: IReviewImageData) => (
+          render={(text, record: IReviewImage) => (
             <Typography.Text>
-              {record.timeStamp ? (
+              {record.createdAt ? (
                 <span>
-                  <Moment format="DD MMM YYYY">{record.timeStamp}</Moment>
+                  <Moment format="DD MMM YYYY">{record.createdAt}</Moment>
                 </span>
               ) : (
                 <span>No Data</span>
               )}
             </Typography.Text>
           )}
-          sorter={(a: IReviewImageData, b: IReviewImageData) =>
-            new Date(a.timeStamp).getTime() - new Date(b.timeStamp).getTime()
+          sorter={(a: IReviewImage, b: IReviewImage) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
           }
           className="cursor-pointer"
-          onCell={(record, rowIndex) => {
+          onCell={(record) => {
             return {
               onClick: (event) => {
                 setSideImage(record);
@@ -145,45 +126,6 @@ const DesignsTableRow: React.FC<Props> = ({
             };
           }}
         />
-        {/* <Column
-          title="Action"
-          key={"action"}
-          render={(text, record: IReviewImageData) => (
-            <Space>
-              <VersionUploadModal
-                prevImage={record}
-                isText={false}
-                pos="start"
-                isMenu={true}
-              />
-
-              <Dropdown
-                menu={{
-                  items: [
-                    {
-                      label: <ChangeFileNameModal image={record} />,
-                    },
-
-                    {
-                      label: (
-                        <SendInvitesIconModal
-                          image={record}
-                          isTooltip={false}
-                          isMenuItem={true}
-                        />
-                      ),
-                    },
-                    {
-                      label: <ImageDeleteModalConfirmation image={record} />,
-                    },
-                  ] as MenuProps["items"],
-                }}
-              >
-                <Button icon={<MoreOutlined />} size="small" />
-              </Dropdown>
-            </Space>
-          )}
-        /> */}
       </Table>
     </>
   );

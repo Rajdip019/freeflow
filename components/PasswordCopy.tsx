@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import { IReviewImage } from "@/interfaces/ReviewImageData";
 import { Box } from "@chakra-ui/react";
 interface Props {
   align?: "right" | "left";
-  image: IReviewImageData;
+  image: IReviewImage;
 }
 
 const PasswordCopy = ({ align = "left", image }: Props) => {
@@ -18,7 +18,6 @@ const PasswordCopy = ({ align = "left", image }: Props) => {
     >
       {isShown ? (
         <>
-          <span>{image.private?.password}</span>
           <svg
             className="w-5 cursor-pointer text-gray-400"
             onClick={() => setIsShown(!isShown)}

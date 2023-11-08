@@ -3,16 +3,16 @@ import { Divider, Drawer, Typography } from "antd";
 import React, { useState, version } from "react";
 import FeedbackExpanded from "../ImageReview/FeedbackExpanded";
 import FeedbackTile from "../ImageReview/FeedbackTile";
-import Moment from "react-moment";
 import { UpOutlined } from "@ant-design/icons";
 
 interface Props {
-  imageId: string;
+  designId: string;
+  workspaceId: string;
 }
 
-const FeedbackDrawerMobile: React.FC<Props> = ({ imageId }) => {
+const FeedbackDrawerMobile: React.FC<Props> = ({ designId, workspaceId }) => {
   const [open, setOpen] = useState(false);
-  const { isFocusedThread, imageData, threads, version } = useFeedbackContext();
+  const { isFocusedThread, image, threads, version } = useFeedbackContext();
 
   // const showDrawer = () => {
   //   setOpen(true);
@@ -31,7 +31,7 @@ const FeedbackDrawerMobile: React.FC<Props> = ({ imageId }) => {
         <UpOutlined />
       </button>
       <Drawer
-        title={`${imageData?.imageName}'s Feedbacks`}
+        title={`${image?.imageName}'s Feedbacks`}
         placement="bottom"
         open={open}
         closable
@@ -45,23 +45,16 @@ const FeedbackDrawerMobile: React.FC<Props> = ({ imageId }) => {
       >
         <div>
           {isFocusedThread ? (
-            <FeedbackExpanded imageId={imageId as string} />
+            <FeedbackExpanded designId={designId as string} workspaceId={workspaceId as string} />
           ) : (
             <>
               <div className=" bg-sec sticky -top-[0.35rem] z-50 flex flex-col py-2">
                 <div className="flex flex-col gap-2">
-                  <Typography.Text className="text-base">
-                    {imageData?.uploadedBy}{" "}
-                    <span className="text-sm text-gray-400">
-                      uploaded <Moment fromNow>{imageData?.timeStamp}</Moment>
-                    </span>
-                    <br />
-                  </Typography.Text>
-                  {imageData?.imageDescription && (
+                  {image?.imageDescription && (
                     <Typography.Text>
                       <span className="text-base">Description</span> <br />
                       <span className="text-sm text-gray-400">
-                        {imageData?.imageDescription}
+                        {image?.imageDescription}
                       </span>
                     </Typography.Text>
                   )}

@@ -6,14 +6,11 @@ import {
   Space,
   Typography,
   Drawer,
-  Divider,
 } from "antd";
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import { IReviewImage } from "@/interfaces/ReviewImageData";
 import {
-  CloseOutlined,
   ExportOutlined,
   FileImageTwoTone,
-  InfoCircleFilled,
   MoreOutlined,
 } from "@ant-design/icons";
 import Moment from "react-moment";
@@ -21,15 +18,16 @@ import VersionUploadModal from "../VersionControl/VersionUploadModal";
 import ChangeFileNameModal from "../Modal/ChangeFileNameModal";
 import SendInvitesIconModal from "../Modal/SendInvitesIconModal";
 import ImageDeleteModalConfirmation from "../Modal/ImageDeleteModalConfirmation";
-import { useImageContext } from "@/contexts/ImagesContext";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 
 type Props = {
-  image: IReviewImageData | null;
+  image: IReviewImage | null;
   sideVisible: boolean;
   setSideVisible: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
+  const { renderWorkspace } = useWorkspaceContext();
   return (
     <Drawer
       open={sideVisible}
@@ -43,7 +41,7 @@ const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
             <Space className="w-full items-center justify-center bg-[#141414]">
               <img
                 className="h-[30vh] w-auto"
-                src={image?.imageURL[0]}
+                src={image?.latestImageURL}
                 alt={image?.imageName}
               />
             </Space>
@@ -89,23 +87,20 @@ const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
                 </Dropdown>
               </Space>
             </Space>
+            {image?.imageDescription && (
+            <Space className="mt-5 w-full pl-2" direction="vertical">
+              <Typography.Text className="font-semibold">Description</Typography.Text>
+              <div className="mb-1 h-[1px] w-full bg-[#ffffff18]" />
+              <Typography.Text className="text-sm text-[#ffffff90]">
+                {image?.imageDescription}
+              </Typography.Text>
+            </Space>
+            )}
           </Space>
-          <Space className="mt-10 w-full px-2" direction="vertical">
+          <Space className="mt-5 w-full px-2" direction="vertical">
             <Typography.Text className="font-semibold">Details</Typography.Text>
             <div className="mb-1 h-[1px] w-full bg-[#ffffff18]" />
             <Space className="w-full" direction="vertical">
-              <Space className="w-full justify-between">
-                <Typography.Text className=" text-sm text-[#ffffff90]">
-                  Views
-                </Typography.Text>
-                <Typography.Text className="text-sm text-[#ffffff90]">
-                  {image?.views ? (
-                    <span> {image?.views}</span>
-                  ) : (
-                    <span>No Data</span>
-                  )}
-                </Typography.Text>
-              </Space>
               <Space className="w-full justify-between">
                 <Typography.Text className=" text-sm text-[#ffffff90]">
                   Type
@@ -119,7 +114,7 @@ const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
                   Size
                 </Typography.Text>
                 <Typography.Text className="text-sm text-[#ffffff90]">
-                  {image?.size && Math.round(image?.size * 1024)} KB
+                  {image?.totalSize && Math.round(image?.totalSize)} KB
                 </Typography.Text>
               </Space>
               <Space className="w-full justify-between">
@@ -128,7 +123,7 @@ const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
                 </Typography.Text>
                 <Typography.Text className="text-sm text-[#ffffff90]">
                   <Moment format="DD/MM/YYYY hh:mm A">
-                    {image?.timeStamp}
+                    {image.createdAt}
                   </Moment>
                 </Typography.Text>
               </Space>
@@ -142,14 +137,6 @@ const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
                   </Moment>
                 </Typography.Text>
               </Space>
-              <Space className="w-full justify-between">
-                <Typography.Text className=" text-sm text-[#ffffff90]">
-                  Uploaded by
-                </Typography.Text>
-                <Typography.Text className="text-sm text-[#ffffff90]">
-                  {image?.uploadedBy}
-                </Typography.Text>
-              </Space>
             </Space>
           </Space>
           <Space className="w-full items-center justify-center p-8">
@@ -159,7 +146,7 @@ const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
               icon={<ExportOutlined />}
               size="large"
               onClick={() => {
-                window.open(`/review-image/${image.id}`);
+                window.open(`/review-design/w/${renderWorkspace?.id}/d/${image.id}`);
               }}
             >
               Open in Feedback Tool
