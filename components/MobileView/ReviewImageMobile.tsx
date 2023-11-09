@@ -1,4 +1,7 @@
-import { IReviewImage, IReviewImageVersion } from "@/interfaces/ReviewImageData";
+import {
+  IReviewImage,
+  IReviewImageVersion,
+} from "@/interfaces/ReviewImageData";
 import React from "react";
 import ReviewCanvas from "../ImageReview/ReviewCanvas";
 import { useFeedbackContext } from "@/contexts/FeedbackContext";
@@ -62,7 +65,7 @@ const ReviewImageMobile: React.FC<Props> = ({ image, imageData }) => {
                 ) : (
                   <div className=" w-full">
                     <ReviewCanvas
-                      imageSrc={imageData[version - 1 ].imageURL as string}
+                      imageSrc={imageData[version - 1].imageURL as string}
                       imageId={imageId as string}
                       workspaceId={workspaceId as string}
                     />
@@ -74,7 +77,10 @@ const ReviewImageMobile: React.FC<Props> = ({ image, imageData }) => {
         )}
       </div>
       {isCompareView ? null : (
-        <FeedbackDrawerMobile designId={imageId as string} workspaceId={workspaceId as string} />
+        <FeedbackDrawerMobile
+          designId={imageId as string}
+          workspaceId={workspaceId as string}
+        />
       )}
     </div>
   );

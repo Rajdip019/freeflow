@@ -1,4 +1,7 @@
-import { IReviewImage, IReviewImageVersion } from "@/interfaces/ReviewImageData";
+import {
+  IReviewImage,
+  IReviewImageVersion,
+} from "@/interfaces/ReviewImageData";
 import { storage, db } from "@/lib/firebaseConfig";
 import { collection, doc, setDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -63,7 +66,7 @@ const ImageUploadModal = ({
   const [open, setOpen] = useState<boolean>(visible);
   const workspaceId = renderWorkspace?.id;
   const uploadFile = async () => {
-    if ((fileSize/1024) < 75) {
+    if (fileSize / 1024 < 75) {
       setUploadingState("uploading");
       const docRef = doc(collection(db, `workspaces/${workspaceId}/designs`));
       const data: IReviewImage = {
@@ -74,7 +77,7 @@ const ImageUploadModal = ({
         newUpdate: "Uploaded",
         latestVersion: 1,
         latestImageURL: "",
-        totalSize : 0,
+        totalSize: 0,
         createdAt: Date.now(),
       };
       await setDoc(docRef, data);
@@ -101,18 +104,23 @@ const ImageUploadModal = ({
           },
           async () => {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            const versionRef = doc(collection(db, `workspaces/${workspaceId}/designs/${docRef.id}/versions`));
-            const versionData : IReviewImageVersion = {
-              id : versionRef.id,
-              version : 1,
-              imageURL : downloadURL,
-              imagePath : imagePath,
-              size : fileSize,
-              timeStamp : Date.now(),
-              uploadedBy : user?.name as string,
-              uploadedByEmail : authUser?.email as string,
-              uploadedById : authUser?.uid as string,
-            }
+            const versionRef = doc(
+              collection(
+                db,
+                `workspaces/${workspaceId}/designs/${docRef.id}/versions`
+              )
+            );
+            const versionData: IReviewImageVersion = {
+              id: versionRef.id,
+              version: 1,
+              imageURL: downloadURL,
+              imagePath: imagePath,
+              size: fileSize,
+              timeStamp: Date.now(),
+              uploadedBy: user?.name as string,
+              uploadedByEmail: authUser?.email as string,
+              uploadedById: authUser?.uid as string,
+            };
             await setDoc(versionRef, versionData);
             message.success("Image uploaded successfully");
             setUploadingState("success");

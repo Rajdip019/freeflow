@@ -19,7 +19,7 @@ const FeedbackDrawer: React.FC<Props> = ({
   onClose,
   open,
   imageId,
-  workspaceId
+  workspaceId,
 }) => {
   const { threads, version, isFocusedThread, image } = useFeedbackContext();
 
@@ -59,15 +59,17 @@ const FeedbackDrawer: React.FC<Props> = ({
             </button>
             <div>
               {isFocusedThread ? (
-                <FeedbackExpanded designId={imageId as string} workspaceId={workspaceId as string} />
+                <FeedbackExpanded
+                  designId={imageId as string}
+                  workspaceId={workspaceId as string}
+                />
               ) : (
                 <>
                   <div className=" bg-sec sticky -top-[0.3rem] z-50 ml-4 flex flex-col py-2">
                     <div className="flex flex-col gap-2">
                       <Typography.Text className="text-base">
                         <span className="text-sm text-gray-400">
-                          Uploaded{" "}
-                          <Moment fromNow>{image?.createdAt}</Moment>
+                          Uploaded <Moment fromNow>{image?.createdAt}</Moment>
                         </span>
                         <br />
                       </Typography.Text>

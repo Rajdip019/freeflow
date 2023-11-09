@@ -1,8 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import {
   Image,
-  AutoComplete,
-  Input,
   Button,
   Space,
   Tooltip,
@@ -12,14 +10,14 @@ import {
 } from "antd";
 import {
   AppstoreOutlined,
-  SearchOutlined,
+  MenuOutlined,
   UnorderedListOutlined,
 } from "@ant-design/icons";
-import ImageUploadModal from "../ImageUploadModal";
 import { useUserContext } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
 import Avatar from "react-avatar";
 import Inbox from "../Workspace/InviteNotification";
+import SidebarDrawer from "../MobileView/SidebarDrawer";
 type Props = {
   isGridView: boolean;
   setIsGridView: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,6 +26,7 @@ type Props = {
 const DesignHeader = ({ isGridView, setIsGridView }: Props) => {
   const { user } = useUserContext();
   const { logout } = useAuth();
+  const [open, setOpen] = useState<boolean>(false);
 
   const items: MenuProps["items"] = [
     {
@@ -54,7 +53,20 @@ const DesignHeader = ({ isGridView, setIsGridView }: Props) => {
   ];
   return (
     <section className="flex w-full items-center justify-between overflow-hidden border-b border-[#2c2b2b] bg-[#141414] px-8 py-4">
-      <Image src="/logo/freeflow.png" width={120} preview={false} />
+      <div className=" flex h-fit items-center ">
+        <Button
+          icon={<MenuOutlined />}
+          type="text"
+          className="-ml-4 md:hidden"
+          onClick={() => setOpen(true)}
+        />
+        <Image
+          src="/logo/freeflow.png"
+          width={120}
+          preview={false}
+          className="hidden md:block"
+        />
+      </div>
       <div className=" flex items-center justify-center gap-3">
         <div className="mr-1 flex items-center gap-2">
           <Space>
@@ -94,6 +106,7 @@ const DesignHeader = ({ isGridView, setIsGridView }: Props) => {
           </Space>
         </div>
       </div>
+      <SidebarDrawer openDrawer={open} setOpenDrawer={setOpen} />
     </section>
   );
 };

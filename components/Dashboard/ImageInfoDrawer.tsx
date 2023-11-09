@@ -6,9 +6,11 @@ import {
   Space,
   Typography,
   Drawer,
+  Image,
 } from "antd";
 import { IReviewImage } from "@/interfaces/ReviewImageData";
 import {
+  DoubleRightOutlined,
   ExportOutlined,
   FileImageTwoTone,
   MoreOutlined,
@@ -32,15 +34,24 @@ const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
     <Drawer
       open={sideVisible}
       onClose={() => setSideVisible(false)}
-      className="p-0"
+      height={"100%"}
       title="Design details"
+      placement={window.innerWidth < 768 ? "bottom" : "right"}
+      closeIcon={
+        window.innerWidth < 768 ? (
+          <DoubleRightOutlined rotate={90} />
+        ) : (
+          <DoubleRightOutlined />
+        )
+      }
     >
       {image && (
         <div className="w-full">
           <Space direction="vertical" className="w-full">
             <Space className="w-full items-center justify-center bg-[#141414]">
-              <img
-                className="h-[30vh] w-auto"
+              <Image
+                loading="lazy"
+                className="max-h-[30vh] w-auto"
                 src={image?.latestImageURL}
                 alt={image?.imageName}
               />
@@ -88,13 +99,15 @@ const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
               </Space>
             </Space>
             {image?.imageDescription && (
-            <Space className="mt-5 w-full pl-2" direction="vertical">
-              <Typography.Text className="font-semibold">Description</Typography.Text>
-              <div className="mb-1 h-[1px] w-full bg-[#ffffff18]" />
-              <Typography.Text className="text-sm text-[#ffffff90]">
-                {image?.imageDescription}
-              </Typography.Text>
-            </Space>
+              <Space className="mt-5 w-full pl-2" direction="vertical">
+                <Typography.Text className="font-semibold">
+                  Description
+                </Typography.Text>
+                <div className="mb-1 h-[1px] w-full bg-[#ffffff18]" />
+                <Typography.Text className="text-sm text-[#ffffff90]">
+                  {image?.imageDescription}
+                </Typography.Text>
+              </Space>
             )}
           </Space>
           <Space className="mt-5 w-full px-2" direction="vertical">
@@ -122,9 +135,7 @@ const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
                   Upload at
                 </Typography.Text>
                 <Typography.Text className="text-sm text-[#ffffff90]">
-                  <Moment format="DD/MM/YYYY hh:mm A">
-                    {image.createdAt}
-                  </Moment>
+                  <Moment format="DD/MM/YYYY hh:mm A">{image.createdAt}</Moment>
                 </Typography.Text>
               </Space>
               <Space className="w-full justify-between">
@@ -146,7 +157,9 @@ const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
               icon={<ExportOutlined />}
               size="large"
               onClick={() => {
-                window.open(`/review-design/w/${renderWorkspace?.id}/d/${image.id}`);
+                window.open(
+                  `/review-design/w/${renderWorkspace?.id}/d/${image.id}`
+                );
               }}
             >
               Open in Feedback Tool

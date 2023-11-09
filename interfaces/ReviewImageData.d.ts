@@ -7,7 +7,12 @@ export interface IReviewImage {
   totalSize: number;
   lastUpdated: number;
   createdAt: number;
-  newUpdate: "New Comment" | "New Thread" | "Uploaded" | "New Version Uploaded" | "Version Deleted";
+  newUpdate:
+    | "New Comment"
+    | "New Thread"
+    | "Uploaded"
+    | "New Version Uploaded"
+    | "Version Deleted";
 }
 
 export interface IReviewImageVersion {

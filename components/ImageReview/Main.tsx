@@ -43,9 +43,7 @@ const ReviewImage = () => {
   return (
     <>
       <Head>
-        <title>
-          {image?.imageName ? image.imageName : "Loading..."}
-        </title>
+        <title>{image?.imageName ? image.imageName : "Loading..."}</title>
       </Head>
       <LinkPreview
         title={image?.imageName as string}
@@ -54,7 +52,10 @@ const ReviewImage = () => {
         url={router.pathname}
       />
       <div className=" md:hidden">
-        <ReviewImageMobile image={image as IReviewImage} imageData={imageData} />
+        <ReviewImageMobile
+          image={image as IReviewImage}
+          imageData={imageData}
+        />
       </div>
       <div className="hidden h-screen overflow-hidden bg-black text-white md:block">
         <FeedbackNavbar />

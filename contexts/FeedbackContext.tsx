@@ -1,6 +1,9 @@
 import { useState } from "react";
 import React, { useContext, useEffect } from "react";
-import { IReviewImage, IReviewImageVersion } from "@/interfaces/ReviewImageData";
+import {
+  IReviewImage,
+  IReviewImageVersion,
+} from "@/interfaces/ReviewImageData";
 import { IReview } from "@/interfaces/Thread";
 import { db } from "@/lib/firebaseConfig";
 import {
@@ -65,7 +68,9 @@ export function FeedbackContextProvider({ children }: any) {
   const [imageData, setImageData] = useState<IReviewImageVersion[]>(
     defaultValues.imageData
   );
-  const [image, setImage] = useState<IReviewImage | undefined>(defaultValues.image);
+  const [image, setImage] = useState<IReviewImage | undefined>(
+    defaultValues.image
+  );
   const [error, setError] = useState<boolean>(false);
   const [threads, setThreads] = useState<IReview[]>(defaultValues.threads);
   const [uname, setUname] = useState<string | undefined>(defaultValues.uname);
@@ -96,21 +101,23 @@ export function FeedbackContextProvider({ children }: any) {
         }
       }
     );
-  };  
+  };
 
   const getVersions = async () => {
-    const q = query(collection(db, `workspaces/${workspace_id}/designs/${designId}/versions`), orderBy("version", "asc"));
+    const q = query(
+      collection(db, `workspaces/${workspace_id}/designs/${designId}/versions`),
+      orderBy("version", "asc")
+    );
     onSnapshot(q, (querySnapshot) => {
-        const _versions: IReviewImageVersion[] = [];
-        querySnapshot.forEach((doc) => {
-          _versions.push({ ...doc.data(), id: doc.id } as IReviewImageVersion);
-        });
-        setImageData((prev : any) => {
-          return _versions as IReviewImageVersion[] ;
-        });
-      }
-    )
-  }
+      const _versions: IReviewImageVersion[] = [];
+      querySnapshot.forEach((doc) => {
+        _versions.push({ ...doc.data(), id: doc.id } as IReviewImageVersion);
+      });
+      setImageData((prev: any) => {
+        return _versions as IReviewImageVersion[];
+      });
+    });
+  };
 
   // Get each thread on an image
   const getThreads = async () => {
@@ -151,7 +158,7 @@ export function FeedbackContextProvider({ children }: any) {
     return function cleanup() {
       document.removeEventListener("contextmenu", handleContextmenu);
     };
-  }, []);  
+  }, []);
 
   const value = {
     image,

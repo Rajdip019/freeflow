@@ -48,7 +48,7 @@ const DesignHomePage = () => {
       {visible && <SearchModal visible={visible} setVisible={setVisible} />}
 
       <div className="flex w-full">
-        <div className={`${sideVisible ? "w-full lg:w-[74%]" : "w-full"}`}>
+        <div className={`w-full`}>
           <DesignHeader isGridView={isGridView} setIsGridView={setIsGridView} />
 
           <div

@@ -1,102 +1,279 @@
 import {
+  CheckCircleOutlined,
+  CloseOutlined,
+  FileImageOutlined,
+  FormOutlined,
+  // InboxOutlined,
+  QuestionCircleOutlined,
+  SearchOutlined,
+  SettingOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+import {
+  Button,
+  Select,
+  Space,
+  Typography,
+  Image,
+  Skeleton,
   Drawer,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  DrawerHeader,
-  DrawerBody,
-  useDisclosure,
-  Avatar,
-} from "@chakra-ui/react";
-import React from "react";
-import { sidebarData } from "@/utils/constants";
-import { useAuth } from "@/contexts/AuthContext";
-import router from "next/router";
+  Tooltip,
+  Dropdown,
+  Tag,
+} from "antd";
+
+import React, { useEffect, useState } from "react";
+import ImageUploadModal from "../ImageUploadModal";
+import SearchModal from "../Modal/SearchModel";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
+import { useRouter } from "next/router";
+import Avatar from "react-avatar";
+import { FFButton } from "@/theme/themeConfig";
 import { useUserContext } from "@/contexts/UserContext";
 
-const SidebarDrawer = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { logout, authUser } = useAuth();
+type Props = {
+  openDrawer: boolean;
+  setOpenDrawer: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const SidebarDrawer = ({ openDrawer, setOpenDrawer }: Props) => {
+  const { workspaceInUser, renderWorkspace, fetchFullWorkspace } =
+    useWorkspaceContext();
+
+  const [open, setOpen] = useState<boolean>(false);
+  const [visible, setVisible] = useState<boolean>(false);
+  const [showModel, setShowModel] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<string>("Designs");
+  const router = useRouter();
   const { user } = useUserContext();
 
+  useEffect(() => {
+    if (router.isReady) {
+      const path = router.pathname;
+      if (path === "/") setActiveTab("Designs");
+      else if (path === "/inbox") setActiveTab("Inbox");
+      else if (path === "/people") setActiveTab("People");
+      else if (path === "/brand-assets")
+        setActiveTab("Brand Assets & Guidelines");
+    }
+  }, [router.isReady]);
+
+  const fetchNewWorkspace = async (workspaceTab: string) => {
+    fetchFullWorkspace(workspaceTab);
+    localStorage.setItem("currentWorkspaceId", workspaceTab);
+  };
+
+  const menu_items = [
+    // {
+    //   label: "Brand Assets & Guidelines",
+    //   icon: <FileZipOutlined />,
+    //   href: "/brand-assets",
+    // },
+    {
+      label: "Designs",
+      icon: <FileImageOutlined />,
+      href: "/",
+    },
+    // {
+    //   label: "Inbox",
+    //   icon: <InboxOutlined />,
+    //   href: "/inbox",
+    // },
+    {
+      label: "People",
+      icon: <UserOutlined />,
+      href: "/people",
+    },
+  ];
+
   return (
-    <div className=" md:hidden">
-      <button onClick={onOpen}>
-        <svg
-          className=" mt-2 w-8"
-          fill="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            clipRule="evenodd"
-            fillRule="evenodd"
-            d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z"
-          />
-        </svg>
-      </button>
-      <Drawer
-        isOpen={isOpen}
-        placement="left"
-        onClose={onClose}
-        colorScheme="blackAlpha"
+    <Drawer
+      placement="left"
+      headerStyle={{ display: "none" }}
+      onClose={() => setOpenDrawer(false)}
+      visible={openDrawer}
+      key="left"
+      width={267}
+      bodyStyle={{
+        margin: 0,
+        padding: 0,
+      }}
+    >
+      <Space
+        direction="vertical"
+        className="bg-sec relative max-h-screen w-full"
       >
-        <DrawerOverlay />
-        <DrawerContent bgColor={"gray.800"}>
-          <DrawerCloseButton color={"white"} />
-          <DrawerHeader>Create your account</DrawerHeader>
-          <DrawerBody>
-            <div className="flex flex-col justify-between">
-              <div>
-                <div className="">
-                  <img src="/logo/freeflow.png" alt="" className="w-40" />
-                </div>
-                <div className=" mt-8  flex items-center gap-3 text-lg text-white">
-                  <div>
-                    <Avatar
-                      className=" w-28 rounded-full ring-2 ring-purple-500"
-                      src={authUser?.photoURL as string}
-                      name={user?.name}
-                    />
-                  </div>
-                  <div>
-                    <h4 className=" truncate font-semibold">{user?.name}</h4>
-                    <p className="  truncate text-xs">{user?.email}</p>
-                  </div>
-                </div>
-                <div className=" mt-10 text-white">
-                  {sidebarData.map((route, index) => {
+        {showModel && (
+          <ImageUploadModal visible={true} setShowModal={setShowModel} />
+        )}
+        {visible && <SearchModal visible={visible} setVisible={setVisible} />}
+
+        <div className="flex h-screen flex-col justify-between p-2">
+          <div>
+            <Dropdown
+              open={open}
+              onOpenChange={(open) => {
+                setOpen(open);
+              }}
+              arrow={{
+                pointAtCenter: true,
+              }}
+              placement="bottom"
+              trigger={["click"]}
+              dropdownRender={() => (
+                <div className="customShadow ml-2 rounded-lg bg-[#121212] p-2">
+                  <Typography.Text className="pl-2">
+                    {user?.email}
+                  </Typography.Text>
+                  {/* <Divider /> */}
+                  <div className="my-3 h-[1px] bg-[#ffffff18]" />
+
+                  {workspaceInUser.map((workspace) => {
                     return (
                       <div
-                        onClick={() => router.push(route.url)}
-                        className={`flex cursor-pointer gap-3 rounded px-3 py-2 ${
-                          route.url === router.pathname ? " bg-[#334155]" : ""
-                        }`}
-                        key={index}
+                        key={workspace.id}
+                        className="my-1.5 flex w-full cursor-pointer items-center justify-between rounded bg-[#1a1a1a] p-2 hover:bg-[#000000]"
+                        onClick={() => {
+                          fetchNewWorkspace(workspace.id);
+                          setOpen(false);
+                          setOpenDrawer(false);
+                        }}
                       >
-                        <p className=" font-sec">{route.title}</p>
+                        <div>
+                          <Avatar
+                            className="mr-2 rounded"
+                            size={"34"}
+                            name={workspace.name}
+                            src={workspace.avatarUrl}
+                          />
+                          <Typography.Text>{workspace.name}</Typography.Text>
+                        </div>
+                        <div>
+                          <Tag className="ml-10">{workspace.role}</Tag>
+                          {renderWorkspace?.id === workspace.id && (
+                            <CheckCircleOutlined className="ml-1" />
+                          )}
+                        </div>
                       </div>
                     );
                   })}
+                  {/* <Divider /> */}
+                  <div className="mt-3 h-[1px] bg-[#ffffff18]" />
+
+                  <Button
+                    type="text"
+                    className="ml-0 w-full pl-2 text-left"
+                    disabled
+                    onClick={() => {
+                      // router.push("/create-workspace");
+                      setOpenDrawer(false);
+                    }}
+                  >
+                    create workspace
+                  </Button>
                 </div>
-              </div>
-            </div>
-          </DrawerBody>
-          <div className=" p-8 text-white">
-            <button
-              onClick={logout}
-              className=" my-5 w-full rounded bg-red-400 py-2 transition-all hover:bg-red-500"
+              )}
             >
-              Logout
-            </button>
-            <p className=" text-xs text-gray-600">
-              © 2023 Freeflow. All rights reserved.
-            </p>
+              <div
+                onClick={() => {
+                  setOpen(!open);
+                }}
+                className="m-2 flex items-center justify-start"
+              >
+                <Avatar
+                  className="mr-2 rounded"
+                  size={"30"}
+                  name={renderWorkspace?.name}
+                  src={renderWorkspace?.avatarUrl}
+                />
+                <Tooltip title={renderWorkspace?.name}>
+                  <Typography.Text className="truncate">
+                    {renderWorkspace?.name}
+                  </Typography.Text>
+                </Tooltip>
+              </div>
+            </Dropdown>
+            <Space className="my-4">
+              <Button
+                className="w-[205px] text-start"
+                icon={<FormOutlined />}
+                onClick={() => {
+                  setShowModel(true);
+                  setOpenDrawer(false);
+                }}
+              >
+                New Design
+              </Button>
+              <Button
+                onClick={() => {
+                  setVisible(true);
+                  setOpenDrawer(false);
+                }}
+                icon={<SearchOutlined />}
+              />
+            </Space>
+            {menu_items.map((item) => (
+              <Space
+                onClick={() => {
+                  router.push(item.href);
+                  setOpenDrawer(false);
+                }}
+                className={`my-1 w-full cursor-pointer rounded-md p-1 pl-4 transition-all ${
+                  activeTab === item.label
+                    ? "bg-[#642AB5] text-white"
+                    : "text-[#ffffffa7]"
+                }`}
+              >
+                {item.icon}
+                {item.label}
+              </Space>
+            ))}
           </div>
-        </DrawerContent>
-      </Drawer>
-    </div>
+          <div className="flex items-center justify-between">
+            <div className="flex">
+              <FFButton
+                type="text"
+                className="w-6 rounded-full transition-all"
+                icon={<SettingOutlined />}
+                disabled
+                onClick={() => {
+                  // router.push("/settings");
+                  setOpenDrawer(false);
+                }}
+              />
+
+              <a
+                href="https://linktr.ee/freeflowapp"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <FFButton
+                  type="text"
+                  className="w-6 rounded-full transition-all"
+                  icon={<QuestionCircleOutlined />}
+                  onClick={() => {
+                    setOpenDrawer(false);
+                  }}
+                />
+              </a>
+            </div>
+            <Image
+              className="mb-4"
+              src={"/logo/freeflow.png"}
+              alt="freeflow"
+              width={120}
+              preview={false}
+            />
+          </div>
+        </div>
+        <Button
+          className="hover:none absolute right-0 top-4"
+          icon={<CloseOutlined />}
+          type="text"
+          onClick={() => setOpenDrawer(false)}
+        />
+      </Space>
+    </Drawer>
   );
 };
 

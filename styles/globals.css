@@ -150,3 +150,7 @@ body {
     transform: translateX(0%);
   }
 }
+
+.customShadow {
+  box-shadow: 0 0 10px rgba(49, 49, 49, 0.25);
+}

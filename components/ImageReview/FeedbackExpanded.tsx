@@ -23,7 +23,7 @@ import Avatar from "react-avatar";
 
 interface Props {
   designId: string;
-  workspaceId : string
+  workspaceId: string;
 }
 
 const FeedbackExpanded: React.FC<Props> = ({ designId, workspaceId }) => {

@@ -1,4 +1,7 @@
-import { IReviewImage, IReviewImageVersion } from "@/interfaces/ReviewImageData";
+import {
+  IReviewImage,
+  IReviewImageVersion,
+} from "@/interfaces/ReviewImageData";
 import { storage, db } from "@/lib/firebaseConfig";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -49,7 +52,7 @@ const VersionUploadModal: React.FC<Props> = ({
 
   const handleFileUploaded = (file: File) => {
     setUploadedFile(file);
-    setFileSize(Math.round(file.size /1024));
+    setFileSize(Math.round(file.size / 1024));
     setImageName(file.name);
   };
 
@@ -62,10 +65,17 @@ const VersionUploadModal: React.FC<Props> = ({
 
   const uploadFile = async () => {
     setConfirmLoading(true);
-    if ((fileSize/1024) < 75) {
+    if (fileSize / 1024 < 75) {
       setUploadingState("uploading");
-      const docRef = doc(collection(db, `workspaces/${workspace_id}/designs/${image_id}/versions`));
-      const imagePath = `designs/${workspace_id}/${image_id}/versions/${imageName}-${Date.now()}-v${prevImage.latestVersion + 1}`;
+      const docRef = doc(
+        collection(
+          db,
+          `workspaces/${workspace_id}/designs/${image_id}/versions`
+        )
+      );
+      const imagePath = `designs/${workspace_id}/${image_id}/versions/${imageName}-${Date.now()}-v${
+        prevImage.latestVersion + 1
+      }`;
       try {
         const storageRef = ref(storage, imagePath);
         let bytes: number = 0;
