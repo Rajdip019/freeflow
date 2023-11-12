@@ -1,4 +1,7 @@
-import { IReviewImage, IReviewImageVersion } from "@/interfaces/ReviewImageData";
+import {
+  IReviewImage,
+  IReviewImageVersion,
+} from "@/interfaces/ReviewImageData";
 import { storage, db } from "@/lib/firebaseConfig";
 import { collection, doc, setDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -10,6 +13,7 @@ import ImageUploadSuccess from "./ImageUploadSuccess";
 import { Button, Input, Modal, Progress, Typography, message } from "antd";
 import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
+import { getPlan } from "@/utils/plans";
 const { TextArea } = Input;
 
 interface Props {
@@ -37,7 +41,7 @@ const ImageUploadModal = ({
 
   const { user } = useUserContext();
   const { authUser } = useAuth();
-  const { renderWorkspace } = useWorkspaceContext();
+  const { renderWorkspace, currentUserInWorkspace } = useWorkspaceContext();
 
   useEffect(() => {
     if (visible && propFile && propImage) {
@@ -49,7 +53,9 @@ const ImageUploadModal = ({
   const handleFileUploaded = (file: File) => {
     setUploadedFile(file);
     setFileSize(file.size / 1024);
-    setImageName(file.name.split(".")[file.name.split(".").length - 2]);
+    setImageName(
+      file.name.split(".")[file.name.split(".").length - 2].substring(0, 24)
+    );
   };
 
   const clearFile = () => {
@@ -63,68 +69,97 @@ const ImageUploadModal = ({
   const [open, setOpen] = useState<boolean>(visible);
   const workspaceId = renderWorkspace?.id;
   const uploadFile = async () => {
-    if ((fileSize/1024) < 75) {
-      setUploadingState("uploading");
-      const docRef = doc(collection(db, `workspaces/${workspaceId}/designs`));
-      const data: IReviewImage = {
-        id: docRef.id,
-        imageName: imageName as string,
-        imageDescription: description,
-        lastUpdated: Date.now(),
-        newUpdate: "Uploaded",
-        latestVersion: 1,
-        latestImageURL: "",
-        totalSize : 0,
-        createdAt: Date.now(),
-      };
-      await setDoc(docRef, data);
-      const imagePath = `designs/${workspaceId}/${
-        docRef.id
-      }/versions/${imageName}-${Date.now()}-v1`;
-      try {
-        const storageRef = ref(storage, imagePath);
-        let bytes: number = 0;
-        const uploadTask = uploadBytesResumable(
-          storageRef,
-          uploadedFile as File
-        );
-        uploadTask.on(
-          "state_changed",
-          (snapshot: { bytesTransferred: number; totalBytes: number }) => {
-            bytes = snapshot.totalBytes;
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setUploadPercentage(Math.round(progress));
-          },
-          (error) => {
-            console.error(error);
-          },
-          async () => {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            const versionRef = doc(collection(db, `workspaces/${workspaceId}/designs/${docRef.id}/versions`));
-            const versionData : IReviewImageVersion = {
-              id : versionRef.id,
-              version : 1,
-              imageURL : downloadURL,
-              imagePath : imagePath,
-              size : fileSize,
-              timeStamp : Date.now(),
-              uploadedBy : user?.name as string,
-              uploadedByEmail : authUser?.email as string,
-              uploadedById : authUser?.uid as string,
-            }
-            await setDoc(versionRef, versionData);
-            message.success("Image uploaded successfully");
-            setUploadingState("success");
-            setUploadedImageId(docRef.id);
+    if (
+      currentUserInWorkspace?.filter((user) => user.id === authUser?.uid)
+        ?.length !== 0 &&
+      currentUserInWorkspace.filter((user) => user.id === authUser?.uid)[0]
+        .role !== "viewer"
+    ) {
+      if (
+        renderWorkspace &&
+        renderWorkspace?.storageUsed + fileSize <=
+          getPlan(renderWorkspace?.subscription).storage
+      ) {
+        if (
+          renderWorkspace?.subscription &&
+          fileSize < getPlan(renderWorkspace?.subscription).fileLimit
+        ) {
+          setUploadingState("uploading");
+          const docRef = doc(
+            collection(db, `workspaces/${workspaceId}/designs`)
+          );
+          const data: IReviewImage = {
+            id: docRef.id,
+            imageName: imageName as string,
+            imageDescription: description,
+            lastUpdated: Date.now(),
+            newUpdate: "Uploaded",
+            latestVersion: 1,
+            latestImageURL: "",
+            totalSize: 0,
+            createdAt: Date.now(),
+          };
+          await setDoc(docRef, data);
+          const imagePath = `designs/${workspaceId}/${
+            docRef.id
+          }/versions/${imageName}-${Date.now()}-v1`;
+          try {
+            const storageRef = ref(storage, imagePath);
+            let bytes: number = 0;
+            const uploadTask = uploadBytesResumable(
+              storageRef,
+              uploadedFile as File
+            );
+            uploadTask.on(
+              "state_changed",
+              (snapshot: { bytesTransferred: number; totalBytes: number }) => {
+                bytes = snapshot.totalBytes;
+                const progress =
+                  (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                setUploadPercentage(Math.round(progress));
+              },
+              (error) => {
+                console.error(error);
+              },
+              async () => {
+                const downloadURL = await getDownloadURL(
+                  uploadTask.snapshot.ref
+                );
+                const versionRef = doc(
+                  collection(
+                    db,
+                    `workspaces/${workspaceId}/designs/${docRef.id}/versions`
+                  )
+                );
+                const versionData: IReviewImageVersion = {
+                  id: versionRef.id,
+                  version: 1,
+                  imageURL: downloadURL,
+                  imagePath: imagePath,
+                  size: fileSize,
+                  timeStamp: Date.now(),
+                  uploadedBy: user?.name as string,
+                  uploadedByEmail: authUser?.email as string,
+                  uploadedById: authUser?.uid as string,
+                };
+                await setDoc(versionRef, versionData);
+                message.success("Image uploaded successfully");
+                setUploadingState("success");
+                setUploadedImageId(docRef.id);
+              }
+            );
+          } catch (error) {
+            message.error("Some error occurred");
+            setUploadingState("error");
           }
-        );
-      } catch (error) {
-        message.error("Some error occurred");
-        setUploadingState("error");
+        } else {
+          message.error("File size too large, Upgrade now to add large files");
+        }
+      } else {
+        message.error("Storage limit exceeded, Upgrade now to add more files");
       }
     } else {
-      message.error("File size should be less than 75MB");
+      message.error("You don't have permission to upload");
     }
   };
 

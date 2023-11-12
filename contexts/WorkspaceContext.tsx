@@ -38,13 +38,21 @@ export interface IWorkspaceContext {
   fetchFullWorkspace: (workspaceId: string) => any;
   fetchWorkspace: (workspaceId: string) => any;
   createWorkspace: (workspaceData: IWorkspace) => any;
-  updateWorkspace: (workspaceId: string, workspaceData: IWorkspace) => any;
+  updateWorkspace: (
+    workspaceId: string,
+    workspaceData: Partial<IWorkspace>
+  ) => any;
   deleteWorkspace: (workspaceId: string) => any;
   addUserInWorkspace: (workspaceId: string, userData: IUserInWorkspace) => any;
   removeUserFromWorkspace: (workspaceId: string, userId: string) => any;
   fetchUserInWorkspace: (workspaceId: string) => any;
   fetchDesignInWorkspace: (workspaceId: string) => any;
   fetchInitialWorkspace: () => any;
+  updateUserInWorkspace: (
+    workspaceId: string,
+    userId: string,
+    userData: Partial<IUserInWorkspace>
+  ) => any;
 }
 
 const defaultValues: IWorkspaceContext = {
@@ -65,6 +73,7 @@ const defaultValues: IWorkspaceContext = {
   fetchUserInWorkspace: () => {},
   fetchDesignInWorkspace: () => {},
   fetchInitialWorkspace: () => {},
+  updateUserInWorkspace: () => {},
 };
 
 const WorkspaceContext = createContext<IWorkspaceContext>(defaultValues);
@@ -137,6 +146,25 @@ export function WorkspaceContextProvider({ children }: any) {
     }
   };
 
+  const updateUserInWorkspace = async (
+    workspaceId: string,
+    userId: string,
+    userData: Partial<IUserInWorkspace>
+  ) => {
+    try {
+      const WorkUserRef = doc(
+        db,
+        "workspaces",
+        workspaceId,
+        "collaborators",
+        userId
+      );
+      await updateDoc(WorkUserRef, userData);
+    } catch (error) {
+      message.error("Failed to update user in workspace");
+    }
+  };
+
   const removeUserFromWorkspace = async (
     workspaceId: string,
     userId: string
@@ -176,11 +204,15 @@ export function WorkspaceContextProvider({ children }: any) {
 
   const updateWorkspace = async (
     workspaceId: string,
-    workspaceData: IWorkspace
+    workspaceData: Partial<IWorkspace>
   ) => {
     try {
       const WorkspaceRef = doc(db, "workspaces", workspaceId);
-      await updateDoc(WorkspaceRef, { ...workspaceData });
+      await updateDoc(WorkspaceRef, workspaceData);
+      setRenderWorkspace({
+        ...renderWorkspace,
+        ...workspaceData,
+      } as IWorkspace);
     } catch (error) {
       message.error("Failed to update workspace");
     }
@@ -215,6 +247,7 @@ export function WorkspaceContextProvider({ children }: any) {
 
   const fetchInitialWorkspace = async () => {
     try {
+      setLoading(true);
       // Get the initial workspace from local storage
       const currentWorkspaceId = localStorage.getItem("currentWorkspaceId");
       if (authUser) {
@@ -243,8 +276,9 @@ export function WorkspaceContextProvider({ children }: any) {
             workspaceData && setRenderWorkspace(workspaceData);
             workspaceDesigns && setCurrentDesignInWorkspace(workspaceDesigns);
             // else case fetch from the users workspace
-          } else fetchFullWorkspace(newWorkspace[0].id);
-        } else fetchFullWorkspace(newWorkspace[0].id);
+          } else await fetchFullWorkspace(newWorkspace[0].id);
+        } else await fetchFullWorkspace(newWorkspace[0].id);
+        setLoading(false);
       }
     } catch (e) {
       console.error(e);
@@ -336,6 +370,7 @@ export function WorkspaceContextProvider({ children }: any) {
     removeUserFromWorkspace,
     fetchUserInWorkspace,
     fetchDesignInWorkspace,
+    updateUserInWorkspace,
   };
 
   return loading ? (

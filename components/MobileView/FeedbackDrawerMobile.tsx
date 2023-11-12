@@ -45,7 +45,10 @@ const FeedbackDrawerMobile: React.FC<Props> = ({ designId, workspaceId }) => {
       >
         <div>
           {isFocusedThread ? (
-            <FeedbackExpanded designId={designId as string} workspaceId={workspaceId as string} />
+            <FeedbackExpanded
+              designId={designId as string}
+              workspaceId={workspaceId as string}
+            />
           ) : (
             <>
               <div className=" bg-sec sticky -top-[0.35rem] z-50 flex flex-col py-2">

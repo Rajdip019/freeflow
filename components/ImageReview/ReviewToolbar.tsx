@@ -47,9 +47,7 @@ const ReviewImageToolbarAdmin: React.FC = () => {
     },
     {
       key: "2",
-      label: (
-        <Copy value={window.location.href} type="both" />
-      ),
+      label: <Copy value={window.location.href} type="both" />,
     },
     // {
     //   key: "3",

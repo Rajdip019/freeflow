@@ -72,7 +72,8 @@ const SendInvitesInput = ({
             !validateCommaSeparatedEmails(invitesInputText)
           }
           onClick={handleSendInvites}
-        >Send
+        >
+          Send
         </Button>
       </Space.Compact>
     </div>

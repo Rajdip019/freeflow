@@ -28,7 +28,7 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
   workspaceId,
   open,
 }) => {
-  const cachedImage = imageSrc.replace(
+  const cachedImage = imageSrc?.replace(
     "https://firebasestorage.googleapis.com",
     "https://ik.imagekit.io/freeflow"
   );
@@ -41,8 +41,12 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
 
   const addNewReviewToDatabase = async (blob: Blob, editorRef: any) => {
     try {
-      const docRef = doc(collection(db, `workspaces/${workspaceId}/designs/${imageId}/comments`));
-      const imagePath = `designs/${workspaceId}/${docRef.id}/${image?.imageName}-${Date.now()}`;
+      const docRef = doc(
+        collection(db, `workspaces/${workspaceId}/designs/${imageId}/comments`)
+      );
+      const imagePath = `designs/${workspaceId}/${docRef.id}/${
+        image?.imageName
+      }-${Date.now()}`;
       const storageRef = ref(storage, imagePath);
       let bytes: number = 0;
       const uploadTask = uploadBytesResumable(storageRef, blob as File);
@@ -62,7 +66,7 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
             timeStamp: Date.now(),
             version: version,
             imageURL: downloadURL,
-            imagePath : imagePath,
+            imagePath: imagePath,
           });
           message.success("Thread added successfully");
           await editorRef?.current?.editor.loadImage(cachedImage);

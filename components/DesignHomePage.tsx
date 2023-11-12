@@ -48,18 +48,18 @@ const DesignHomePage = () => {
       {visible && <SearchModal visible={visible} setVisible={setVisible} />}
 
       <div className="flex w-full">
-        <div className={`${sideVisible ? "w-full lg:w-[74%]" : "w-full"}`}>
+        <div className={`w-full`}>
           <DesignHeader isGridView={isGridView} setIsGridView={setIsGridView} />
 
           <div
-            className="min-h-[88.1vh] overflow-scroll px-5 md:min-h-min"
+            className="min-h-[88.1vh] overflow-scroll md:min-h-min"
             style={{
               height: "calc(100vh - 40px)",
             }}
           >
             {searchQuery && (
               <Space className="-mb-4 mt-2">
-                <Typography.Text type="secondary" className="text-md mt-5">
+                <Typography.Text type="secondary" className="text-md ml-4 mt-5">
                   search result for <b>{searchQuery}</b>
                 </Typography.Text>
               </Space>
@@ -67,7 +67,7 @@ const DesignHomePage = () => {
             {filteredImages.length !== 0 ? (
               <>
                 {isGridView ? (
-                  <div className="py-4">
+                  <div className="ml-4 py-4">
                     <div className="flex w-full flex-wrap items-center justify-center gap-4 md:justify-normal">
                       {orderBy(filteredImages, ["timeStamp"], ["desc"]).map(
                         (image) => {
@@ -84,7 +84,7 @@ const DesignHomePage = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="my-4">
+                  <div className="my-2 mb-4">
                     <DesignsTableRow
                       images={filteredImages}
                       setSideImage={setSideImage}

@@ -1,4 +1,7 @@
-import { IReviewImage, IReviewImageVersion } from "@/interfaces/ReviewImageData";
+import {
+  IReviewImage,
+  IReviewImageVersion,
+} from "@/interfaces/ReviewImageData";
 import { storage, db } from "@/lib/firebaseConfig";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -11,6 +14,7 @@ import { useUserContext } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/router";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
+import { getPlan } from "@/utils/plans";
 
 interface Props {
   prevImage: IReviewImage;
@@ -34,7 +38,7 @@ const VersionUploadModal: React.FC<Props> = ({
   const [fileSize, setFileSize] = useState<number>(0);
   const router = useRouter();
   const { workspaceId, designId } = router.query;
-  const { renderWorkspace } = useWorkspaceContext();
+  const { renderWorkspace, currentUserInWorkspace } = useWorkspaceContext();
   const workspace_id = workspaceId || renderWorkspace?.id;
   const image_id = designId || prevImage.id;
 
@@ -49,7 +53,7 @@ const VersionUploadModal: React.FC<Props> = ({
 
   const handleFileUploaded = (file: File) => {
     setUploadedFile(file);
-    setFileSize(Math.round(file.size /1024));
+    setFileSize(Math.round(file.size / 1024));
     setImageName(file.name);
   };
 
@@ -62,57 +66,82 @@ const VersionUploadModal: React.FC<Props> = ({
 
   const uploadFile = async () => {
     setConfirmLoading(true);
-    if ((fileSize/1024) < 75) {
-      setUploadingState("uploading");
-      const docRef = doc(collection(db, `workspaces/${workspace_id}/designs/${image_id}/versions`));
-      const imagePath = `designs/${workspace_id}/${image_id}/versions/${imageName}-${Date.now()}-v${prevImage.latestVersion + 1}`;
-      try {
-        const storageRef = ref(storage, imagePath);
-        let bytes: number = 0;
-        const uploadTask = uploadBytesResumable(
-          storageRef,
-          uploadedFile as File
-        );
-        uploadTask.on(
-          "state_changed",
-          (snapshot: { bytesTransferred: number; totalBytes: number }) => {
-            bytes = snapshot.totalBytes;
-          },
-          (error) => {
-            console.error(error);
-          },
-          async () => {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+    if (
+      currentUserInWorkspace.filter((user) => user.id === authUser?.uid)[0]
+        .role === "viewer"
+    ) {
+      if (
+        renderWorkspace &&
+        renderWorkspace?.storageUsed + fileSize >
+          getPlan(renderWorkspace?.subscription).storage
+      ) {
+        if (
+          renderWorkspace?.subscription &&
+          fileSize < getPlan(renderWorkspace?.subscription).fileLimit
+        ) {
+          setUploadingState("uploading");
+          const docRef = doc(
+            collection(
+              db,
+              `workspaces/${workspace_id}/designs/${image_id}/versions`
+            )
+          );
+          const imagePath = `designs/${workspace_id}/${image_id}/versions/${imageName}-${Date.now()}-v${
+            prevImage.latestVersion + 1
+          }`;
+          try {
+            const storageRef = ref(storage, imagePath);
+            let bytes: number = 0;
+            const uploadTask = uploadBytesResumable(
+              storageRef,
+              uploadedFile as File
+            );
+            uploadTask.on(
+              "state_changed",
+              (snapshot: { bytesTransferred: number; totalBytes: number }) => {
+                bytes = snapshot.totalBytes;
+              },
+              (error) => {
+                console.error(error);
+              },
+              async () => {
+                const downloadURL = await getDownloadURL(
+                  uploadTask.snapshot.ref
+                );
 
-            const data: IReviewImageVersion = {
-              id: docRef.id,
-              imageURL: downloadURL,
-              size: fileSize,
-              timeStamp: Date.now(),
-              version: prevImage.latestVersion + 1,
-              imagePath: imagePath,
-              uploadedBy: user?.name as string,
-              uploadedByEmail: user?.email as string,
-              uploadedById: authUser?.uid as string,
-            };
+                const data: IReviewImageVersion = {
+                  id: docRef.id,
+                  imageURL: downloadURL,
+                  size: fileSize,
+                  timeStamp: Date.now(),
+                  version: prevImage.latestVersion + 1,
+                  imagePath: imagePath,
+                  uploadedBy: user?.name as string,
+                  uploadedByEmail: user?.email as string,
+                  uploadedById: authUser?.uid as string,
+                };
 
-            await setDoc(docRef, data);
-            message.success("Version updated successfully");
-            setOpen(false);
+                await setDoc(docRef, data);
+                message.success("Version updated successfully");
+                setOpen(false);
+                setConfirmLoading(false);
+              }
+            );
+          } catch (error) {
+            message.error("Something went wrong. Please try again");
+            setUploadingState("error");
             setConfirmLoading(false);
           }
-        );
-      } catch (error) {
-        message.error("Something went wrong. Please try again");
-        setUploadingState("error");
-        setConfirmLoading(false);
+        } else {
+          message.error("File size too large, Upgrade now to add large files");
+        }
+      } else {
+        message.error("Storage limit exceeded, Upgrade now to add more files");
       }
     } else {
-      message.error(
-        "File size is too large. Please upload a file less than 75 MB"
-      );
-      setConfirmLoading(false);
+      message.error("You do not have permission to upload new version");
     }
+    setConfirmLoading(false);
   };
 
   return (

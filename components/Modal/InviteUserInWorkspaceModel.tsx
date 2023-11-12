@@ -16,6 +16,7 @@ import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 import { IUserInWorkspace } from "@/interfaces/Workspace";
 import { useUserContext } from "@/contexts/UserContext";
 import Avatar from "react-avatar";
+import { getPlan } from "@/utils/plans";
 
 const { Option } = Select;
 
@@ -81,44 +82,54 @@ const InviteUserInWorkspaceModel: React.FC<Props> = ({
   };
 
   const inviteUser = async (userData: IUser, id: string, role: string) => {
-    if (renderWorkspace) {
-      const currentWorkspaceId = renderWorkspace.id;
-      if (currentWorkspaceId) {
-        const newUserInWorkspaceData: IUserInWorkspace = {
-          id: id,
-          role: role as "owner" | "admin" | "editor" | "viewer",
-          name: userData.name,
-          email: userData.email,
-          inviteTime: Date.now(),
-          imageURL: userData?.imageURL || "",
-          status: "Pending",
-        };
+    if (renderWorkspace && currentUserInWorkspace) {
+      if (
+        currentUserInWorkspace?.length <
+        getPlan(renderWorkspace.subscription).members
+      ) {
+        const currentWorkspaceId = renderWorkspace.id;
+        if (currentWorkspaceId) {
+          const newUserInWorkspaceData: IUserInWorkspace = {
+            id: id,
+            role: role as "owner" | "admin" | "editor" | "viewer",
+            name: userData.name,
+            email: userData.email,
+            inviteTime: Date.now(),
+            imageURL: userData?.imageURL || "",
+            status: "Pending",
+          };
 
-        // add workspace to the user sub collection
+          // add workspace to the user sub collection
 
-        const newWorkspaceInUserData: IWorkspaceInUser = {
-          id: currentWorkspaceId as string,
-          role: role as "owner" | "admin" | "editor" | "viewer",
-          name: renderWorkspace.name,
-          avatarUrl: "",
-          status: "Pending",
-        };
+          const newWorkspaceInUserData: IWorkspaceInUser = {
+            id: currentWorkspaceId as string,
+            role: role as "owner" | "admin" | "editor" | "viewer",
+            name: renderWorkspace.name,
+            avatarUrl: "",
+            status: "Pending",
+          };
 
-        try {
-          await addUserInWorkspace(currentWorkspaceId, newUserInWorkspaceData);
-          await addWorkspaceInUser(id, newWorkspaceInUserData);
+          try {
+            await addUserInWorkspace(
+              currentWorkspaceId,
+              newUserInWorkspaceData
+            );
+            await addWorkspaceInUser(id, newWorkspaceInUserData);
 
-          setCurrentUserInWorkspace([
-            ...currentUserInWorkspace,
-            newUserInWorkspaceData,
-          ]);
+            setCurrentUserInWorkspace([
+              ...currentUserInWorkspace,
+              newUserInWorkspaceData,
+            ]);
 
-          message.success("User invited successfully");
-          setEmail("");
-          setRole("");
-        } catch (err) {
-          message.error("Failed to invite user");
+            message.success("User invited successfully");
+            setEmail("");
+            setRole("");
+          } catch (err) {
+            message.error("Failed to invite user");
+          }
         }
+      } else {
+        message.error("Upgrade your plan to add more members");
       }
     }
   };

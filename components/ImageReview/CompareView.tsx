@@ -1,4 +1,7 @@
-import { IReviewImage, IReviewImageVersion } from "@/interfaces/ReviewImageData";
+import {
+  IReviewImage,
+  IReviewImageVersion,
+} from "@/interfaces/ReviewImageData";
 import React from "react";
 import PreviewCanvas from "./PreviewCanvas";
 import { Button, Dropdown, Typography } from "antd";
@@ -10,7 +13,7 @@ interface Props {
   currentVersion: number;
 }
 
-const CompareView: React.FC<Props> = ({image, imageData, currentVersion }) => {
+const CompareView: React.FC<Props> = ({ image, imageData, currentVersion }) => {
   const [version1, setVersion1] = React.useState<number>(currentVersion);
   const [version2, setVersion2] = React.useState<number>(currentVersion - 1);
 
@@ -23,9 +26,7 @@ const CompareView: React.FC<Props> = ({image, imageData, currentVersion }) => {
               {image.imageName}
             </Typography.Text>
             <div className="w-[90vw] md:w-[45vw]">
-              <PreviewCanvas
-                imageSrc={imageData[0].imageURL}
-              />
+              <PreviewCanvas imageSrc={imageData[0].imageURL} />
             </div>
             <div className=" mt-5">
               <Dropdown
@@ -70,9 +71,7 @@ const CompareView: React.FC<Props> = ({image, imageData, currentVersion }) => {
               {image.imageName}
             </Typography.Text>
             <div className="w-[90vw] md:w-[45vw]">
-              <PreviewCanvas
-                imageSrc={imageData[1].imageURL}
-              />
+              <PreviewCanvas imageSrc={imageData[1].imageURL} />
             </div>
             <div className=" mb-10 mt-5 md:mb-0">
               <Dropdown

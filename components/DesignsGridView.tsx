@@ -1,14 +1,20 @@
 import { IReviewImage } from "@/interfaces/ReviewImageData";
 import React from "react";
-import { Dropdown, Image, MenuProps, Tag, Typography } from "antd";
-import Link from "next/link";
-import Moment from "react-moment";
-import Copy from "./shared/Copy";
-import { APP_URL } from "@/utils/constants";
-import ChangeFileNameModal from "./Modal/ChangeFileNameModal";
+import {
+  Button,
+  Dropdown,
+  Image,
+  MenuProps,
+  Skeleton,
+  Space,
+  Tag,
+  Typography,
+} from "antd";
 import VersionUploadModal from "./VersionControl/VersionUploadModal";
+import ChangeFileNameModal from "./Modal/ChangeFileNameModal";
 import SendInvitesIconModal from "./Modal/SendInvitesIconModal";
 import ImageDeleteModalConfirmation from "./Modal/ImageDeleteModalConfirmation";
+import { MoreOutlined } from "@ant-design/icons";
 
 interface Props {
   image: IReviewImage;
@@ -22,7 +28,7 @@ const DesignsGridView: React.FC<Props> = ({
   setSideVisible,
 }) => {
   return (
-    <div className="relative h-64 w-64 cursor-pointer rounded-xl border border-[#181818]">
+    <div className="relative flex w-[47%] cursor-pointer items-center justify-center rounded-xl border border-[#181818] md:h-64 md:w-64">
       {image.latestImageURL ? (
         <Image
           src={image.latestImageURL}
@@ -30,27 +36,81 @@ const DesignsGridView: React.FC<Props> = ({
           className="aspect-square w-full cursor-pointer rounded-xl object-cover"
           loading="lazy"
           preview={false}
+          onClick={
+            image.latestImageURL
+              ? () => {
+                  setSideVisible(true);
+                  setSideImage(image);
+                }
+              : () => {}
+          }
         />
       ) : (
-        <div className=" text-white">Waiting for image...</div>
+        <Space direction="vertical" className="items-center justify-center">
+          <Skeleton.Image active />
+          <Typography.Text className="text-white">
+            {image.imageName} Loading..
+          </Typography.Text>
+        </Space>
       )}
       <div
         onClick={() => {
-          setSideVisible(true);
           setSideImage(image);
+          setSideVisible(true);
         }}
-        className="absolute left-0 top-0 flex h-64 w-64 flex-col justify-between p-2 text-white opacity-0 transition-all hover:bg-[#0000008d] hover:opacity-100"
+        className="absolute left-0 top-0 hidden w-[47%] flex-col justify-between p-2 text-white opacity-0 transition-all hover:bg-[#0000008d] hover:opacity-100 md:flex md:h-64 md:w-64"
       >
         <div className="flex items-end justify-end">
           <Tag color="red">{image.newUpdate}</Tag>
         </div>
         <div className="flex items-center justify-between">
-          <Typography className="w-[15ch] truncate text-[1.1rem]">
-            {image.imageName}
-          </Typography>
-          <Typography className="text-[0.7rem]">
-            {image?.totalSize && `${Math.round(image.totalSize)} KB`}
-          </Typography>
+          <div>
+            <Typography className="w-[15ch] truncate text-[1.1rem]">
+              {image.imageName}
+            </Typography>
+            <Typography className="text-[0.7rem]">
+              {image?.totalSize && `${Math.round(image.totalSize)} KB`}
+            </Typography>
+          </div>
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <Space>
+              <VersionUploadModal
+                prevImage={image}
+                isText={false}
+                pos="start"
+                isMenu={true}
+              />
+
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      label: <ChangeFileNameModal image={image} />,
+                    },
+
+                    {
+                      label: (
+                        <SendInvitesIconModal
+                          image={image}
+                          isTooltip={false}
+                          isMenuItem={true}
+                        />
+                      ),
+                    },
+                    {
+                      label: <ImageDeleteModalConfirmation image={image} />,
+                    },
+                  ] as MenuProps["items"],
+                }}
+              >
+                <Button icon={<MoreOutlined />} size="small" />
+              </Dropdown>
+            </Space>
+          </div>
         </div>
       </div>
     </div>

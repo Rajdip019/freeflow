@@ -1,15 +1,15 @@
 import VersionUploadModal from "@/components/VersionControl/VersionUploadModal";
 import { defaultHighlightedThread } from "@/utils/constants";
-import { IReviewImage, IReviewImageVersion } from "@/interfaces/ReviewImageData";
+import {
+  IReviewImage,
+  IReviewImageVersion,
+} from "@/interfaces/ReviewImageData";
 import router from "next/router";
 import React from "react";
 import ReviewImageToolbar from "../ReviewToolbar";
 import { useFeedbackContext } from "@/contexts/FeedbackContext";
 import { Dropdown, MenuProps, Typography } from "antd";
-import {
-  DownOutlined,
-  SmileOutlined,
-} from "@ant-design/icons";
+import { DownOutlined, SmileOutlined } from "@ant-design/icons";
 import { FFButton } from "@/theme/themeConfig";
 
 const FeedbackNavbar = () => {
@@ -29,16 +29,13 @@ const FeedbackNavbar = () => {
         {
           key: "1",
           label: (
-            <VersionUploadModal
-              prevImage={image as IReviewImage}
-              pos="start"
-            />
+            <VersionUploadModal prevImage={image as IReviewImage} pos="start" />
           ),
         },
         {
           key: "2",
           label: <Typography.Text>Versions</Typography.Text>,
-          children: imageData?.map((_ : any, index : number) => {
+          children: imageData?.map((_: any, index: number) => {
             return {
               key: index,
               label: (
@@ -86,22 +83,24 @@ const FeedbackNavbar = () => {
         {
           key: "2",
           label: <Typography.Text>Versions</Typography.Text>,
-          children: imageData && imageData?.map((_ : any, index : number) => {
-            return {
-              key: index,
-              label: (
-                <div
-                  key={index}
-                  onClick={() => {
-                    setHighlightedComment(defaultHighlightedThread);
-                    setVersion(imageData.length - index);
-                  }}
-                >
-                  {`Version ${imageData.length - index}`}
-                </div>
-              ),
-            };
-          }),
+          children:
+            imageData &&
+            imageData?.map((_: any, index: number) => {
+              return {
+                key: index,
+                label: (
+                  <div
+                    key={index}
+                    onClick={() => {
+                      setHighlightedComment(defaultHighlightedThread);
+                      setVersion(imageData.length - index);
+                    }}
+                  >
+                    {`Version ${imageData.length - index}`}
+                  </div>
+                ),
+              };
+            }),
         },
         {
           key: "3",
@@ -127,7 +126,7 @@ const FeedbackNavbar = () => {
       </div>
       <Typography.Text className=" flex items-center justify-center gap-2 font-semibold">
         {isCompareView ? "" : image?.imageName}{" "}
-        {imageData[0].version ? (
+        {imageData[0]?.version ? (
           <>
             {!isCompareView && (
               <Dropdown menu={{ items }}>

@@ -1,11 +1,6 @@
 /* eslint-disable no-undef */
 import { db } from "@/lib/firebaseConfig";
-import {
-  collection,
-  deleteDoc,
-  doc,
-  onSnapshot,
-} from "firebase/firestore";
+import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
 import {
   createContext,
   useContext,
@@ -51,9 +46,7 @@ export function useImageContext() {
 }
 
 export const ImageContextProvider = ({ children }: Props) => {
-  const [images, setImages] = useState<IReviewImage[]>(
-    defaultValues.images
-  );
+  const [images, setImages] = useState<IReviewImage[]>(defaultValues.images);
   const { authUser } = useAuth();
   const toast = useToast();
   const { user } = useUserContext();
@@ -65,7 +58,10 @@ export const ImageContextProvider = ({ children }: Props) => {
 
   const getImages = useCallback(async () => {
     if (authUser) {
-      const imagesRef = collection(db, `workspaces/${renderWorkspace?.id}/designs`);
+      const imagesRef = collection(
+        db,
+        `workspaces/${renderWorkspace?.id}/designs`
+      );
       onSnapshot(imagesRef, async (querySnapshot) => {
         const promises = querySnapshot.docs.map(async (docSnap) => {
           const data = docSnap.data() as IReviewImage;

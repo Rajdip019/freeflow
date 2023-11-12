@@ -36,6 +36,11 @@ interface IDefaultValues {
   addWorkspaceInUser: (userId: string, workspaceData: IWorkspaceInUser) => any;
   removeWorkspaceInUser: (userId: string, workspaceDataId: string) => any;
   fetchWorkspaceInUser: (userId: string) => any;
+  updateWorkspaceInUser: (
+    userId: string,
+    workspaceId: string,
+    workspaceData: Partial<IWorkspaceInUser>
+  ) => any;
 }
 
 const defaultValues: IDefaultValues = {
@@ -47,6 +52,7 @@ const defaultValues: IDefaultValues = {
   addWorkspaceInUser: () => {},
   removeWorkspaceInUser: () => {},
   fetchWorkspaceInUser: () => {},
+  updateWorkspaceInUser: () => {},
 };
 
 const userContext = createContext(defaultValues);
@@ -80,6 +86,19 @@ export const UserContextProvider = ({ children }: Props) => {
       await setDoc(UserWorkRef, workspaceData);
     } catch (error) {
       message.error("Failed to add workspace in user");
+    }
+  };
+
+  const updateWorkspaceInUser = async (
+    userId: string,
+    workspaceId: string,
+    workspaceData: Partial<IWorkspaceInUser>
+  ) => {
+    try {
+      const UserWorkRef = doc(db, "users", userId, "workspaces", workspaceId);
+      await updateDoc(UserWorkRef, workspaceData);
+    } catch (error) {
+      message.error("Failed to update workspace in user");
     }
   };
 
@@ -160,6 +179,7 @@ export const UserContextProvider = ({ children }: Props) => {
     removeWorkspaceInUser,
     addWorkspaceInUser,
     fetchWorkspaceInUser,
+    updateWorkspaceInUser,
   };
 
   return (

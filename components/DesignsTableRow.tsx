@@ -1,7 +1,22 @@
 import { IReviewImage } from "@/interfaces/ReviewImageData";
 import React from "react";
 import Moment from "react-moment";
-import { Table, Image, Tag, Typography } from "antd";
+import {
+  Table,
+  Image,
+  Tag,
+  Typography,
+  Spin,
+  Space,
+  Dropdown,
+  Button,
+  MenuProps,
+} from "antd";
+import { MoreOutlined } from "@ant-design/icons";
+import ImageDeleteModalConfirmation from "./Modal/ImageDeleteModalConfirmation";
+import SendInvitesIconModal from "./Modal/SendInvitesIconModal";
+import ChangeFileNameModal from "./Modal/ChangeFileNameModal";
+import VersionUploadModal from "./VersionControl/VersionUploadModal";
 const { Column } = Table;
 interface Props {
   images: IReviewImage[];
@@ -23,7 +38,9 @@ const DesignsTableRow: React.FC<Props> = ({
         dataSource={images}
         scroll={{ x: 300 }}
         pagination={false}
+        rootClassName="ml-2"
         bordered={false}
+        tableLayout="auto"
         onRow={(record) => {
           return {
             onClick: (event) => {
@@ -50,13 +67,18 @@ const DesignsTableRow: React.FC<Props> = ({
                 />
               ) : (
                 <div>
-                  <Typography.Text className="text-center text-sm text-white">
-                    Waiting for image...
-                  </Typography.Text>
+                  <Spin size={"large"} className="m-2.5" />
                 </div>
               )}
             </>
           )}
+          onCell={(record) => {
+            return {
+              onClick: (e) => {
+                e.stopPropagation();
+              },
+            };
+          }}
         />
         <Column
           title="Name"
@@ -125,6 +147,52 @@ const DesignsTableRow: React.FC<Props> = ({
               },
             };
           }}
+        />
+        <Column
+          title="Actions"
+          key="action"
+          render={(text, image: IReviewImage) => (
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <Space>
+                <VersionUploadModal
+                  prevImage={image}
+                  isText={false}
+                  pos="start"
+                  isMenu={true}
+                />
+
+                <Dropdown
+                  menu={{
+                    items: [
+                      {
+                        label: <ChangeFileNameModal image={image} />,
+                      },
+
+                      {
+                        label: (
+                          <SendInvitesIconModal
+                            image={image}
+                            isTooltip={false}
+                            isMenuItem={true}
+                          />
+                        ),
+                      },
+                      {
+                        label: <ImageDeleteModalConfirmation image={image} />,
+                      },
+                    ] as MenuProps["items"],
+                  }}
+                >
+                  <Button icon={<MoreOutlined />} size="small" />
+                </Dropdown>
+              </Space>
+            </div>
+          )}
+          className="hidden cursor-pointer lg:table-cell "
         />
       </Table>
     </>
