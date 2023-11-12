@@ -91,7 +91,10 @@ const ReviewImage = () => {
                   ) : (
                     <div className=" w-full">
                       <ReviewCanvas
-                        imageSrc={imageData[version - 1].imageURL as string}
+                        imageSrc={
+                          imageData &&
+                          (imageData[version - 1]?.imageURL as string)
+                        }
                         imageId={designId as string}
                         workspaceId={workspaceId as string}
                         open={open}

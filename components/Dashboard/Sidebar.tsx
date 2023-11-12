@@ -28,15 +28,24 @@ import Avatar from "react-avatar";
 import SearchModal from "../Modal/SearchModel";
 import ImageUploadModal from "../ImageUploadModal";
 import { useUserContext } from "@/contexts/UserContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { some } from "lodash-es";
+import SettingModal from "../Modal/SettingModal";
 
 const Sidebar = () => {
-  const { workspaceInUser, renderWorkspace, fetchFullWorkspace } =
-    useWorkspaceContext();
+  const {
+    workspaceInUser,
+    renderWorkspace,
+    fetchFullWorkspace,
+    currentUserInWorkspace,
+  } = useWorkspaceContext();
   const { user } = useUserContext();
+  const { authUser } = useAuth();
 
   const [open, setOpen] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [showModel, setShowModel] = useState<boolean>(false);
+  const [settingModal, setSettingModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Designs");
   const router = useRouter();
 
@@ -52,7 +61,7 @@ const Sidebar = () => {
   }, [router.isReady]);
 
   const fetchNewWorkspace = async (workspaceTab: string) => {
-    fetchFullWorkspace(workspaceTab);
+    await fetchFullWorkspace(workspaceTab);
     localStorage.setItem("currentWorkspaceId", workspaceTab);
   };
 
@@ -82,7 +91,7 @@ const Sidebar = () => {
   return (
     <Space
       direction="vertical"
-      className="bg-sec sticky top-0 hidden h-screen max-w-[255px] border-r border-r-[#ffffff1e] md:flex"
+      className="bg-sec sticky top-0 hidden h-screen min-w-[250px] max-w-[250px] border-r border-r-[#ffffff1e] md:flex"
     >
       {showModel && (
         <ImageUploadModal visible={true} setShowModal={setShowModel} />
@@ -173,6 +182,16 @@ const Sidebar = () => {
               className="w-full text-start"
               icon={<FormOutlined />}
               onClick={() => setShowModel(true)}
+              disabled={
+                currentUserInWorkspace && currentUserInWorkspace.length > 0
+                  ? some(currentUserInWorkspace, (user) => {
+                      return (
+                        user.id === authUser?.uid &&
+                        (user.role === "viewer" || user.role === "editor")
+                      );
+                    })
+                  : false
+              }
             >
               New Design
             </Button>
@@ -204,6 +223,19 @@ const Sidebar = () => {
               type="text"
               className="w-6 rounded-full transition-all"
               icon={<SettingOutlined />}
+              onClick={() => {
+                setSettingModal(true);
+              }}
+              disabled={
+                currentUserInWorkspace && currentUserInWorkspace.length > 0
+                  ? some(currentUserInWorkspace, (user) => {
+                      return (
+                        user.id === authUser?.uid &&
+                        (user.role === "viewer" || user.role === "editor")
+                      );
+                    })
+                  : false
+              }
             />
 
             <a
@@ -227,6 +259,7 @@ const Sidebar = () => {
           />
         </div>
       </div>
+      <SettingModal open={settingModal} setOpen={setSettingModal} />
     </Space>
   );
 };

@@ -30,6 +30,9 @@ import { useRouter } from "next/router";
 import Avatar from "react-avatar";
 import { FFButton } from "@/theme/themeConfig";
 import { useUserContext } from "@/contexts/UserContext";
+import SettingModal from "../Modal/SettingModal";
+import { useAuth } from "@/contexts/AuthContext";
+import { some } from "lodash-es";
 
 type Props = {
   openDrawer: boolean;
@@ -37,15 +40,21 @@ type Props = {
 };
 
 const SidebarDrawer = ({ openDrawer, setOpenDrawer }: Props) => {
-  const { workspaceInUser, renderWorkspace, fetchFullWorkspace } =
-    useWorkspaceContext();
+  const {
+    workspaceInUser,
+    renderWorkspace,
+    fetchFullWorkspace,
+    currentUserInWorkspace,
+  } = useWorkspaceContext();
 
   const [open, setOpen] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [showModel, setShowModel] = useState<boolean>(false);
+  const [settingModal, setSettingModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Designs");
   const router = useRouter();
   const { user } = useUserContext();
+  const { authUser } = useAuth();
 
   useEffect(() => {
     if (router.isReady) {
@@ -201,6 +210,16 @@ const SidebarDrawer = ({ openDrawer, setOpenDrawer }: Props) => {
                   setShowModel(true);
                   setOpenDrawer(false);
                 }}
+                disabled={
+                  currentUserInWorkspace && currentUserInWorkspace.length > 0
+                    ? some(currentUserInWorkspace, (user) => {
+                        return (
+                          user.id === authUser?.uid &&
+                          (user.role === "viewer" || user.role === "editor")
+                        );
+                      })
+                    : false
+                }
               >
                 New Design
               </Button>
@@ -235,9 +254,19 @@ const SidebarDrawer = ({ openDrawer, setOpenDrawer }: Props) => {
                 type="text"
                 className="w-6 rounded-full transition-all"
                 icon={<SettingOutlined />}
-                disabled
+                disabled={
+                  currentUserInWorkspace && currentUserInWorkspace.length > 0
+                    ? some(currentUserInWorkspace, (user) => {
+                        return (
+                          user.id === authUser?.uid &&
+                          (user.role === "viewer" || user.role === "editor")
+                        );
+                      })
+                    : false
+                }
                 onClick={() => {
                   // router.push("/settings");
+                  setSettingModal(true);
                   setOpenDrawer(false);
                 }}
               />
@@ -272,6 +301,7 @@ const SidebarDrawer = ({ openDrawer, setOpenDrawer }: Props) => {
           type="text"
           onClick={() => setOpenDrawer(false)}
         />
+        <SettingModal open={settingModal} setOpen={setSettingModal} />
       </Space>
     </Drawer>
   );

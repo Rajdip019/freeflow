@@ -40,9 +40,10 @@ const PeopleContent = (props: Props) => {
     currentUserInWorkspace,
     removeUserFromWorkspace,
     fetchFullWorkspace,
+    updateUserInWorkspace,
   } = useWorkspaceContext();
 
-  const { removeWorkspaceInUser } = useUserContext();
+  const { removeWorkspaceInUser, updateWorkspaceInUser } = useUserContext();
   const [visibleInviteModel, setVisibleInviteModel] = useState<boolean>(false);
   const { authUser } = useAuth();
 
@@ -62,10 +63,18 @@ const PeopleContent = (props: Props) => {
 
   const handleChangeRole = async (role: string, userId: string) => {
     try {
+      message.loading("Changing user role...");
       const workspaceId = renderWorkspace?.id;
       if (workspaceId) {
+        await updateUserInWorkspace(workspaceId, userId, {
+          role: role as IUserInWorkspace["role"],
+        });
+        await updateWorkspaceInUser(userId, workspaceId, {
+          role: role as IUserInWorkspace["role"],
+        });
+        await fetchFullWorkspace(workspaceId);
+        message.success("User role changed to " + role);
       }
-      message.success("User role changed to " + role);
     } catch (error) {
       console.log(error);
     }
@@ -159,19 +168,19 @@ const PeopleContent = (props: Props) => {
                                     label: "Admin",
                                     key: "1-2",
                                     onClick: () =>
-                                      handleChangeRole("Admin", user.id),
+                                      handleChangeRole("admin", user.id),
                                   },
                                   {
                                     label: "Editor",
                                     key: "1-2",
                                     onClick: () =>
-                                      handleChangeRole("Editor", user.id),
+                                      handleChangeRole("editor", user.id),
                                   },
                                   {
                                     label: "Viewer",
                                     key: "1-3",
                                     onClick: () =>
-                                      handleChangeRole("Viewer", user.id),
+                                      handleChangeRole("viewer", user.id),
                                   },
                                 ],
                               },

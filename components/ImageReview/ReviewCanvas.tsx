@@ -28,7 +28,7 @@ const ReviewCanvas: React.FC<ReviewCanvasProps> = ({
   workspaceId,
   open,
 }) => {
-  const cachedImage = imageSrc.replace(
+  const cachedImage = imageSrc?.replace(
     "https://firebasestorage.googleapis.com",
     "https://ik.imagekit.io/freeflow"
   );

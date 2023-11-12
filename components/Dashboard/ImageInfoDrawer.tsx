@@ -48,10 +48,10 @@ const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
       {image && (
         <div className="w-full">
           <Space direction="vertical" className="w-full">
-            <Space className="w-full items-center justify-center bg-[#141414]">
+            <Space className="h-[30vh] w-full items-center justify-center bg-[#141414]">
               <Image
                 loading="lazy"
-                className="max-h-[30vh] w-auto"
+                className="max-h-[29vh]"
                 src={image?.latestImageURL}
                 alt={image?.imageName}
               />
@@ -99,7 +99,7 @@ const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
               </Space>
             </Space>
             {image?.imageDescription && (
-              <Space className="mt-5 w-full pl-2" direction="vertical">
+              <Space className="mb-3 mt-5 w-full pl-2" direction="vertical">
                 <Typography.Text className="font-semibold">
                   Description
                 </Typography.Text>
@@ -110,7 +110,7 @@ const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
               </Space>
             )}
           </Space>
-          <Space className="mt-5 w-full px-2" direction="vertical">
+          <Space className="mt-8 w-full px-2" direction="vertical">
             <Typography.Text className="font-semibold">Details</Typography.Text>
             <div className="mb-1 h-[1px] w-full bg-[#ffffff18]" />
             <Space className="w-full" direction="vertical">

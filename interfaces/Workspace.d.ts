@@ -5,7 +5,7 @@ export interface IWorkspace {
   name: string;
   description?: string;
   avatarUrl?: string;
-  subscription: "free" | "pro" | "team" | "enterprise";
+  subscription: "free" | "basic" | "pro";
   storageUsed: number;
   createdAt: number;
   isCompleted: boolean;

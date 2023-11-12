@@ -126,7 +126,7 @@ const FeedbackNavbar = () => {
       </div>
       <Typography.Text className=" flex items-center justify-center gap-2 font-semibold">
         {isCompareView ? "" : image?.imageName}{" "}
-        {imageData[0].version ? (
+        {imageData[0]?.version ? (
           <>
             {!isCompareView && (
               <Dropdown menu={{ items }}>

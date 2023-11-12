@@ -62,7 +62,7 @@ export function useFeedbackContext() {
 
 export function FeedbackContextProvider({ children }: any) {
   const router = useRouter();
-  const { renderWorkspace } = useWorkspaceContext();
+  const { renderWorkspace, currentUserInWorkspace } = useWorkspaceContext();
   const { designId, workspaceId } = router.query;
   const workspace_id = workspaceId || renderWorkspace?.id;
   const [imageData, setImageData] = useState<IReviewImageVersion[]>(
@@ -134,9 +134,27 @@ export function FeedbackContextProvider({ children }: any) {
     });
   };
 
+  const parentUserCheck = () => {
+    if (
+      authUser &&
+      currentUserInWorkspace &&
+      currentUserInWorkspace.length > 0
+    ) {
+      if (currentUserInWorkspace.find((user) => user.id === authUser.uid)) {
+        setIsUnameValid(true);
+      }
+    }
+  };
+
   useEffect(() => {
     getImageDetails();
     getVersions();
+  }, []);
+
+  useEffect(() => {
+    if (authUser) {
+      parentUserCheck();
+    }
   }, []);
 
   // Handle initial Image and threads load

@@ -65,7 +65,10 @@ const ReviewImageMobile: React.FC<Props> = ({ image, imageData }) => {
                 ) : (
                   <div className=" w-full">
                     <ReviewCanvas
-                      imageSrc={imageData[version - 1].imageURL as string}
+                      imageSrc={
+                        imageData &&
+                        (imageData[version - 1]?.imageURL as string)
+                      }
                       imageId={imageId as string}
                       workspaceId={workspaceId as string}
                     />

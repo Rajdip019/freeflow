@@ -38,7 +38,9 @@ const DesignsTableRow: React.FC<Props> = ({
         dataSource={images}
         scroll={{ x: 300 }}
         pagination={false}
+        rootClassName="ml-2"
         bordered={false}
+        tableLayout="auto"
         onRow={(record) => {
           return {
             onClick: (event) => {
