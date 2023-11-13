@@ -127,7 +127,7 @@ const Sidebar = () => {
                         setOpen(false);
                       }}
                     >
-                      <div>
+                      <div className="cursor-pointer">
                         <Avatar
                           className="mr-2 rounded"
                           size={"34"}
@@ -162,7 +162,7 @@ const Sidebar = () => {
               onClick={() => {
                 setOpen(!open);
               }}
-              className="m-2 flex items-center justify-start"
+              className="m-2 flex cursor-pointer items-center justify-start"
             >
               <Avatar
                 className="mr-2 rounded"
