@@ -274,6 +274,7 @@ const ImageUploadModal = ({
           )}
           {uploadingState === "success" && (
             <ImageUploadSuccess
+              renderWorkspaceId={renderWorkspace?.id as string}
               imageId={uploadedImageId}
               setUploadingState={setUploadingState}
               clearFile={clearFile}

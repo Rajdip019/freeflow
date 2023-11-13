@@ -1,7 +1,7 @@
 import { APP_URL } from "@/utils/constants";
 import React from "react";
-import classNames from "classnames";
-import SendInvitesInput from "./ImageReview/SendInvitesInput";
+// import classNames from "classnames";
+// import SendInvitesInput from "./ImageReview/SendInvitesInput";
 import { Button, Divider, Input, Space, Typography, message } from "antd";
 
 interface Props {
@@ -11,6 +11,7 @@ interface Props {
   >;
   clearFile: () => any;
   mode: "dark" | "light";
+  renderWorkspaceId: string;
 }
 
 const ImageUploadSuccess: React.FC<Props> = ({
@@ -18,8 +19,9 @@ const ImageUploadSuccess: React.FC<Props> = ({
   setUploadingState,
   clearFile,
   mode,
+  renderWorkspaceId,
 }) => {
-  const reviewImageUrl = `${APP_URL}/review-image/${imageId}`;
+  const reviewImageUrl = `${APP_URL}/review-design/w/${renderWorkspaceId}/d/${imageId}`;
 
   return (
     <div>
@@ -32,7 +34,7 @@ const ImageUploadSuccess: React.FC<Props> = ({
           Done! Share the link to let anyone leave feedback
         </Typography.Text>
       </div>
-
+      {/* 
       <SendInvitesInput
         imageId={imageId}
         inputClassName={classNames({
@@ -40,9 +42,9 @@ const ImageUploadSuccess: React.FC<Props> = ({
           "text-black": mode === "light",
         })}
         wrapperClassName="mb-4"
-      />
+      /> */}
 
-      <Divider>OR</Divider>
+      {/* <Divider>OR</Divider> */}
       <div className="mb-4 flex flex-col gap-2">
         <p>Share the link:</p>
         <Space.Compact>
