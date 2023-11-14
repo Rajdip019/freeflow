@@ -33,11 +33,34 @@ const SettingModal = ({ open, setOpen }: Props) => {
   );
   const [Loading, setLoading] = React.useState<boolean>(false);
   const [asyncLoading, setAsyncLoading] = React.useState<boolean>(false);
+  const [storageString, setStorageString] =
+    React.useState<string>("calculating...");
+  const [storagePercent, setStoragePercent] = React.useState<number>(0);
 
   useEffect(() => {
     setName(renderWorkspace?.name || "");
     setAvatar(renderWorkspace?.avatarUrl || "");
+    setStorageString(describeStorageUsed(renderWorkspace?.storageUsed || 0));
+    setStoragePercent(
+      (renderWorkspace?.storageUsed &&
+        Math.round(
+          (renderWorkspace?.storageUsed /
+            getPlan(renderWorkspace?.subscription).storage) *
+            100
+        )) ||
+        0
+    );
   }, [renderWorkspace]);
+
+  function describeStorageUsed(x: number) {
+    if (x < 1024) {
+      return `Used ${x.toFixed(2)} KB of 2 GB`;
+    } else if (x < 1024 * 1024) {
+      return `Used ${(x / 1024).toFixed(2)} MB of 2 GB`;
+    } else {
+      return `Used ${(x / (1024 * 1024)).toFixed(2)} GB of 2 GB`;
+    }
+  }
 
   const generateRandom = () => {
     setLoading(true);
@@ -56,6 +79,7 @@ const SettingModal = ({ open, setOpen }: Props) => {
         avatarUrl: avatar,
       }));
     setAsyncLoading(false);
+    setOpen(false);
     message.success("Workspace settings updated successfully");
   };
   return (
@@ -137,27 +161,8 @@ const SettingModal = ({ open, setOpen }: Props) => {
         </Space>
         <Space direction="vertical" className="w-full -space-y-3">
           <Typography.Text>Storage</Typography.Text>
-          <Progress
-            percent={
-              (renderWorkspace?.storageUsed &&
-                Math.round(
-                  (renderWorkspace?.storageUsed /
-                    getPlan(renderWorkspace?.subscription).storage) *
-                    100
-                )) ||
-              0
-            }
-          />
-          <Typography.Text type="secondary">
-            {(renderWorkspace?.storageUsed &&
-              Math.round(renderWorkspace?.storageUsed / 1024)) ||
-              0}{" "}
-            MB used of{" "}
-            {renderWorkspace?.subscription &&
-              getPlan(renderWorkspace?.subscription).storage /
-                (1024 * 1024)}{" "}
-            GB
-          </Typography.Text>
+          <Progress percent={storagePercent} />
+          <Typography.Text type="secondary">{storageString}</Typography.Text>
         </Space>
       </Space>
     </Modal>

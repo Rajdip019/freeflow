@@ -11,12 +11,15 @@ import {
   Dropdown,
   Button,
   MenuProps,
+  message,
 } from "antd";
-import { MoreOutlined } from "@ant-design/icons";
+import { CopyOutlined, MoreOutlined } from "@ant-design/icons";
 import ImageDeleteModalConfirmation from "./Modal/ImageDeleteModalConfirmation";
 import SendInvitesIconModal from "./Modal/SendInvitesIconModal";
 import ChangeFileNameModal from "./Modal/ChangeFileNameModal";
 import VersionUploadModal from "./VersionControl/VersionUploadModal";
+import { APP_URL } from "@/utils/constants";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 const { Column } = Table;
 interface Props {
   images: IReviewImage[];
@@ -32,6 +35,7 @@ const DesignsTableRow: React.FC<Props> = ({
   images = images.sort((a, b) => {
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
+  const { renderWorkspace } = useWorkspaceContext();
   return (
     <>
       <Table
@@ -168,6 +172,17 @@ const DesignsTableRow: React.FC<Props> = ({
                 <Dropdown
                   menu={{
                     items: [
+                      {
+                        label: "Copy feedback link",
+                        icon: <CopyOutlined />,
+                        onClick: () => {
+                          navigator.clipboard.writeText(
+                            `${APP_URL}/review-design/w/${renderWorkspace?.id}/d/${image.id}`
+                          );
+                          message.success("Link copied to clipboard");
+                        },
+                      },
+
                       {
                         label: <ChangeFileNameModal image={image} />,
                       },
