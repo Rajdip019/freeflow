@@ -20,6 +20,8 @@ import {
   Tooltip,
   Dropdown,
   Tag,
+  Divider,
+  Progress,
 } from "antd";
 
 import React, { useEffect, useState } from "react";
@@ -33,6 +35,7 @@ import { useUserContext } from "@/contexts/UserContext";
 import SettingModal from "../Modal/SettingModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { some } from "lodash-es";
+import { getPlan } from "@/utils/plans";
 
 type Props = {
   openDrawer: boolean;
@@ -71,6 +74,32 @@ const SidebarDrawer = ({ openDrawer, setOpenDrawer }: Props) => {
     fetchFullWorkspace(workspaceTab);
     localStorage.setItem("currentWorkspaceId", workspaceTab);
   };
+
+  const [storageString, setStorageString] = useState<string>("calculating...");
+  const [storagePercent, setStoragePercent] = useState<number>(0);
+
+  useEffect(() => {
+    setStorageString(describeStorageUsed(renderWorkspace?.storageUsed || 0));
+    setStoragePercent(
+      (renderWorkspace?.storageUsed &&
+        Math.round(
+          (renderWorkspace?.storageUsed /
+            getPlan(renderWorkspace?.subscription).storage) *
+            100
+        )) ||
+        0
+    );
+  }, [renderWorkspace]);
+
+  function describeStorageUsed(x: number) {
+    if (x < 1024) {
+      return `Used ${x.toFixed(2)} KB of 2 GB`;
+    } else if (x < 1024 * 1024) {
+      return `Used ${(x / 1024).toFixed(2)} MB of 2 GB`;
+    } else {
+      return `Used ${(x / (1024 * 1024)).toFixed(2)} GB of 2 GB`;
+    }
+  }
 
   const menu_items = [
     // {
@@ -248,51 +277,61 @@ const SidebarDrawer = ({ openDrawer, setOpenDrawer }: Props) => {
               </Space>
             ))}
           </div>
-          <div className="flex items-center justify-between">
-            <div className="flex">
-              <FFButton
-                type="text"
-                className="w-6 rounded-full transition-all"
-                icon={<SettingOutlined />}
-                disabled={
-                  currentUserInWorkspace && currentUserInWorkspace.length > 0
-                    ? some(currentUserInWorkspace, (user) => {
-                        return (
-                          user.id === authUser?.uid &&
-                          (user.role === "viewer" || user.role === "editor")
-                        );
-                      })
-                    : false
-                }
-                onClick={() => {
-                  // router.push("/settings");
-                  setSettingModal(true);
-                  setOpenDrawer(false);
-                }}
-              />
-
-              <a
-                href="https://linktr.ee/freeflowapp"
-                target="_blank"
-                rel="noreferrer"
-              >
+          <div>
+            <Space direction="vertical" className="w-full -space-y-3">
+              <Typography.Text>Storage</Typography.Text>
+              <Progress percent={storagePercent} />
+              <Typography.Text type="secondary">
+                {storageString}
+              </Typography.Text>
+            </Space>
+            <Divider />
+            <div className="flex items-center justify-between">
+              <div className="flex">
                 <FFButton
                   type="text"
                   className="w-6 rounded-full transition-all"
-                  icon={<QuestionCircleOutlined />}
+                  icon={<SettingOutlined />}
+                  disabled={
+                    currentUserInWorkspace && currentUserInWorkspace.length > 0
+                      ? some(currentUserInWorkspace, (user) => {
+                          return (
+                            user.id === authUser?.uid &&
+                            (user.role === "viewer" || user.role === "editor")
+                          );
+                        })
+                      : false
+                  }
                   onClick={() => {
+                    // router.push("/settings");
+                    setSettingModal(true);
                     setOpenDrawer(false);
                   }}
                 />
-              </a>
+
+                <a
+                  href="https://linktr.ee/freeflowapp"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <FFButton
+                    type="text"
+                    className="w-6 rounded-full transition-all"
+                    icon={<QuestionCircleOutlined />}
+                    onClick={() => {
+                      setOpenDrawer(false);
+                    }}
+                  />
+                </a>
+              </div>
+              <Image
+                className="mb-4"
+                src={"/logo/freeflow.png"}
+                alt="freeflow"
+                width={120}
+                preview={false}
+              />
             </div>
-            <Image
-              className="mb-4"
-              src={"/logo/freeflow.png"}
-              alt="freeflow"
-              width={120}
-              preview={false}
-            />
           </div>
         </div>
         <Button

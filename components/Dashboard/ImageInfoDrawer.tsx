@@ -7,9 +7,11 @@ import {
   Typography,
   Drawer,
   Image,
+  message,
 } from "antd";
 import { IReviewImage } from "@/interfaces/ReviewImageData";
 import {
+  CopyOutlined,
   DoubleRightOutlined,
   ExportOutlined,
   FileImageTwoTone,
@@ -21,6 +23,7 @@ import ChangeFileNameModal from "../Modal/ChangeFileNameModal";
 import SendInvitesIconModal from "../Modal/SendInvitesIconModal";
 import ImageDeleteModalConfirmation from "../Modal/ImageDeleteModalConfirmation";
 import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
+import { APP_URL } from "@/utils/constants";
 
 type Props = {
   image: IReviewImage | null;
@@ -75,6 +78,16 @@ const ImageInfoDrawer = ({ image, sideVisible, setSideVisible }: Props) => {
                 <Dropdown
                   menu={{
                     items: [
+                      {
+                        label: "Copy feedback link",
+                        icon: <CopyOutlined />,
+                        onClick: () => {
+                          navigator.clipboard.writeText(
+                            `${APP_URL}/review-design/w/${renderWorkspace?.id}/d/${image.id}`
+                          );
+                          message.success("Link copied to clipboard");
+                        },
+                      },
                       {
                         label: <ChangeFileNameModal image={image} />,
                       },

@@ -9,12 +9,15 @@ import {
   Space,
   Tag,
   Typography,
+  message,
 } from "antd";
 import VersionUploadModal from "./VersionControl/VersionUploadModal";
 import ChangeFileNameModal from "./Modal/ChangeFileNameModal";
 import SendInvitesIconModal from "./Modal/SendInvitesIconModal";
 import ImageDeleteModalConfirmation from "./Modal/ImageDeleteModalConfirmation";
-import { MoreOutlined } from "@ant-design/icons";
+import { CopyOutlined, MoreOutlined } from "@ant-design/icons";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
+import { APP_URL } from "@/utils/constants";
 
 interface Props {
   image: IReviewImage;
@@ -27,6 +30,7 @@ const DesignsGridView: React.FC<Props> = ({
   setSideImage,
   setSideVisible,
 }) => {
+  const { renderWorkspace } = useWorkspaceContext();
   return (
     <div className="relative flex w-[47%] cursor-pointer items-center justify-center rounded-xl border border-[#181818] md:h-64 md:w-64">
       {image.latestImageURL ? (
@@ -88,6 +92,16 @@ const DesignsGridView: React.FC<Props> = ({
               <Dropdown
                 menu={{
                   items: [
+                    {
+                      label: "Copy feedback link",
+                      icon: <CopyOutlined />,
+                      onClick: () => {
+                        navigator.clipboard.writeText(
+                          `${APP_URL}/review-design/w/${renderWorkspace?.id}/d/${image.id}`
+                        );
+                        message.success("Link copied to clipboard");
+                      },
+                    },
                     {
                       label: <ChangeFileNameModal image={image} />,
                     },
