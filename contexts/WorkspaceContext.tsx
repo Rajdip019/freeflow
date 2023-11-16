@@ -246,8 +246,8 @@ export function WorkspaceContextProvider({ children }: any) {
   }, []);
 
   const fetchInitialWorkspace = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       // Get the initial workspace from local storage
       const currentWorkspaceId = localStorage.getItem("currentWorkspaceId");
       if (authUser) {
@@ -278,11 +278,11 @@ export function WorkspaceContextProvider({ children }: any) {
             // else case fetch from the users workspace
           } else await fetchFullWorkspace(newWorkspace[0].id);
         } else await fetchFullWorkspace(newWorkspace[0].id);
-        setLoading(false);
       }
     } catch (e) {
       console.error(e);
     }
+    setLoading(false);
   };
 
   // const fetchInitialWorkspace = async () => {
