@@ -1,18 +1,23 @@
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import {
+  IReviewImage,
+  IReviewImageVersion,
+} from "@/interfaces/ReviewImageData";
 import { storage, db } from "@/lib/firebaseConfig";
-import { doc, updateDoc } from "firebase/firestore";
+import { collection, doc, setDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import React, { useState } from "react";
 import ImageUploaderDropzone from "../ImageDropZones/ImageUploaderDropzone";
-import { useUserContext } from "@/contexts/UserContext";
-import { useAuth } from "@/contexts/AuthContext";
-import { useImageContext } from "@/contexts/ImagesContext";
 import { Button, Modal, Typography, message } from "antd";
 import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 import { FFButton } from "@/theme/themeConfig";
+import { useUserContext } from "@/contexts/UserContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/router";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
+import { getPlan } from "@/utils/plans";
 
 interface Props {
-  prevImage: IReviewImageData;
+  prevImage: IReviewImage;
   pos: "start" | "mid" | "end";
   isText?: boolean;
   isMenu?: boolean;
@@ -30,14 +35,17 @@ const VersionUploadModal: React.FC<Props> = ({
   const [uploadingState, setUploadingState] = useState<
     "not-started" | "uploading" | "success" | "error"
   >("not-started");
-  const [uploadedImageId, setUploadedImageId] = useState<string>("{imageId}");
   const [fileSize, setFileSize] = useState<number>(0);
-  const { user } = useUserContext();
-  const { authUser } = useAuth();
-  const { storage: storageUsed } = useImageContext();
+  const router = useRouter();
+  const { workspaceId, designId } = router.query;
+  const { renderWorkspace, currentUserInWorkspace } = useWorkspaceContext();
+  const workspace_id = workspaceId || renderWorkspace?.id;
+  const image_id = designId || prevImage.id;
 
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const { user } = useUserContext();
+  const { authUser } = useAuth();
 
   const showModal = () => {
     setOpen(true);
@@ -45,32 +53,44 @@ const VersionUploadModal: React.FC<Props> = ({
 
   const handleFileUploaded = (file: File) => {
     setUploadedFile(file);
-    setFileSize(Math.round(file.size / (1024 * 1024)));
+    setFileSize(Math.round(file.size / 1024));
     setImageName(file.name);
-    console.log("File uploaded:", file);
   };
 
   const clearFile = () => {
     setImage("");
     setUploadedFile(null);
     setImageName("");
+    setFileSize(0);
   };
-
-  const [uploadPercentage, setUploadPercentage] = useState<number>(0);
 
   const uploadFile = async () => {
     setConfirmLoading(true);
-    if (fileSize < 75) {
-      if (user?.storage) {
-        if (storageUsed <= user.storage) {
+    if (
+      currentUserInWorkspace.filter((user) => user.id === authUser?.uid)[0]
+        .role === "viewer"
+    ) {
+      if (
+        renderWorkspace &&
+        renderWorkspace?.storageUsed + fileSize >
+          getPlan(renderWorkspace?.subscription).storage
+      ) {
+        if (
+          renderWorkspace?.subscription &&
+          fileSize < getPlan(renderWorkspace?.subscription).fileLimit
+        ) {
           setUploadingState("uploading");
-          const docRef = doc(db, "reviewImages", prevImage.id);
-          const imagePath = `reviewImages/${authUser?.uid}/${docRef.id}/${imageName}_${Date.now()}_v${prevImage.currentVersion + 1}`;
+          const docRef = doc(
+            collection(
+              db,
+              `workspaces/${workspace_id}/designs/${image_id}/versions`
+            )
+          );
+          const imagePath = `designs/${workspace_id}/${image_id}/versions/${imageName}-${Date.now()}-v${
+            prevImage.latestVersion + 1
+          }`;
           try {
-            const storageRef = ref(
-              storage,
-              imagePath
-            );
+            const storageRef = ref(storage, imagePath);
             let bytes: number = 0;
             const uploadTask = uploadBytesResumable(
               storageRef,
@@ -80,9 +100,6 @@ const VersionUploadModal: React.FC<Props> = ({
               "state_changed",
               (snapshot: { bytesTransferred: number; totalBytes: number }) => {
                 bytes = snapshot.totalBytes;
-                const progress =
-                  (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                setUploadPercentage(progress);
               },
               (error) => {
                 console.error(error);
@@ -91,21 +108,22 @@ const VersionUploadModal: React.FC<Props> = ({
                 const downloadURL = await getDownloadURL(
                   uploadTask.snapshot.ref
                 );
-                console.log("File available at", downloadURL);
 
-                const data: Partial<IReviewImageData> = {
-                  imageURL: [...prevImage.imageURL, downloadURL],
-                  size: (prevImage.size as number) + bytes / (1024 * 1024),
-                  lastUpdated: Date.now(),
-                  newUpdate: "New Version Uploaded",
-                  currentVersion: prevImage.currentVersion + 1,
-                  imagePath : [...prevImage.imagePath, imagePath]
+                const data: IReviewImageVersion = {
+                  id: docRef.id,
+                  imageURL: downloadURL,
+                  size: fileSize,
+                  timeStamp: Date.now(),
+                  version: prevImage.latestVersion + 1,
+                  imagePath: imagePath,
+                  uploadedBy: user?.name as string,
+                  uploadedByEmail: user?.email as string,
+                  uploadedById: authUser?.uid as string,
                 };
 
-                await updateDoc(docRef, data);
+                await setDoc(docRef, data);
                 message.success("Version updated successfully");
                 setOpen(false);
-                setUploadedImageId(docRef.id);
                 setConfirmLoading(false);
               }
             );
@@ -115,18 +133,15 @@ const VersionUploadModal: React.FC<Props> = ({
             setConfirmLoading(false);
           }
         } else {
-          message.error(
-            "Your storage is full. Delete some images and try uploading."
-          );
-          setConfirmLoading(false);
+          message.error("File size too large, Upgrade now to add large files");
         }
+      } else {
+        message.error("Storage limit exceeded, Upgrade now to add more files");
       }
     } else {
-      message.error(
-        "File size is too large. Please upload a file less than 75 MB"
-      );
-      setConfirmLoading(false);
+      message.error("You do not have permission to upload new version");
     }
+    setConfirmLoading(false);
   };
 
   return (

@@ -10,7 +10,6 @@ const StudioNameCard = ({ setCurrentTab }: Props) => {
   const [studioName, setStudioName] = useState<string>("");
 
   const handleContinue = () => {
-    console.log(studioName);
     setCurrentTab(3);
     localStorage.setItem("currentTab", "3");
   };

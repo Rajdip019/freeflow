@@ -1,6 +1,9 @@
 import { useState } from "react";
 import React, { useContext, useEffect } from "react";
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import {
+  IReviewImage,
+  IReviewImageVersion,
+} from "@/interfaces/ReviewImageData";
 import { IReview } from "@/interfaces/Thread";
 import { db } from "@/lib/firebaseConfig";
 import {
@@ -11,16 +14,17 @@ import {
   onSnapshot,
   orderBy,
   query,
-  updateDoc,
 } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useAuth } from "./AuthContext";
 import AddEmailAndPassword from "@/components/ImageReview/AddEmailAndPassword";
 import ErrorFeedback from "@/components/ImageReview/ErrorFeedback";
 import { defaultHighlightedThread } from "@/utils/constants";
+import { useWorkspaceContext } from "./WorkspaceContext";
 
 export interface IFeedbackContext {
-  imageData: IReviewImageData | undefined;
+  image: IReviewImage | undefined;
+  imageData: IReviewImageVersion[];
   threads: IReview[];
   version: number;
   setVersion: React.Dispatch<React.SetStateAction<number>>;
@@ -35,7 +39,8 @@ export interface IFeedbackContext {
 }
 
 const defaultValues: IFeedbackContext = {
-  imageData: undefined,
+  image: undefined,
+  imageData: [],
   threads: [],
   version: 0,
   isAdmin: false,
@@ -57,16 +62,21 @@ export function useFeedbackContext() {
 
 export function FeedbackContextProvider({ children }: any) {
   const router = useRouter();
-  const { imageId } = router.query;
-  const [imageData, setImageData] = useState<IReviewImageData | undefined>(
+  const { renderWorkspace, currentUserInWorkspace } = useWorkspaceContext();
+  const { designId, workspaceId } = router.query;
+  const workspace_id = workspaceId || renderWorkspace?.id;
+  const [imageData, setImageData] = useState<IReviewImageVersion[]>(
     defaultValues.imageData
+  );
+  const [image, setImage] = useState<IReviewImage | undefined>(
+    defaultValues.image
   );
   const [error, setError] = useState<boolean>(false);
   const [threads, setThreads] = useState<IReview[]>(defaultValues.threads);
   const [uname, setUname] = useState<string | undefined>(defaultValues.uname);
   const [version, setVersion] = useState<number>(defaultValues.version);
   const [isUnameValid, setIsUnameValid] = useState<boolean>(false);
-  const [isAdmin, setIsAdmin] = useState<boolean>(defaultValues.isAdmin);
+  const [isAdmin, setIsAdmin] = useState<boolean>(true);
   const [highlightedComment, setHighlightedComment] = useState<IReview>(
     defaultValues.highlightedComment as IReview
   );
@@ -81,24 +91,39 @@ export function FeedbackContextProvider({ children }: any) {
 
   const getImageDetails = async () => {
     onSnapshot(
-      doc(db, "reviewImages", imageId as string),
+      doc(db, `workspaces/${workspaceId}/designs/${designId}`),
       (docSnap: DocumentSnapshot<DocumentData>) => {
         if (docSnap.exists()) {
-          setImageData(docSnap.data() as IReviewImageData);
-          setVersion(docSnap.data().currentVersion);
+          setImage(docSnap.data() as IReviewImage);
+          setVersion(docSnap.data().latestVersion);
         } else {
           setError(true);
-          console.log("No such document!");
         }
       }
     );
   };
 
+  const getVersions = async () => {
+    const q = query(
+      collection(db, `workspaces/${workspace_id}/designs/${designId}/versions`),
+      orderBy("version", "asc")
+    );
+    onSnapshot(q, (querySnapshot) => {
+      const _versions: IReviewImageVersion[] = [];
+      querySnapshot.forEach((doc) => {
+        _versions.push({ ...doc.data(), id: doc.id } as IReviewImageVersion);
+      });
+      setImageData((prev: any) => {
+        return _versions as IReviewImageVersion[];
+      });
+    });
+  };
+
   // Get each thread on an image
   const getThreads = async () => {
     const q = query(
-      collection(db, `reviewImages/${imageId}/threads`),
-      orderBy("timeStamp", "desc")
+      collection(db, `workspaces/${workspace_id}/designs/${designId}/comments`),
+      orderBy("version", "desc")
     );
     onSnapshot(q, (querySnapshot) => {
       const _comments: unknown[] = [];
@@ -109,8 +134,27 @@ export function FeedbackContextProvider({ children }: any) {
     });
   };
 
+  const parentUserCheck = () => {
+    if (
+      authUser &&
+      currentUserInWorkspace &&
+      currentUserInWorkspace.length > 0
+    ) {
+      if (currentUserInWorkspace.find((user) => user.id === authUser.uid)) {
+        setIsUnameValid(true);
+      }
+    }
+  };
+
   useEffect(() => {
     getImageDetails();
+    getVersions();
+  }, []);
+
+  useEffect(() => {
+    if (authUser) {
+      parentUserCheck();
+    }
   }, []);
 
   // Handle initial Image and threads load
@@ -124,33 +168,6 @@ export function FeedbackContextProvider({ children }: any) {
     }
   }, [authUser, uname]);
 
-  // Handle image rendering with different width and height
-  useEffect(() => {
-    if (router.isReady) {
-      let isVisited = localStorage.getItem("isVisited");
-      if (isVisited) {
-        const visited_arr = isVisited.split(",");
-        if (!visited_arr.includes(imageId as string)) {
-          if (imageData) {
-            isVisited = isVisited + "," + imageId;
-            localStorage.setItem("isVisited", isVisited);
-            updateDoc(doc(db, `reviewImages`, imageId as string), {
-              views: (imageData?.views as number) + 1,
-            });
-          }
-        }
-      } else {
-        if (imageData) {
-          isVisited = imageId as string;
-          localStorage.setItem("isVisited", isVisited);
-          updateDoc(doc(db, `reviewImages`, imageId as string), {
-            views: (imageData?.views as number) + 1,
-          });
-        }
-      }
-    }
-  }, [imageData, router.isReady]);
-
   useEffect(() => {
     const handleContextmenu = (e: any) => {
       e.preventDefault();
@@ -161,16 +178,8 @@ export function FeedbackContextProvider({ children }: any) {
     };
   }, []);
 
-  useEffect(() => {
-    if (authUser) {
-      if (authUser.uid === imageData?.uploadedById) {
-        setIsAdmin(true);
-        setIsUnameValid(true);
-      }
-    }
-  }, [authUser, imageData?.uploadedById]);
-
   const value = {
+    image,
     imageData,
     threads,
     version,
@@ -195,7 +204,7 @@ export function FeedbackContextProvider({ children }: any) {
             <>{children}</>
           ) : (
             <AddEmailAndPassword
-              imageData={imageData}
+              imageData={image}
               setIsUnameValid={setIsUnameValid}
               uname={uname as string}
               setUname={setUname}

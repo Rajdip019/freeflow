@@ -5,6 +5,7 @@ import { useDropzone } from "react-dropzone";
 import ImageUploadModal from "../ImageUploadModal";
 // import { UploadOutlined } from "@ant-design/icons";
 import { Typography } from "antd";
+import Sidebar from "./Sidebar";
 
 const DashboardLayout = ({ children }: any) => {
   const [image, setImage] = React.useState<string>();
@@ -25,8 +26,8 @@ const DashboardLayout = ({ children }: any) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   return (
     <FFPage isAuthRequired={true}>
-      <div className=" flex overflow-hidden min-h-screen">
-        {/* <Sidebar /> */}
+      <div className=" flex h-screen overflow-hidden">
+        <Sidebar />
         <div
           {...getRootProps()}
           onClick={(e) => e.stopPropagation()}

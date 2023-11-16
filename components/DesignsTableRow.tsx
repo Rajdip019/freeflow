@@ -1,47 +1,69 @@
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import { IReviewImage } from "@/interfaces/ReviewImageData";
 import React from "react";
 import Moment from "react-moment";
-import ChangeFileNameModal from "./Modal/ChangeFileNameModal";
-import SendInvitesIconModal from "./Modal/SendInvitesIconModal";
-import VersionUploadModal from "./VersionControl/VersionUploadModal";
 import {
   Table,
   Image,
   Tag,
   Typography,
-  Button,
+  Spin,
   Space,
-  MenuProps,
   Dropdown,
+  Button,
+  MenuProps,
+  message,
 } from "antd";
-import { MoreOutlined } from "@ant-design/icons";
+import { CopyOutlined, MoreOutlined } from "@ant-design/icons";
 import ImageDeleteModalConfirmation from "./Modal/ImageDeleteModalConfirmation";
+import SendInvitesIconModal from "./Modal/SendInvitesIconModal";
+import ChangeFileNameModal from "./Modal/ChangeFileNameModal";
+import VersionUploadModal from "./VersionControl/VersionUploadModal";
+import { APP_URL } from "@/utils/constants";
+import { useWorkspaceContext } from "@/contexts/WorkspaceContext";
 const { Column } = Table;
 interface Props {
-  images: IReviewImageData[];
+  images: IReviewImage[];
+  setSideImage: React.Dispatch<React.SetStateAction<IReviewImage | null>>;
+  setSideVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DesignsTableRow: React.FC<Props> = ({ images }) => {
+const DesignsTableRow: React.FC<Props> = ({
+  images,
+  setSideImage,
+  setSideVisible,
+}) => {
   images = images.sort((a, b) => {
-    return new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime();
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
+  const { renderWorkspace } = useWorkspaceContext();
   return (
     <>
-      <Table dataSource={images} scroll={{ x: 300 }} pagination={false} bordered={false}>
+      <Table
+        dataSource={images}
+        scroll={{ x: 300 }}
+        pagination={false}
+        rootClassName="ml-2"
+        bordered={false}
+        tableLayout="auto"
+        onRow={(record) => {
+          return {
+            onClick: (event) => {
+              setSideImage(record);
+              setSideVisible(true);
+            },
+          };
+        }}
+      >
         <Column
           title="Design"
           dataIndex="imageName"
           key="imageName"
           width={50}
-          render={(text, record: IReviewImageData) => (
+          render={(text, record: IReviewImage) => (
             <>
-              {(record.currentVersion && record.imageURL) ? (
+              {record.latestImageURL ? (
                 <Image
-                  src={
-                    record.currentVersion
-                      ? record.imageURL[record.currentVersion - 1]
-                      : (record.imageURL as any)
-                  }
+                  src={record.latestImageURL}
                   width={50}
                   height={50}
                   preview={true}
@@ -49,86 +71,56 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
                 />
               ) : (
                 <div>
-                  <Typography.Text className="text-white text-center text-sm">
-                    Waiting for image...
-                  </Typography.Text>
+                  <Spin size={"large"} className="m-2.5" />
                 </div>
               )}
             </>
           )}
+          onCell={(record) => {
+            return {
+              onClick: (e) => {
+                e.stopPropagation();
+              },
+            };
+          }}
         />
         <Column
-          render={(text, record: IReviewImageData) => (
+          title="Name"
+          render={(text, record: IReviewImage) => (
             <Typography.Text className="group flex items-center truncate hover:underline">
               {record.imageName}{" "}
             </Typography.Text>
           )}
           className="cursor-pointer"
-          onCell={(record) => {
-            return {
-              onClick: (event) => {
-                window.open(`/review-image/${record.id}`, "_blank");
-              },
-            };
-          }}
         />
         <Column
           // open image on this cell click
           title="Status"
           dataIndex="newUpdate"
           key="newUpdate"
-          render={(text, record: IReviewImageData) => (
+          render={(text, record: IReviewImage) => (
             <Tag color="green">{record.newUpdate}</Tag>
           )}
-          className="cursor-pointer"
-          onCell={(record) => {
-            return {
-              onClick: (event) => {
-                window.open(`/review-image/${record.id}`, "_blank");
-              },
-            };
-          }}
-        />
-        <Column
-          title="Views"
-          dataIndex="views"
-          key="views"
-          render={(text, record: IReviewImageData) => (
-            <Typography.Text>
-              {record.views ? (
-                <span> {record.views}</span>
-              ) : (
-                <span>No Data</span>
-              )}
-            </Typography.Text>
-          )}
-          className="cursor-pointer"
-          onCell={(record) => {
-            return {
-              onClick: (event) => {
-                window.open(`/review-image/${record.id}`, "_blank");
-              },
-            };
-          }}
+          className="hidden cursor-pointer lg:table-cell"
         />
         <Column
           title="Size"
           dataIndex="size"
           key="size"
-          render={(text, record: IReviewImageData) => (
+          render={(text, record: IReviewImage) => (
             <Typography.Text>
-              {record.size ? (
-                <span>{Math.round(record.size * 1024)} KB</span>
+              {record.totalSize ? (
+                <span>{Math.round(record.totalSize)} KB</span>
               ) : (
                 <span>No Data</span>
               )}
             </Typography.Text>
           )}
-          className="cursor-pointer"
+          className="hidden cursor-pointer lg:table-cell"
           onCell={(record) => {
             return {
               onClick: () => {
-                window.open(`/review-image/${record.id}`, "_blank");
+                setSideImage(record);
               },
             };
           }}
@@ -137,67 +129,85 @@ const DesignsTableRow: React.FC<Props> = ({ images }) => {
           title="Created At"
           dataIndex="timestamp"
           key="timestamp"
-          render={(text, record: IReviewImageData) => (
+          render={(text, record: IReviewImage) => (
             <Typography.Text>
-              {record.timeStamp ? (
+              {record.createdAt ? (
                 <span>
-                  <Moment format="DD MMM YYYY">{record.timeStamp}</Moment>
+                  <Moment format="DD MMM YYYY">{record.createdAt}</Moment>
                 </span>
               ) : (
                 <span>No Data</span>
               )}
             </Typography.Text>
           )}
-          sorter={(a: IReviewImageData, b: IReviewImageData) =>
-            new Date(a.timeStamp).getTime() - new Date(b.timeStamp).getTime()
+          sorter={(a: IReviewImage, b: IReviewImage) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
           }
           className="cursor-pointer"
-          onCell={(record, rowIndex) => {
+          onCell={(record) => {
             return {
               onClick: (event) => {
-                window.open(`/review-image/${record.id}`, "_blank");
+                setSideImage(record);
               },
             };
           }}
         />
         <Column
-          title="Action"
-          key={"action"}
-          render={(text, record: IReviewImageData) => (
-            <Space>
-              <VersionUploadModal
-                prevImage={record}
-                isText={false}
-                pos="start"
-                isMenu={true}
-              />
+          title="Actions"
+          key="action"
+          render={(text, image: IReviewImage) => (
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <Space>
+                <VersionUploadModal
+                  prevImage={image}
+                  isText={false}
+                  pos="start"
+                  isMenu={true}
+                />
 
-              <Dropdown
-                menu={{
-                  items: [
-                    {
-                      label: <ChangeFileNameModal image={record} />,
-                    },
+                <Dropdown
+                  menu={{
+                    items: [
+                      {
+                        label: "Copy feedback link",
+                        icon: <CopyOutlined />,
+                        onClick: () => {
+                          navigator.clipboard.writeText(
+                            `${APP_URL}/review-design/w/${renderWorkspace?.id}/d/${image.id}`
+                          );
+                          message.success("Link copied to clipboard");
+                        },
+                      },
 
-                    {
-                      label: (
-                        <SendInvitesIconModal
-                          image={record}
-                          isTooltip={false}
-                          isMenuItem={true}
-                        />
-                      ),
-                    },
-                    {
-                      label: <ImageDeleteModalConfirmation image={record} />,
-                    },
-                  ] as MenuProps["items"],
-                }}
-              >
-                <Button icon={<MoreOutlined />} size="small" />
-              </Dropdown>
-            </Space>
+                      {
+                        label: <ChangeFileNameModal image={image} />,
+                      },
+
+                      {
+                        label: (
+                          <SendInvitesIconModal
+                            image={image}
+                            isTooltip={false}
+                            isMenuItem={true}
+                          />
+                        ),
+                      },
+                      {
+                        label: <ImageDeleteModalConfirmation image={image} />,
+                      },
+                    ] as MenuProps["items"],
+                  }}
+                >
+                  <Button icon={<MoreOutlined />} size="small" />
+                </Dropdown>
+              </Space>
+            </div>
           )}
+          className="hidden cursor-pointer lg:table-cell "
         />
       </Table>
     </>

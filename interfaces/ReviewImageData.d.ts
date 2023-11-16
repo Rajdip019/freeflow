@@ -1,23 +1,29 @@
-export interface IReviewImageData {
+export interface IReviewImage {
   id: string;
   imageName: string;
   imageDescription?: string;
-  imageURL: string[];
+  latestImageURL: string;
+  latestVersion: number;
+  totalSize: number;
+  lastUpdated: number;
+  createdAt: number;
+  newUpdate:
+    | "New Comment"
+    | "New Thread"
+    | "Uploaded"
+    | "New Version Uploaded"
+    | "Version Deleted";
+}
+
+export interface IReviewImageVersion {
+  id: string;
+  version: number;
+  imageURL: string;
   timeStamp: number;
   uploadedBy: string;
   uploadedByEmail: string;
   uploadedById?: string;
-  size?: number;
-  views?: number;
+  size: number;
   threads?: number;
-  lastUpdated: number;
-  newUpdate: "New Comment" | "New Thread" | "Uploaded" | "New Version Uploaded";
-  sentEmailInvites?: string[];
-  isPrivate: boolean;
-  currentVersion: number;
-  imagePath: string[];
-  // Nested Firestore documents in /reviewImages/{id}/private
-  private?: {
-    password?: string;
-  };
+  imagePath: string;
 }

@@ -4,7 +4,7 @@ export const IS_PRODUCTION = process.env.NEXT_PUBLIC_ENV === "prod";
 
 export const APP_URL =
   process.env.NEXT_PUBLIC_ENV === "prod"
-    ? "https://freeflow.to"
+    ? "https://app.freeflow.to"
     : process.env.NEXT_PUBLIC_ENV === "stage"
     ? "https://freeflow-stage.vercel.app"
     : "http://localhost:3000";

@@ -11,6 +11,7 @@ interface Props {
   onClose: () => void;
   open: boolean;
   imageId: string;
+  workspaceId: string;
 }
 
 const FeedbackDrawer: React.FC<Props> = ({
@@ -18,8 +19,9 @@ const FeedbackDrawer: React.FC<Props> = ({
   onClose,
   open,
   imageId,
+  workspaceId,
 }) => {
-  const { threads, version, isFocusedThread, imageData } = useFeedbackContext();
+  const { threads, version, isFocusedThread, image } = useFeedbackContext();
 
   return (
     <>
@@ -57,24 +59,25 @@ const FeedbackDrawer: React.FC<Props> = ({
             </button>
             <div>
               {isFocusedThread ? (
-                <FeedbackExpanded imageId={imageId as string} />
+                <FeedbackExpanded
+                  designId={imageId as string}
+                  workspaceId={workspaceId as string}
+                />
               ) : (
                 <>
                   <div className=" bg-sec sticky -top-[0.3rem] z-50 ml-4 flex flex-col py-2">
                     <div className="flex flex-col gap-2">
                       <Typography.Text className="text-base">
-                        {imageData?.uploadedBy}{" "}
                         <span className="text-sm text-gray-400">
-                          uploaded{" "}
-                          <Moment fromNow>{imageData?.timeStamp}</Moment>
+                          Uploaded <Moment fromNow>{image?.createdAt}</Moment>
                         </span>
                         <br />
                       </Typography.Text>
-                      {imageData?.imageDescription && (
+                      {image?.imageDescription && (
                         <Typography.Text>
                           <span className="text-base">Description</span> <br />
                           <span className="text-sm text-gray-400">
-                            {imageData?.imageDescription}
+                            {image?.imageDescription}
                           </span>
                         </Typography.Text>
                       )}

@@ -1,6 +1,4 @@
 import classNames from "classnames";
-import SendCompleteIcon from "@/components/Icons/SendCompleteIcon";
-import SendIcon from "@/components/Icons/SendIcon";
 import { useState } from "react";
 import { validateCommaSeparatedEmails } from "@/utils/validators";
 import { formatCommaSeparatedStringToArray } from "@/utils/formatters";
@@ -75,19 +73,7 @@ const SendInvitesInput = ({
           }
           onClick={handleSendInvites}
         >
-          {["idle", "loading"].includes(invitesSendStatus) && (
-            <SendIcon
-              className={classNames(
-                "h-5 w-5 text-purple-500 hover:text-gray-500",
-                {
-                  "animate-pulse": invitesSendStatus === "loading",
-                }
-              )}
-            />
-          )}
-          {invitesSendStatus === "done" && (
-            <SendCompleteIcon className="h-5 w-5 text-purple-500" />
-          )}
+          Send
         </Button>
       </Space.Compact>
     </div>

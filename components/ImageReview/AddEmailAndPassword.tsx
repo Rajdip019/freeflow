@@ -1,12 +1,12 @@
 import { validateEmail } from "@/utils/validators";
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import { IReviewImage } from "@/interfaces/ReviewImageData";
 import React, { useState } from "react";
 import { Image, Input, Typography } from "antd";
 import { FFButton } from "@/theme/themeConfig";
 import { useRouter } from "next/router";
 
 interface Props {
-  imageData?: IReviewImageData;
+  imageData?: IReviewImage;
   uname: string;
   setUname: React.Dispatch<React.SetStateAction<string | undefined>>;
   setIsUnameValid: React.Dispatch<React.SetStateAction<boolean>>;

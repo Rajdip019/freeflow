@@ -1,4 +1,4 @@
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import { IReviewImage } from "@/interfaces/ReviewImageData";
 import React, { useState } from "react";
 import { isEmpty } from "lodash-es";
 import { formatCommaSeparatedStringToArray } from "@/utils/formatters";
@@ -8,7 +8,7 @@ import { FFButton } from "@/theme/themeConfig";
 import { Tooltip, Input, message, Modal, Typography } from "antd";
 
 interface Props {
-  image: IReviewImageData;
+  image: IReviewImage;
   isTooltip?: boolean;
   isMenuItem?: boolean;
   type?: "text" | "icon" | "both";
@@ -31,7 +31,6 @@ const SendInvitesIconModal: React.FC<Props> = ({
   const handleSendInvites = async () => {
     try {
       const _emails = formatCommaSeparatedStringToArray(invitesInputText);
-      console.log("_emails", _emails);
       await postJson(`/api/review-image/${image.id}/send-invites`, {
         emails: _emails,
       });
@@ -89,7 +88,7 @@ const SendInvitesIconModal: React.FC<Props> = ({
             onChange={(e) => setInvitesInputText(e.target.value)}
           />
         </div>
-        {!isEmpty(image.sentEmailInvites) && (
+        {/* {!isEmpty(image.sentEmailInvites) && (
           <div className="mt-4">
             <Typography.Text className=" mt-5 font-semibold">
               Invites have already been sent to:
@@ -100,7 +99,7 @@ const SendInvitesIconModal: React.FC<Props> = ({
               ))}
             </ul>
           </div>
-        )}
+        )} */}
       </Modal>
     </div>
   );

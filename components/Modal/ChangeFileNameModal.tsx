@@ -1,4 +1,4 @@
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import { IReviewImage } from "@/interfaces/ReviewImageData";
 
 import React, { useState } from "react";
 import classNames from "classnames";
@@ -8,7 +8,7 @@ import { Input, Modal, Tooltip, Typography, message } from "antd";
 import { SwapOutlined } from "@ant-design/icons";
 
 interface Props {
-  image: IReviewImageData;
+  image: IReviewImage;
 }
 
 const ChangeFileNameModal: React.FC<Props> = ({ image }) => {

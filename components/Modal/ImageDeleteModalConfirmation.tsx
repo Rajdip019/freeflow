@@ -1,11 +1,11 @@
 import { useImageContext } from "@/contexts/ImagesContext";
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import { IReviewImage } from "@/interfaces/ReviewImageData";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Modal, Space, Typography } from "antd";
 import React from "react";
 
 interface Props {
-  image: IReviewImageData;
+  image: IReviewImage;
   onlyIcon?: boolean;
 }
 
@@ -44,7 +44,7 @@ const ImageDeleteModalConfirmation: React.FC<Props> = ({ image, onlyIcon }) => {
               <Typography.Text className="text-lg font-bold text-red-700">
                 Warning
               </Typography.Text>
-              <Typography.Paragraph className=" text-black whitespace-nowrap">
+              <Typography.Paragraph className=" whitespace-nowrap text-black">
                 By deleting this file you will also delete any feedback on it{" "}
               </Typography.Paragraph>
             </div>

@@ -1,14 +1,6 @@
 /* eslint-disable no-undef */
 import { db } from "@/lib/firebaseConfig";
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
 import {
   createContext,
   useContext,
@@ -19,29 +11,32 @@ import {
   useCallback,
 } from "react";
 import { useAuth } from "./AuthContext";
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import { IReviewImage } from "@/interfaces/ReviewImageData";
 import { useToast } from "@chakra-ui/react";
 import { useUserContext } from "./UserContext";
 import { useRouter } from "next/router";
+import { useWorkspaceContext } from "./WorkspaceContext";
 
 interface Props {
   children: JSX.Element[] | JSX.Element;
 }
 
 interface IDefaultValues {
-  images: IReviewImageData[];
-  setImages: Dispatch<SetStateAction<IReviewImageData[]>>;
-  storage: number;
+  images: IReviewImage[];
+  setImages: Dispatch<SetStateAction<IReviewImage[]>>;
   getImages: () => any;
-  deleteImage: (image: IReviewImageData) => any;
+  deleteImage: (image: IReviewImage) => any;
+  searchQuery: string;
+  setSearchQuery: Dispatch<SetStateAction<string>>;
 }
 
 const defaultValues: IDefaultValues = {
   images: [],
   setImages: () => {},
-  storage: 0,
   getImages: () => {},
   deleteImage: () => {},
+  searchQuery: "",
+  setSearchQuery: () => {},
 };
 
 const imagesContext = createContext(defaultValues);
@@ -51,54 +46,40 @@ export function useImageContext() {
 }
 
 export const ImageContextProvider = ({ children }: Props) => {
-  const [images, setImages] = useState<IReviewImageData[]>(
-    defaultValues.images
-  );
-  const [storage, setStorage] = useState<number>(defaultValues.storage);
+  const [images, setImages] = useState<IReviewImage[]>(defaultValues.images);
   const { authUser } = useAuth();
   const toast = useToast();
   const { user } = useUserContext();
   const router = useRouter();
-  // const { onCopy, hasCopied } = useClipboard(value);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const { workspaceId } = router.query;
+  const { renderWorkspace } = useWorkspaceContext();
+  const workspace_id = workspaceId || renderWorkspace?.id;
 
   const getImages = useCallback(async () => {
     if (authUser) {
-      const imagesRef = collection(db, "reviewImages");
-      const q = query(imagesRef, where("uploadedById", "==", authUser?.uid));
-      onSnapshot(q, async (querySnapshot) => {
+      const imagesRef = collection(
+        db,
+        `workspaces/${renderWorkspace?.id}/designs`
+      );
+      onSnapshot(imagesRef, async (querySnapshot) => {
         const promises = querySnapshot.docs.map(async (docSnap) => {
-          const data = docSnap.data() as IReviewImageData;
-          let password;
-          if (data.isPrivate) {
-            const passDocSnap = await getDoc(
-              doc(db, "reviewImages", docSnap.id, "private/password")
-            );
-            password = passDocSnap.data()?.password;
-          }
+          const data = docSnap.data() as IReviewImage;
           const finalData = {
-            // @ts-expect-error //
+            // @ts-ignore
             id: docSnap.id,
-            ...(password && { private: { password } }),
             ...data,
-          } as IReviewImageData;
+          } as IReviewImage;
           return finalData;
         });
         const _images = await Promise.all(promises);
         setImages(_images);
-        if (_images.length !== 0) {
-          const sum = _images.reduce((accumulator, object: any) => {
-            return accumulator + object.size;
-          }, 0);
-          const finalSum =
-            Math.round((Math.round(sum * 100) / 100 / 1024) * 100) / 100;
-          setStorage(finalSum);
-        }
       });
     }
-  }, [authUser]);
+  }, [authUser, renderWorkspace?.id]);
 
-  const deleteImage = async (image: IReviewImageData) => {
-    await deleteDoc(doc(db, "reviewImages", image.id as string));
+  const deleteImage = async (design: IReviewImage) => {
+    await deleteDoc(doc(db, `workspaces/${workspace_id}/designs/${design.id}`));
     toast({
       title: "Design Deleted Successfully.",
       status: "error",
@@ -109,7 +90,7 @@ export const ImageContextProvider = ({ children }: Props) => {
     if (user && router.pathname !== "/") {
       router.push("/");
     } else if (router.pathname === "/") {
-      console.log("🚀 > deleteImage > router.pathname", router.pathname);
+      // console.log("🚀 > deleteImage > router.pathname", router.pathname);
     } else {
       router.push("/");
     }
@@ -117,14 +98,17 @@ export const ImageContextProvider = ({ children }: Props) => {
 
   useEffect(() => {
     getImages();
-  }, [authUser]);
+  }, [authUser, renderWorkspace?.id]);
+
+  console.log("🚀 > images", images);
 
   const value = {
     images,
     setImages,
-    storage,
     getImages,
     deleteImage,
+    searchQuery,
+    setSearchQuery,
   };
 
   return (

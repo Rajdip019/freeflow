@@ -39,8 +39,9 @@ const FeedbackTile: React.FC<Props> = ({ thread, onClose, setOpen }) => {
             setHighlightedComment(thread);
             onClose && !isFocusedThread && onClose();
           }}
-          className={`cursor-pointer transition-all ${highlightedComment?.id === thread.id ? "bg-black" : ""
-            }`}
+          className={`cursor-pointer transition-all ${
+            highlightedComment?.id === thread.id ? "bg-black" : ""
+          }`}
         >
           <div className="py-2 pl-2.5">
             <div className=" flex items-center">
@@ -50,8 +51,7 @@ const FeedbackTile: React.FC<Props> = ({ thread, onClose, setOpen }) => {
                 size="30"
                 round={true}
                 className="mr-2"
-              >
-              </Avatar>
+              ></Avatar>
               <Typography.Text strong>{thread.name}</Typography.Text>
               <Moment fromNow className=" ml-2 text-sm text-gray-400">
                 {thread.timeStamp}

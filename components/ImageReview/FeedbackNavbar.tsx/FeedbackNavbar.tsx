@@ -1,20 +1,20 @@
 import VersionUploadModal from "@/components/VersionControl/VersionUploadModal";
 import { defaultHighlightedThread } from "@/utils/constants";
-import { IReviewImageData } from "@/interfaces/ReviewImageData";
+import {
+  IReviewImage,
+  IReviewImageVersion,
+} from "@/interfaces/ReviewImageData";
 import router from "next/router";
 import React from "react";
 import ReviewImageToolbar from "../ReviewToolbar";
 import { useFeedbackContext } from "@/contexts/FeedbackContext";
 import { Dropdown, MenuProps, Typography } from "antd";
-import {
-  DownCircleOutlined,
-  DownOutlined,
-  SmileOutlined,
-} from "@ant-design/icons";
+import { DownOutlined, SmileOutlined } from "@ant-design/icons";
 import { FFButton } from "@/theme/themeConfig";
 
 const FeedbackNavbar = () => {
   const {
+    image,
     imageData,
     isAdmin,
     version,
@@ -29,16 +29,13 @@ const FeedbackNavbar = () => {
         {
           key: "1",
           label: (
-            <VersionUploadModal
-              prevImage={imageData as IReviewImageData}
-              pos="start"
-            />
+            <VersionUploadModal prevImage={image as IReviewImage} pos="start" />
           ),
         },
         {
           key: "2",
           label: <Typography.Text>Versions</Typography.Text>,
-          children: imageData?.imageURL.map((_, index) => {
+          children: imageData?.map((_: any, index: number) => {
             return {
               key: index,
               label: (
@@ -46,10 +43,10 @@ const FeedbackNavbar = () => {
                   key={index}
                   onClick={() => {
                     setHighlightedComment(defaultHighlightedThread);
-                    setVersion(imageData.imageURL.length - index);
+                    setVersion(imageData.length - index);
                   }}
                 >
-                  {`Version ${imageData.imageURL.length - index}`}
+                  {`Version ${imageData.length - index}`}
                 </Typography.Text>
               ),
             };
@@ -86,22 +83,24 @@ const FeedbackNavbar = () => {
         {
           key: "2",
           label: <Typography.Text>Versions</Typography.Text>,
-          children: imageData?.imageURL.map((_, index) => {
-            return {
-              key: index,
-              label: (
-                <div
-                  key={index}
-                  onClick={() => {
-                    setHighlightedComment(defaultHighlightedThread);
-                    setVersion(imageData.imageURL.length - index);
-                  }}
-                >
-                  {`Version ${imageData.imageURL.length - index}`}
-                </div>
-              ),
-            };
-          }),
+          children:
+            imageData &&
+            imageData?.map((_: any, index: number) => {
+              return {
+                key: index,
+                label: (
+                  <div
+                    key={index}
+                    onClick={() => {
+                      setHighlightedComment(defaultHighlightedThread);
+                      setVersion(imageData.length - index);
+                    }}
+                  >
+                    {`Version ${imageData.length - index}`}
+                  </div>
+                ),
+              };
+            }),
         },
         {
           key: "3",
@@ -126,8 +125,8 @@ const FeedbackNavbar = () => {
         <img src="/logo/freeflow.png" alt="" className=" w-32" />
       </div>
       <Typography.Text className=" flex items-center justify-center gap-2 font-semibold">
-        {isCompareView ? "" : imageData?.imageName}{" "}
-        {imageData?.currentVersion ? (
+        {isCompareView ? "" : image?.imageName}{" "}
+        {imageData[0]?.version ? (
           <>
             {!isCompareView && (
               <Dropdown menu={{ items }}>

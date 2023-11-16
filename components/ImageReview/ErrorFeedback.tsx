@@ -6,7 +6,6 @@ import { FFButton } from "@/theme/themeConfig";
 
 const ErrorFeedback = () => {
   const router = useRouter();
-  const { user } = useUserContext();
 
   return (
     <>
@@ -18,7 +17,7 @@ const ErrorFeedback = () => {
           </Typography.Title>
           <FFButton
             onClick={() => {
-                router.push("/");
+              router.push("/");
             }}
             type="primary"
           >
