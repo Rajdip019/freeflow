@@ -16,6 +16,7 @@ const ChangeFileNameModal: React.FC<Props> = ({ image }) => {
   const [open, setOpen] = useState<boolean>(false);
   const changeFileName = async () => {
     try {
+      console.log("changeFileName", image.id, fileName);
       await updateDoc(doc(db, "reviewImages", image.id), {
         imageName: fileName,
       });

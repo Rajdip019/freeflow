@@ -56,8 +56,10 @@ const FeedbackNavbar = () => {
           key: "3",
           label: (
             <Typography.Text
+              disabled={image ? image?.latestVersion === 1 : true}
               onClick={() => {
-                setIsCompareView(true);
+                if (imageData && image?.latestVersion !== 1)
+                  setIsCompareView(true);
               }}
             >
               Compare Versions
@@ -106,8 +108,10 @@ const FeedbackNavbar = () => {
           key: "3",
           label: (
             <Typography.Text
+              disabled={image ? image?.latestVersion === 1 : true}
               onClick={() => {
-                setIsCompareView(true);
+                if (imageData && image?.latestVersion !== 1)
+                  setIsCompareView(true);
               }}
             >
               Compare Versions
