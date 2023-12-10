@@ -68,11 +68,11 @@ const VersionUploadModal: React.FC<Props> = ({
     setConfirmLoading(true);
     if (
       currentUserInWorkspace.filter((user) => user.id === authUser?.uid)[0]
-        .role === "viewer"
+        .role !== "viewer"
     ) {
       if (
         renderWorkspace &&
-        renderWorkspace?.storageUsed + fileSize >
+        renderWorkspace?.storageUsed + fileSize <
           getPlan(renderWorkspace?.subscription).storage
       ) {
         if (
